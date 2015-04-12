@@ -57,7 +57,7 @@ namespace Oggy
 
 		#endregion // static
 
-		public void Update(float dT)
+		public void Update(double dT)
 		{
 			m_rawInputSrc.Update(dT);
 			m_padInputSrc.Update(dT);

@@ -8,7 +8,7 @@ namespace Oggy
 {
 	public interface ICamera
 	{
-		void Update(float dt);
+		void Update(double dt);
 
 		/// <summary>
 		/// get camera data from current setting

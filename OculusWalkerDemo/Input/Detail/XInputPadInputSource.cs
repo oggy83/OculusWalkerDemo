@@ -84,7 +84,7 @@ namespace Oggy
 			// nothing
 		}
 
-		public void Update(float dT)
+		public void Update(double dT)
 		{
 			var pad = m_selectCtrler.GetState().Gamepad;
 

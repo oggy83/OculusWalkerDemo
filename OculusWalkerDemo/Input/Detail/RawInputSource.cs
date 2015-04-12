@@ -76,7 +76,7 @@ namespace Oggy
 			// nothing
 		}
 
-		public void Update(float dT)
+		public void Update(double dT)
 		{
 			m_mousePosDelta = m_tmpMousePosDelta;
 			m_tmpMousePosDelta = new Vector2 { X = 0, Y = 0 };

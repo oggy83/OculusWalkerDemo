@@ -53,9 +53,7 @@ namespace Oggy
 			drawSys.AmbientColor = new Color3(0.3f, 0.4f, 0.6f);
 			drawSys.FogColor = new Color3(0.3f, 0.5f, 0.8f);
 
-			// camera setting
-			drawSys.Camera = Matrix.LookAtLH(new Vector3(0.0f, 1.5f, 0.0f), new Vector3(0.0f, 1.5f, 1.0f), Vector3.Up);
-
+			
 			// create random box storm
 			var boxModel = DrawModel.CreateBox(1.0f, 1.0f, Vector4.Zero);
 			m_drawModelList.Add(boxModel);
@@ -112,6 +110,9 @@ namespace Oggy
 			m_multiThreadCount = multiThreadCount;
 			m_taskList = new List<Task>(m_multiThreadCount);
 			m_taskResultList = new List<CommandList>(m_multiThreadCount);
+
+            // other settings
+            CameraSystem.GetInstance().ActivateCamera(CameraSystem.FreeCameraName);
 		}
 
         public void RenderFrame()
@@ -119,6 +120,8 @@ namespace Oggy
 			double dt = m_fps.GetDeltaTime();
 
 			var drawSys = DrawSystem.GetInstance();
+            var cameraSys = CameraSystem.GetInstance();
+            var inputSys = InputSystem.GetInstance();
 
 			// update fps
 			{
@@ -127,11 +130,17 @@ namespace Oggy
 				m_numberEntity.SetNumber(1.0f / (float)avgDT);
 			}
 
-
 			if (m_multiThreadCount > 1)
 			{
 				Task.WaitAll(m_taskList.ToArray());
 				var tmpTaskResult = new List<CommandList>(m_taskResultList);
+
+                // camera setting
+                inputSys.Update(dt);
+                cameraSys.Update(dt);
+                drawSys.Camera = cameraSys.GetCameraData().GetViewMatrix();    
+                //drawSys.Camera = Matrix.LookAtLH(new Vector3(0.0f, 1.5f, 0.0f), new Vector3(0.0f, 1.5f, 1.0f), Vector3.Up);
+
 				var context = drawSys.BeginScene();
 
 				// start command list generation for the next frame

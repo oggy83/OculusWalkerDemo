@@ -54,7 +54,7 @@ namespace Oggy
 			m_cameraTrans = Matrix.Identity;
 		}
 
-		public void Update(float dt)
+		public void Update(double dt)
 		{
 			IMouseKeyboardInputSource src = InputSystem.GetInstance().MouseKeyboard;
 

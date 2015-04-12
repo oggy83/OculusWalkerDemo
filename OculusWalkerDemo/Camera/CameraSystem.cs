@@ -126,7 +126,7 @@ namespace Oggy
 			m_camera.Activate(oldCamera);
 		}
 
-		public void Update(float dT)
+		public void Update(double dT)
 		{
 			if (m_camera != null)
 			{

@@ -20,7 +20,7 @@ namespace Oggy
 			//m_player = null;
 		}
 
-		public void Update(float dt)
+		public void Update(double dt)
 		{
             /*
 			var layoutC = m_player.FindComponent<LayoutComponent>();

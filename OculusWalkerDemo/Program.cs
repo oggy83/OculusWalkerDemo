@@ -114,8 +114,8 @@ namespace Oggy
             InputSystem.Initialize(form.GetRenderTarget());
             CameraSystem.Initialize();
             GameSystem.Initialize();
-            
 
+           
 			var scene = new Scene(device, swapChain, form.GetRenderTarget(), hmd, bStereoRendering, multiThreadCount);
 			RenderLoop.Run(form, () => { scene.RenderFrame(); });
 
