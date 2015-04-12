@@ -22,26 +22,62 @@ namespace Oggy
 		[STAThread]
 		static void Main()
 		{
-			bool bStereoRendering = false;// change to 'false' due to non-stereo rendering for debug
+            bool bStereoRendering = false;// change to 'false' due to non-stereo rendering for debug
 			int multiThreadCount = 4;// 1 is single thread
 
-			// init oculus rift hmd system
-			HmdSystem.Initialize();
-			var hmdSys = HmdSystem.GetInstance();
-			var hmd = hmdSys.DetectHmd();
-			hmd.ResetPose();
+            HmdDevice hmd = null;
+            try
+            {
+                // init oculus rift hmd system
+                HmdSystem.Initialize();
+                var hmdSys = HmdSystem.GetInstance();
+                hmd = hmdSys.DetectHmd();
+            }
+            catch (Exception)
+            {
+                // failed to detect hmd 
+                hmd = null;
+            }
 
-			Size resolution = hmd.Resolution;
-			if (!bStereoRendering)
-			{
-				//resolution.Width = 1920;// Full HD
-				//resolution.Height = 1080;
-				resolution.Width = 1280;
-				resolution.Height = 720;
-			}
-
-			var form = new MyForm();
+#if !DEBUG
+            var configForm = new ConfigForm(hmd);
+            Application.Run(configForm);
+            if (configForm.HasResult())
+            {
+                bStereoRendering = configForm.GetResult().UseHmd;
+            }
+            else
+            {
+                // cancel 
+                return;
+            }
+#endif
+            Size resolution = new Size();
+            if (hmd == null)
+            {
+                //resolution.Width = 1920;// Full HD
+                //resolution.Height = 1080;
+                resolution.Width = 1280;
+                resolution.Height = 720;
+            }
+            else
+            {
+                hmd.ResetPose();
+                resolution = hmd.Resolution;
+            }
+			
+			var form = new MainForm();
 			form.ClientSize = resolution;
+
+            bool isEnableWindowMode = false;
+            if (hmd == null)
+            {
+                isEnableWindowMode = true;
+            }
+            else
+            {
+                isEnableWindowMode = hmd.IsEnableWindowMode;
+            }
 
 			// Create Device & SwapChain
 			var desc = new SwapChainDescription()
@@ -49,7 +85,7 @@ namespace Oggy
 				BufferCount = 2,
 				ModeDescription =
 					new ModeDescription(resolution.Width, resolution.Height, new Rational(0, 1), Format.R8G8B8A8_UNorm),
-				IsWindowed = hmd.IsEnableWindowMode,
+				IsWindowed = isEnableWindowMode,
 				OutputHandle = form.GetRenderTarget().Handle,
 				SampleDescription = new SampleDescription(1, 0),
 				SwapEffect = SwapEffect.Sequential,

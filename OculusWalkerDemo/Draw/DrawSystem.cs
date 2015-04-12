@@ -32,7 +32,10 @@ namespace Oggy
 		static public void Dispose()
 		{
 			s_singleton.m_passCtrl.Dispose();
-			s_singleton.m_hmd.Detach();
+            if (s_singleton.m_hmd != null)
+            {
+                s_singleton.m_hmd.Detach();
+            }
 			s_singleton.m_repository.Dispose();
 			s_singleton = null;
 		}
@@ -123,7 +126,11 @@ namespace Oggy
 
 			m_bStereoRendering = bStereoRendering;
 			m_hmd = hmd;
-			m_hmd.Attach(m_d3d, m_repository.GetDefaultRenderTarget());
+            if (m_hmd != null)
+            {
+                m_hmd.Attach(m_d3d, m_repository.GetDefaultRenderTarget());
+            }
+			
 		}
 
 		public void SetDirectionalLight(DirectionalLightData light)

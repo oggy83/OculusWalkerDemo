@@ -72,6 +72,19 @@ namespace Oggy
 			
 		}
 
+        /// <summary>
+        /// get a string which represents this device
+        /// </summary>
+        public String DisplayName
+        {
+            get
+            {
+                string name = m_handle.Value.ProductName;
+                int majorVer = m_handle.Value.FirmwareMajor;
+                int minorVer = m_handle.Value.FirmwareMinor;
+                return string.Format("{0} (firmware ver {1}.{2})", name, majorVer, minorVer);
+            }
+        }
 
 		#endregion // properties
 
