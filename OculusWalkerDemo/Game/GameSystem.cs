@@ -49,7 +49,10 @@ namespace Oggy
 		[Conditional("DEBUG")]
 		public void CreateDebugMenu(ToolStripMenuItem parent)
 		{
-			Config.CreateDebugMenu(parent);
+            var menuItem = new ToolStripMenuItem("Game");
+            parent.DropDownItems.Add(menuItem);
+
+			Config.CreateDebugMenu(menuItem);
 		}
 
 	}

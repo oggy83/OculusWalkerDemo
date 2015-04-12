@@ -47,6 +47,8 @@
             this.Controls.Add(this.m_renderPanel);
             this.Name = "MainForm";
             this.Text = "OculusWalkerDemo";
+            this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this._OnFormClosed);
+            this.Load += new System.EventHandler(this._OnLoad);
             this.ResumeLayout(false);
 
         }

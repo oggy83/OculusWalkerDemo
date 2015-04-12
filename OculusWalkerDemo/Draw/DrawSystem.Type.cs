@@ -36,6 +36,28 @@ namespace Oggy
 			}
 		}
 
+        /// <summary>
+        /// camera
+        /// </summary>
+        public struct CameraData
+        {
+            public Vector3 eye;
+            public Vector3 lookAt;
+            public Vector3 up;
+
+            public CameraData(Vector3 eye, Vector3 lookAt, Vector3 up)
+            {
+                this.eye = eye;
+                this.lookAt = lookAt;
+                this.up = up;
+            }
+
+            public Matrix GetViewMatrix()
+            {
+                return Matrix.LookAtLH(eye, lookAt, up);
+            }
+        }
+
 		/// <summary>
 		/// world data (camera + light)
 		/// </summary>

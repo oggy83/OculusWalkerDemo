@@ -53,7 +53,7 @@ namespace Oggy
             }
 #endif
             Size resolution = new Size();
-            if (hmd == null)
+            if (!bStereoRendering)
             {
                 //resolution.Width = 1920;// Full HD
                 //resolution.Height = 1080;
@@ -111,11 +111,18 @@ namespace Oggy
 			factory.MakeWindowAssociation(form.Handle, WindowAssociationFlags.IgnoreAll);
 
 			DrawSystem.Initialize(form.GetRenderTarget().Handle, device, swapChain, hmd, bStereoRendering, multiThreadCount);
+            InputSystem.Initialize(form.GetRenderTarget());
+            CameraSystem.Initialize();
+            GameSystem.Initialize();
+            
 
 			var scene = new Scene(device, swapChain, form.GetRenderTarget(), hmd, bStereoRendering, multiThreadCount);
 			RenderLoop.Run(form, () => { scene.RenderFrame(); });
 
 			// Release
+            GameSystem.Dispose();
+            CameraSystem.Dispose();
+            InputSystem.Dispose();
 			DrawSystem.Dispose();
 			scene.Dispose();
 			device.Dispose();

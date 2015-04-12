@@ -21,5 +21,34 @@ namespace Oggy
         {
             return m_renderPanel;
         }
+
+        #region private members
+
+#if DEBUG
+        private DebugDialog m_debugDialog = null;
+#endif // DEBUG
+        #endregion // private members
+
+        #region private methods
+
+        private void _OnLoad(object sender, EventArgs e)
+        {
+#if DEBUG
+            m_debugDialog = new DebugDialog();
+            m_debugDialog.Show();
+            var debugMenu = m_debugDialog.GetSystemMenuItem();
+            GameSystem.GetInstance().CreateDebugMenu(debugMenu);
+            CameraSystem.GetInstance().CreateDebugMenu(debugMenu);
+#endif // DEBUG
+        }
+
+        private void _OnFormClosed(object sender, FormClosedEventArgs e)
+        {
+#if DEBUG
+            m_debugDialog.Hide();
+#endif // DEBUG
+        }
+
+        #endregion // private methods
     }
 }

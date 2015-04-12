@@ -37,11 +37,12 @@ namespace Oggy
 		[Conditional("DEBUG")]
 		public void CreateDebugMenu(ToolStripMenuItem parent)
 		{
+           
 			var item1 = new ToolStripRadioButtonMenuItem("MouseKeyboard");
 			item1.Click += (sender, e) => { InputDevice = UserInputDevices.MouseKeyboard; };
 			var item2 = new ToolStripRadioButtonMenuItem("GamePad");
 			item2.Click += (sender, e) => { InputDevice = UserInputDevices.Pad; };
-			parent.DropDownItems.AddRange(new ToolStripItem[] { item1, item2 });
+            parent.DropDownItems.AddRange(new ToolStripItem[] { item1, item2 });
 
 			item2.Checked = true;
 		}
