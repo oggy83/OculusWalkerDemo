@@ -112,19 +112,23 @@ namespace Oggy
 
 			DrawSystem.Initialize(form.GetRenderTarget().Handle, device, swapChain, hmd, bStereoRendering, multiThreadCount);
             InputSystem.Initialize(form.GetRenderTarget());
+            EntitySystem.Initialize();
+            ChrSystem.Initialize();
             CameraSystem.Initialize();
             GameSystem.Initialize();
 
            
 			var scene = new Scene(device, swapChain, form.GetRenderTarget(), hmd, bStereoRendering, multiThreadCount);
 			RenderLoop.Run(form, () => { scene.RenderFrame(); });
+            scene.Dispose();
 
 			// Release
             GameSystem.Dispose();
             CameraSystem.Dispose();
+            ChrSystem.Dispose();
+            EntitySystem.Dispose();
             InputSystem.Dispose();
 			DrawSystem.Dispose();
-			scene.Dispose();
 			device.Dispose();
 			swapChain.Dispose();
 			HmdSystem.Dispose();

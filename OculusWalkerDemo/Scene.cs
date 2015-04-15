@@ -111,8 +111,16 @@ namespace Oggy
 			m_taskList = new List<Task>(m_multiThreadCount);
 			m_taskResultList = new List<CommandList>(m_multiThreadCount);
 
+            // create player
+            m_player = new PlayerEntity();
+            ChrSystem.GetInstance().Player = m_player;
+
             // other settings
+#if DEBUG
             CameraSystem.GetInstance().ActivateCamera(CameraSystem.FreeCameraName);
+#else
+            CameraSystem.GetInstance().ActivateCamera(CameraSystem.IngameCameraName);
+#endif // DEBUG
 		}
 
         public void RenderFrame()
@@ -122,6 +130,7 @@ namespace Oggy
 			var drawSys = DrawSystem.GetInstance();
             var cameraSys = CameraSystem.GetInstance();
             var inputSys = InputSystem.GetInstance();
+            var entitySys = EntitySystem.GetInstance();
 
 			// update fps
 			{
@@ -137,9 +146,12 @@ namespace Oggy
 
                 // camera setting
                 inputSys.Update(dt);
+                entitySys.UpdateComponents(GameEntityComponent.UpdateLines.Input, dt);
                 cameraSys.Update(dt);
                 drawSys.Camera = cameraSys.GetCameraData().GetViewMatrix();    
                 //drawSys.Camera = Matrix.LookAtLH(new Vector3(0.0f, 1.5f, 0.0f), new Vector3(0.0f, 1.5f, 1.0f), Vector3.Up);
+
+                
 
 				var context = drawSys.BeginScene();
 
@@ -218,6 +230,7 @@ namespace Oggy
         /// </summary>
         public void Dispose()
         {
+            m_player.Dispose();
 			Task.WaitAll(m_taskList.ToArray());
 			m_numberEntity.Dispose();
 			m_floor.Dispose();
@@ -242,6 +255,7 @@ namespace Oggy
 		private int m_multiThreadCount;
 		private List<Task> m_taskList = null;
 		private List<CommandList> m_taskResultList = null;
+        private PlayerEntity m_player = null;
 
 		#endregion // private members
 	}

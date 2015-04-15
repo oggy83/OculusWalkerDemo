@@ -45,6 +45,15 @@
     <Compile Include="Camera\FreeCamera.cs" />
     <Compile Include="Camera\ICamera.cs" />
     <Compile Include="Camera\IngameCamera.cs" />
+    <Compile Include="Chr\ChrSystem.cs" />
+    <Compile Include="Chr\PlayerEntity.cs" />
+    <Compile Include="Chr\PlayerInputComponent.cs" />
+    <Compile Include="Entity\Detail\GameEntityComponentLine.cs" />
+    <Compile Include="Entity\EntitySystem.cs" />
+    <Compile Include="Entity\GameEntity.cs" />
+    <Compile Include="Entity\GameEntityComponent.cs" />
+    <Compile Include="Entity\GameEntityComponent.Types.cs" />
+    <Compile Include="Entity\LayoutComponent.cs" />
     <Compile Include="Forms\ConfigForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -63,7 +72,9 @@
     <Compile Include="Forms\MainForm.Designer.cs">
       <DependentUpon>MainForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="Forms\ToolStripRadioButtonMenuItem.cs" />
+    <Compile Include="Forms\ToolStripRadioButtonMenuItem.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Hmd\CRef.cs" />
     <Compile Include="Draw\DrawContext.cs" />
     <Compile Include="Draw\DrawContext.Factory.cs" />
@@ -75,7 +86,7 @@
     <Compile Include="Draw\DrawSystem.Type.cs" />
     <Compile Include="Draw\DrawUtil.cs" />
     <Compile Include="Draw\Effect.cs" />
-    <Compile Include="Draw\FpsCounter.cs" />
+    <Compile Include="Util\FpsCounter.cs" />
     <Compile Include="Draw\IDrawContext.cs" />
     <Compile Include="Draw\MonoralDrawContext.cs" />
     <Compile Include="Draw\RenderTarget.cs" />
@@ -99,6 +110,7 @@
     <Compile Include="NumberEntity.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Scene.cs" />
+    <Compile Include="Util\MathUtil.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Microsoft.CSharp" />

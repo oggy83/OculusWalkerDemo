@@ -17,26 +17,25 @@ namespace Oggy
 
 		public IngameCamera()
 		{
-			//m_player = null;
+			m_player = null;
 		}
 
 		public void Update(double dt)
 		{
-            /*
 			var layoutC = m_player.FindComponent<LayoutComponent>();
 			Debug.Assert(layoutC!= null, "");
 
-			var markerC = m_player.FindComponent<ModelMarkerComponent>();
-			Debug.Assert(markerC != null, "");
+			//var markerC = m_player.FindComponent<ModelMarkerComponent>();
+			//Debug.Assert(markerC != null, "");
+            //var mtx = markerC.FindMarkerMatrix(10) * layoutC.Transform;
 
-			var mtx = markerC.FindMarkerMatrix(10) * layoutC.Transform;
+            var mtx = layoutC.Transform * Matrix.Translation(0, 1, 0);
 
 			Vector3 eye, lookAt, up;
 			eye = mtx.TranslationVector;
 			lookAt = eye + mtx.Backward * Zoom;
 			up = Vector3.UnitY;
 			m_camera = new DrawSystem.CameraData(eye, lookAt, up);
-            */
 		}
 
 		public DrawSystem.CameraData GetCameraData()
@@ -46,15 +45,13 @@ namespace Oggy
 		
 		public void Activate(ICamera oldCamera)
 		{
-            /*
 			m_player = ChrSystem.GetInstance().Player;
 			Debug.Assert(m_player != null, "player must not be null");
-            */
 		}
 
 		public void Deactivate()
 		{
-			//m_player = null;
+			m_player = null;
 		}
 
 		#region private members
@@ -63,7 +60,7 @@ namespace Oggy
 		/// <summary>
 		/// target player
 		/// </summary>
-		//private PlayerEntity m_player;
+		private PlayerEntity m_player;
 
 		/// <summary>
 		/// camera data

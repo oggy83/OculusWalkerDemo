@@ -76,7 +76,7 @@ namespace Oggy
 			RegisterCamera(FreeCameraName, new FreeCamera());
 			RegisterCamera(IngameCameraName, new IngameCamera());
 			ActivateCamera(FreeCameraName);
-		}
+        }
 
 		/// <summary>
 		/// register a camera
