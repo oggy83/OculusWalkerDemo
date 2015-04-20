@@ -209,7 +209,7 @@ namespace Oggy
 		private DrawSystem.RenderMode? m_lastRenderMode = null;
 		private TextureView m_lastTexture = null;
 		private PrimitiveTopology? m_lastTopology = null;
-		private Buffer m_lastVertexBuffer = null;
+		private VertexBufferBinding[] m_lastVertexBuffers = null;
 		private int m_lastVertexCount = 0;
 
 		// DrawInstancedModel context
@@ -247,10 +247,10 @@ namespace Oggy
 				m_context.InputAssembler.PrimitiveTopology = mesh.Topology;
 				m_lastTopology = mesh.Topology;
 			}
-			if (m_lastVertexBuffer == null || m_lastVertexBuffer != mesh.Buffer.Buffer)
+			if (m_lastVertexBuffers == null || m_lastVertexBuffers != mesh.Buffers)
 			{
-				m_context.InputAssembler.SetVertexBuffers(0, mesh.Buffer);
-				m_lastVertexBuffer = mesh.Buffer.Buffer;
+				m_context.InputAssembler.SetVertexBuffers(0, mesh.Buffers);
+				m_lastVertexBuffers = mesh.Buffers;
 				m_lastVertexCount = mesh.VertexCount;
 			}
 		}

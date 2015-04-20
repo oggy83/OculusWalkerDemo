@@ -49,7 +49,11 @@ namespace Oggy
 
 		public void Dispose()
 		{
-			m_mesh.Buffer.Buffer.Dispose();
+            foreach (var buffer in m_mesh.Buffers)
+            {
+                buffer.Buffer.Dispose();
+            }
+            m_mesh.Buffers = null;
 		}
 
 		public static DrawModel CreateBox(float geometryScale, float uvScale, Vector4 offset)

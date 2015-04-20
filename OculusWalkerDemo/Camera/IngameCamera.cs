@@ -29,7 +29,7 @@ namespace Oggy
 			//Debug.Assert(markerC != null, "");
             //var mtx = markerC.FindMarkerMatrix(10) * layoutC.Transform;
 
-            var mtx = layoutC.Transform * Matrix.Translation(0, 1, 0);
+            var mtx = layoutC.Transform * Matrix.Translation(0, 1.8f, 0);
 
 			Vector3 eye, lookAt, up;
 			eye = mtx.TranslationVector;

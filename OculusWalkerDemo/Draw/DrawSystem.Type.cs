@@ -76,29 +76,118 @@ namespace Oggy
 			public IntPtr WindowHandle;
 		}
 
+        public struct TextureData
+        {
+            public string Name { get; set; }
+
+            public static TextureData FromName(string name)
+            {
+                var data = new TextureData()
+                {
+                    Name = name,
+                };
+
+                return data;
+            }
+        }
+
 		public enum RenderMode
 		{
 			Opaque = 0,		// disable alpha blend
 			Transparency,	// enable alpha blend
 		}
 
-		public struct MeshData
-		{
-			public int VertexCount { get; set; }
-			public VertexBufferBinding Buffer { get; set; }
-			public PrimitiveTopology Topology { get; set; }
+        public enum TextureTypes
+        {
+            Diffuse0 = 0,
+            Bump0,
+        }
 
-			public static MeshData Create(int bufferCount)
-			{
-				var data = new MeshData()
-				{
-					VertexCount = 0,
-					Topology = PrimitiveTopology.TriangleList
-				};
+        public enum MaterialTypes
+        {
+            Default = 0,
+            DbgBoneWeight,
+            Marker,
+        }
 
-				return data;
-			}
-		}
+        public struct MaterialData
+        {
+            public MaterialTypes Type { get; set; }
+
+            /// <summary>
+            /// first diffuse texture for Default
+            /// </summary>
+            public TextureView DiffuseTex0 { get; set; }
+
+            /// <summary>
+            /// first bump texture for Default
+            /// </summary>
+            public TextureView BumpTex0 { get; set; }
+
+            /// <summary>
+            /// index of showing bone weight for DbgBoneWeight
+            /// </summary>
+            public int DbgBoneIndex;
+
+            /// <summary>
+            /// marker id for Marker
+            /// </summary>
+            public int MarkerId;
+        }
+
+        public struct MeshData
+        {
+            public int VertexCount { get; set; }
+            public VertexBufferBinding[] Buffers { get; set; }
+            public PrimitiveTopology Topology { get; set; }
+
+            public static MeshData Create(int bufferCount)
+            {
+                var data = new MeshData()
+                {
+                    VertexCount = 0,
+                    Buffers = new VertexBufferBinding[bufferCount],
+                    Topology = PrimitiveTopology.TriangleList
+                };
+
+                return data;
+            }
+        }
+
+        public struct BoneData
+        {
+            /// <summary>
+            /// bone name
+            /// </summary>
+            public string Name { get; set; }
+
+            /// <summary>
+            /// index of the parent bone
+            /// </summary>
+            /// <remarks>in case of master bone, this is set to -1</remarks>
+            public int Parent { get; set; }
+
+            /// <summary>
+            /// bone matrix which transforms parent bone coords system to this bone coords system
+            /// </summary>
+            public Matrix BoneTransform { get; set; }
+
+            /// <summary>
+            /// bone matrix which transforms model coords system to this bone coords system
+            /// </summary>
+            public Matrix BoneOffset { get; set; }
+
+            /// <summary>
+            /// bone length
+            /// </summary>
+            public float Length { get; set; }
+
+            public bool IsMasterBone()
+            {
+                return Parent == -1;
+            }
+
+        }
 
 	}
 }
