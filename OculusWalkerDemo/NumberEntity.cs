@@ -64,7 +64,7 @@ namespace Oggy
 				}
 
 				Debug.Assert(tex != null, "invalid character");
-				context.DrawModel(layout, Color4.White, m_plane.Mesh, tex, DrawSystem.RenderMode.Transparency);
+				context.DrawModel(layout, Color4.White, m_plane.NodeList[0].Mesh, tex, DrawSystem.RenderMode.Transparency);
 				layout *= Matrix.Translation(offset, 0, 0);
 			}
 

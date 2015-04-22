@@ -153,7 +153,10 @@ namespace Oggy
 
                 
 
-				var context = drawSys.BeginScene();
+				drawSys.BeginScene();
+                var context = drawSys.GetDrawContext();
+
+                entitySys.UpdateComponents(GameEntityComponent.UpdateLines.PreDraw, dt);
 
 				// start command list generation for the next frame
 				int spanIndex = m_boxList.Count() / m_multiThreadCount;
@@ -198,7 +201,8 @@ namespace Oggy
 			}
 			else
 			{
-				var context = drawSys.BeginScene();
+				drawSys.BeginScene();
+                var context = drawSys.GetDrawContext();
 
 				// draw floor
 				m_floor.Draw(context);

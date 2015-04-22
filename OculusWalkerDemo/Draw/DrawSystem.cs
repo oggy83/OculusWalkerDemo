@@ -138,12 +138,16 @@ namespace Oggy
 			m_world.dirLight = light;
 		}
 
-		public IDrawContext BeginScene()
+		public void BeginScene()
 		{
 			DrawSystem.WorldData data = m_world;
 			m_passCtrl.StartPass(data);
-			return m_passCtrl.Context;
 		}
+
+        public IDrawContext GetDrawContext()
+        {
+            return m_passCtrl.Context;
+        }
 
 		public void EndScene()
 		{
