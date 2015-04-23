@@ -51,7 +51,7 @@ namespace Oggy
 			Zoom = 10;
 			m_isLeftDrugging = false;
 			m_isRightDrugging = false;
-			m_cameraTrans = Matrix.Identity;
+			m_cameraTrans = Matrix.Translation(0, 4, 0);
 		}
 
 		public void Update(double dt)

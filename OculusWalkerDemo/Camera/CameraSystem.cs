@@ -33,6 +33,8 @@ namespace Oggy
 
 		public static readonly string IngameCameraName = "ingame";
 
+        public static readonly string FixedCameraName = "Fixed";
+
 		#endregion // static
 
 		#region properties
@@ -65,6 +67,14 @@ namespace Oggy
 			}
 		}
 
+        public ICamera FixedCamera
+        {
+            get
+            {
+                return m_cameraTable[FixedCameraName];
+            }
+        }
+
 		#endregion // properties
 
 
@@ -75,6 +85,7 @@ namespace Oggy
 			// register system camera
 			RegisterCamera(FreeCameraName, new FreeCamera());
 			RegisterCamera(IngameCameraName, new IngameCamera());
+            RegisterCamera(FixedCameraName, new FixedCamera());
 			ActivateCamera(FreeCameraName);
         }
 
@@ -163,7 +174,9 @@ namespace Oggy
 			item1.Click += (sender, e) => { ActivateCamera(FreeCameraName); };
 			var item2 = new ToolStripRadioButtonMenuItem("ingame camera");
 			item2.Click += (sender, e) => { ActivateCamera(IngameCameraName); };
-            menuItem.DropDownItems.AddRange(new ToolStripItem[] { item1, item2 });
+            var item3 = new ToolStripRadioButtonMenuItem("fixed camera");
+            item3.Click += (sender, e) => { ActivateCamera(FixedCameraName); };
+            menuItem.DropDownItems.AddRange(new ToolStripItem[] { item1, item2, item3 });
 
 			item1.Checked = true;
 		}

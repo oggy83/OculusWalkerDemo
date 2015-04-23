@@ -119,7 +119,7 @@ namespace Oggy
 #if DEBUG
             CameraSystem.GetInstance().ActivateCamera(CameraSystem.FreeCameraName);
 #else
-            CameraSystem.GetInstance().ActivateCamera(CameraSystem.IngameCameraName);
+            CameraSystem.GetInstance().ActivateCamera(CameraSystem.FixedCameraName);
 #endif // DEBUG
 		}
 
