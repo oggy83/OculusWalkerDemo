@@ -27,7 +27,6 @@ namespace Oggy
 			// load textures
 			var textures = new List<TextureView>(new []
 			{
-				TextureView.FromFile("block", drawSys.D3D, "Image/block.png"),
 				TextureView.FromFile("dot", drawSys.D3D, "Image/dot.png"),
 				TextureView.FromFile("floor", drawSys.D3D, "Image/floor.jpg"),
 			});
@@ -42,7 +41,6 @@ namespace Oggy
 			{
 				drawSys.ResourceRepository.AddResource(tex);
 			}
-			
 
 			// light setting
 			drawSys.SetDirectionalLight(new DrawSystem.DirectionalLightData()
@@ -52,38 +50,6 @@ namespace Oggy
 			});
 			drawSys.AmbientColor = new Color3(0.3f, 0.4f, 0.6f);
 			drawSys.FogColor = new Color3(0.3f, 0.5f, 0.8f);
-
-			
-			// create random box storm
-			var boxModel = DrawModel.CreateBox(1.0f, 1.0f, Vector4.Zero);
-			m_drawModelList.Add(boxModel);
-			var rnd = new Random();
-			for (int i = 0; i < 40; ++i)
-			{
-				for (int j = 0; j < 10; ++j)
-				{
-					for (int k = 0; k < 40; ++k)
-					{
-						double angle = RandomUtil.NextDouble(rnd, 0.0, 2 * Math.PI);
-						float scale = RandomUtil.NextFloat(rnd, 0.03f, 0.1f);
-						float r = RandomUtil.NextFloat(rnd, 0.5f, 1.0f);
-						float g = RandomUtil.NextFloat(rnd, 0.5f, 1.0f);
-						float b = RandomUtil.NextFloat(rnd, 0.5f, 1.0f);
-						float speed = RandomUtil.NextFloat(rnd, 0.2f, 0.5f);
-						var layout = Matrix.Scaling(scale) * Matrix.Translation(i - 20.0f, 1.5f + j, k - 20.0f);
-						m_boxList.Add(new ModelEntity(new ModelEntity.InitParam()
-						{
-							Model = boxModel,
-							Texture = drawSys.ResourceRepository.FindResource<TextureView>("block"),
-							Layout = layout,
-							Delay = RandomUtil.NextFloat(rnd, 0.0f, 100.0f),
-							Forward = new Vector3((float)Math.Cos(angle), 0, (float)Math.Sin(angle)),
-							Color = new Color4(r, g, b, 1),
-							Speed = speed,
-						}));
-					}
-				}
-			}
 
 			// create number entity
 			m_fps = new FpsCounter();
@@ -151,41 +117,26 @@ namespace Oggy
                 inputSys.Update(dt);
                 cameraSys.Update(dt);
                 drawSys.Camera = cameraSys.GetCameraData().GetViewMatrix();
-                //drawSys.Camera = Matrix.LookAtLH(new Vector3(0.0f, 1.5f, 0.0f), new Vector3(0.0f, 1.5f, 1.0f), Vector3.Up);
 
                 entitySys.UpdateComponents(GameEntityComponent.UpdateLines.Input, dt);
                 entitySys.UpdateComponents(GameEntityComponent.UpdateLines.PreDraw, dt);
                 
 				// start command list generation for the next frame
-				int spanIndex = m_boxList.Count() / m_multiThreadCount;
 				m_taskList.Clear();
 				m_taskResultList.Clear();
 				m_taskResultList.AddRange(Enumerable.Repeat<CommandList>(null, m_multiThreadCount));
 				m_accTime += dt;
 				for (int threadIndex = 0; threadIndex < m_multiThreadCount; ++threadIndex)
 				{
-					int startIndex = spanIndex * threadIndex;
 					int resultIndex = threadIndex;
 
 					var subThreadContext = drawSys.GetSubThreadContext(threadIndex);
 					m_taskList.Add(Task.Run(() =>
 					{
-						m_boxList[startIndex].BeginDrawInstance(subThreadContext);
-						for (int index = startIndex; index < startIndex + spanIndex; ++index)
-						{
-							var entity = m_boxList[index];
-							float frame = (float)m_accTime + entity.Delay;
-							float angle = frame % (2.0f * (float)Math.PI);
-							entity.SetPose(new Vector3(angle, angle, angle),
-								((frame * entity.Speed) % 20.0f) * entity.Forward);
-
-							entity.AddInstance(subThreadContext);
-						}
-						subThreadContext.EndDrawInstance();
+                        // todo : do sub-thread task
 						m_taskResultList[resultIndex] = subThreadContext.FinishCommandList();
 					}));
 				}
-
                
 				// draw floor
 				m_floor.Draw(context);
@@ -216,10 +167,6 @@ namespace Oggy
 			Task.WaitAll(m_taskList.ToArray());
 			m_numberEntity.Dispose();
 			m_floor.Dispose();
-			foreach (var entity in m_boxList)
-			{
-				entity.Dispose();
-			}
 			foreach (var model in m_drawModelList)
 			{
 				model.Dispose();
@@ -230,7 +177,6 @@ namespace Oggy
 
 		private FpsCounter m_fps;
 		private List<DrawModel> m_drawModelList = new List<DrawModel>();
-		private List<ModelEntity> m_boxList = new List<ModelEntity>();
 		private ModelEntity m_floor;
 		private NumberEntity m_numberEntity = null;
 		private double m_accTime = 0;

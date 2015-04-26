@@ -9,9 +9,9 @@ using System.Diagnostics;
 
 namespace Oggy
 {
-	public class FpsPlayerInputComponent : GameEntityComponent
-	{
-		private const float AngleFactor = 0.50f;
+    public class PlayerInputComponent : GameEntityComponent
+    {
+        private const float AngleFactor = 0.50f;
 		private const float PositionFactor = 1.0f;
 		private const float PI = (float)Math.PI;
 		private const float MinVerticalAngle = PI * -0.3f;
@@ -19,7 +19,7 @@ namespace Oggy
 		private const float PadAngleFactor = 1.0f;
 		private const float PadPositionFactor = 1.5f;
 
-		public FpsPlayerInputComponent()
+        public PlayerInputComponent()
 		: base(GameEntityComponent.UpdateLines.Input)
 		{
 			m_position = new Vector3(0, 0, 0);
@@ -37,12 +37,12 @@ namespace Oggy
 		public override void Update(double dT)
 		{
 			var cameraSys = CameraSystem.GetInstance();
-			ICamera activeCamera = cameraSys.ActiveCamera;
-			/*if (activeCamera != cameraSys.IngameCamera)
-			{
-				// player processes input when active camera is IngameCamera
-				return;
-			}*/
+            var drawSys = DrawSystem.GetInstance();
+
+            var viewMat = cameraSys.GetCameraData().GetViewMatrix() * drawSys.GetDrawContext().GetHeadMatrix();
+            viewMat.Invert();
+            var moveDirection = new Vector3(viewMat.Backward.X, 0, viewMat.Backward.Z);
+            moveDirection.Normalize();
 
 			bool isMoving = false;
 
@@ -105,8 +105,10 @@ namespace Oggy
                             float hAngle = direction.X * magnitude * PadAngleFactor * (float)dT;
                             float vAngle = -direction.Y * magnitude * PadAngleFactor * (float)dT;
 
-							m_angle.X = (m_angle.X + hAngle) % (2 * PI);
-							m_angle.Y = MathUtil.Clamp(m_angle.Y + vAngle, MinVerticalAngle, MaxVerticalAngle);
+							//m_angle.X = (m_angle.X + hAngle) % (2 * PI);
+							//m_angle.Y = MathUtil.Clamp(m_angle.Y + vAngle, MinVerticalAngle, MaxVerticalAngle);
+                            m_angle.X = (float)Math.Atan2(moveDirection.X, moveDirection.Z);
+                            m_angle.Y = 0;
 						}
 
 						{
@@ -259,5 +261,5 @@ namespace Oggy
 		}
 
 		#endregion // private methods
-	}
+    }
 }
