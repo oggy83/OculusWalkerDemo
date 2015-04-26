@@ -190,6 +190,16 @@ namespace Oggy
 			return result;
 		}
 
+        public Matrix GetHeadMatrix()
+        {
+            LibOVR.ovrPosef eyePose = m_tmpEyePoses[0];
+
+            // Posef is a right-hand system, so we convert to left-hand system
+            var q = new Quaternion(eyePose.Orientation.x, eyePose.Orientation.y, -eyePose.Orientation.z, eyePose.Orientation.w);
+            var M = Matrix.RotationQuaternion(q);
+            return M;
+        }
+
 		public void EndScene(RenderTarget leftEyeRenderTarget, RenderTarget rightEyeRenderTarget)
 		{
 			var renderTargets = new RenderTarget[] { leftEyeRenderTarget, rightEyeRenderTarget };

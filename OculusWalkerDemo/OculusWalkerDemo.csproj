@@ -53,8 +53,9 @@
     <Compile Include="Camera\ICamera.cs" />
     <Compile Include="Camera\IngameCamera.cs" />
     <Compile Include="Chr\ChrSystem.cs" />
+    <Compile Include="Chr\BirdViewPlayerInputComponent.cs" />
     <Compile Include="Chr\PlayerEntity.cs" />
-    <Compile Include="Chr\PlayerInputComponent.cs" />
+    <Compile Include="Chr\FpsPlayerInputComponent.cs" />
     <Compile Include="Entity\Detail\GameEntityComponentLine.cs" />
     <Compile Include="Entity\EntitySystem.cs" />
     <Compile Include="Entity\GameEntity.cs" />

@@ -37,7 +37,7 @@ namespace Oggy
 				//var animC = new AnimComponent(animRes);
 				//AddComponent(animC);
 
-				var inputC = new PlayerInputComponent();
+				var inputC = new BirdViewPlayerInputComponent();
 				AddComponent(inputC);
 
 				var modelC = new ModelComponent();

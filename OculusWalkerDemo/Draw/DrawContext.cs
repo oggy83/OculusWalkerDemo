@@ -123,6 +123,11 @@ namespace Oggy
 			commandList.Dispose();
 		}
 
+        public Matrix GetHeadMatrix()
+        {
+            return Matrix.Identity;
+        }
+
 		public void SetWorldParams(RenderTarget renderTarget, DrawSystem.WorldData data)
 		{
 			m_worldData = data;

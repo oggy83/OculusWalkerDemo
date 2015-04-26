@@ -146,6 +146,11 @@ namespace Oggy
 			m_commandListTable.Add(commandList);
 		}
 
+        public Matrix GetHeadMatrix()
+        {
+          return m_hmd.GetHeadMatrix();
+        }
+
 		#region private members
 
 		private DrawSystem.D3DData m_d3d;

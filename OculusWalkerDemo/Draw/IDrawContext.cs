@@ -28,5 +28,18 @@ namespace Oggy
 		CommandList FinishCommandList();
 
 		void ExecuteCommandList(CommandList commandList);
+
+        /// <summary>
+        /// get a matrix which transforms view coord system to head coord system
+        /// </summary>
+        /// <returns>
+        /// head matrix
+        /// </returns>
+        /// <remarks>
+        /// in case of the monoral mode, this method returns identity matrix.
+        /// head matrix represents the center of position defined by two eye matrix.
+        /// you can use this matrix instead of camera matrix to get the true view direction.
+        /// </remarks>
+        Matrix GetHeadMatrix();
 	}
 }

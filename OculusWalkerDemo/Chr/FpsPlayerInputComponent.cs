@@ -9,7 +9,7 @@ using System.Diagnostics;
 
 namespace Oggy
 {
-	public class PlayerInputComponent : GameEntityComponent
+	public class FpsPlayerInputComponent : GameEntityComponent
 	{
 		private const float AngleFactor = 0.50f;
 		private const float PositionFactor = 1.0f;
@@ -19,7 +19,7 @@ namespace Oggy
 		private const float PadAngleFactor = 1.0f;
 		private const float PadPositionFactor = 1.5f;
 
-		public PlayerInputComponent()
+		public FpsPlayerInputComponent()
 		: base(GameEntityComponent.UpdateLines.Input)
 		{
 			m_position = new Vector3(0, 0, 0);

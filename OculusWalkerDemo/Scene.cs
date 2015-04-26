@@ -144,20 +144,18 @@ namespace Oggy
 				Task.WaitAll(m_taskList.ToArray());
 				var tmpTaskResult = new List<CommandList>(m_taskResultList);
 
-                // camera setting
-                inputSys.Update(dt);
-                entitySys.UpdateComponents(GameEntityComponent.UpdateLines.Input, dt);
-                cameraSys.Update(dt);
-                drawSys.Camera = cameraSys.GetCameraData().GetViewMatrix();    
-                //drawSys.Camera = Matrix.LookAtLH(new Vector3(0.0f, 1.5f, 0.0f), new Vector3(0.0f, 1.5f, 1.0f), Vector3.Up);
-
-                
-
 				drawSys.BeginScene();
                 var context = drawSys.GetDrawContext();
 
-                entitySys.UpdateComponents(GameEntityComponent.UpdateLines.PreDraw, dt);
+                // camera setting
+                inputSys.Update(dt);
+                cameraSys.Update(dt);
+                drawSys.Camera = cameraSys.GetCameraData().GetViewMatrix();
+                //drawSys.Camera = Matrix.LookAtLH(new Vector3(0.0f, 1.5f, 0.0f), new Vector3(0.0f, 1.5f, 1.0f), Vector3.Up);
 
+                entitySys.UpdateComponents(GameEntityComponent.UpdateLines.Input, dt);
+                entitySys.UpdateComponents(GameEntityComponent.UpdateLines.PreDraw, dt);
+                
 				// start command list generation for the next frame
 				int spanIndex = m_boxList.Count() / m_multiThreadCount;
 				m_taskList.Clear();
@@ -188,6 +186,7 @@ namespace Oggy
 					}));
 				}
 
+               
 				// draw floor
 				m_floor.Draw(context);
 
@@ -201,28 +200,7 @@ namespace Oggy
 			}
 			else
 			{
-				drawSys.BeginScene();
-                var context = drawSys.GetDrawContext();
-
-				// draw floor
-				m_floor.Draw(context);
-
-				// draw block entities
-				m_accTime += dt;
-				m_boxList[0].BeginDrawInstance(context);
-				foreach (var entity in m_boxList)
-				{
-					float frame = (float)m_accTime + entity.Delay;
-					float angle = frame % (2.0f * (float)Math.PI);
-					entity.SetPose(new Vector3(angle, angle, angle),
-						((frame * entity.Speed) % 5.0f) * entity.Forward);
-
-					entity.AddInstance(context);
-				}
-				context.EndDrawInstance();
-
-				m_numberEntity.Draw(context);
-				drawSys.EndScene();
+                // not supported
 			}
 
 			m_fps.EndFrame();

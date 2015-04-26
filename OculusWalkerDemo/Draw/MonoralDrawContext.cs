@@ -80,6 +80,11 @@ namespace Oggy
 			m_context.ExecuteCommandList(commandList);
 		}
 
+        public Matrix GetHeadMatrix()
+        {
+            return Matrix.Identity;
+        }
+
 		#region private members
 
 		private DrawSystem.D3DData m_d3d;
