@@ -28,7 +28,7 @@ namespace Oggy
 				//AddComponent(skeletonC);
 
 				var layoutC = new LayoutComponent();
-				layoutC.Transform = Matrix.Identity;
+				layoutC.Transform = Matrix.Translation(0, 1, 0);
 				AddComponent(layoutC);
 				
 				//var markerC = new ModelMarkerComponent(scene);

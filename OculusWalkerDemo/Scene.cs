@@ -46,9 +46,9 @@ namespace Oggy
 			drawSys.SetDirectionalLight(new DrawSystem.DirectionalLightData()
 			{
 				Direction = new Vector3(0.3f, -0.5f, 0),
-				Color = new Color3(0.9f, 0.9f, 0.8f),
+                Color = new Color3(0.6f, 0.6f, 0.5f),
 			});
-			drawSys.AmbientColor = new Color3(0.3f, 0.4f, 0.6f);
+			drawSys.AmbientColor = new Color3(0.4f, 0.45f, 0.55f);
 			drawSys.FogColor = new Color3(0.3f, 0.5f, 0.8f);
 
 			// create number entity

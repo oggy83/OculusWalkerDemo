@@ -200,6 +200,11 @@ namespace Oggy
 						break;
 				}
 
+                if (plan == null)
+                {
+                    continue;
+                }
+
 				foreach (int i in plan)
 				{
 					int vIndex = mloopList[i].GetMember("v").GetRawValue<int>();

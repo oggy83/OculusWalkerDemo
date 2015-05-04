@@ -84,6 +84,7 @@ namespace Oggy
 						material = node.Material;
                         var tex = material.DiffuseTex0;
                         context.DrawModel(layout, Color4.White, node.Mesh, tex, DrawSystem.RenderMode.Opaque);
+
                         /*
 						if (node.HasBone && dbg.IsEnableDrawBoneWeight)
 						{

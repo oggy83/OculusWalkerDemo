@@ -51,9 +51,8 @@ PS_OUTPUT main(PS_INPUT In)
 	float3 Normal = normalize(In.Normal);
 
 	// Calc Diffuse Term
-	float4 diffLight = g_ambientCol 
-		+ max(0, dot(Normal, Light1Dir)) * g_lightCol1;
-	float4 diffCol = diffLight * g_Diffuse1Tex.Sample(g_Diffuse1Sampler, In.UV1) * g_instanceCol[In.InstanceId];
+	float4 diffLight = g_ambientCol + max(0, dot(Normal, Light1Dir)) * g_lightCol1;
+	float4 diffCol = diffLight * g_Diffuse1Tex.Sample(g_Diffuse1Sampler, In.UV1);
 
 	// Blinn-Phong Model
 	float3 halfVec = normalize(EyeDir + Light1Dir);
@@ -64,8 +63,8 @@ PS_OUTPUT main(PS_INPUT In)
 	Out.Color.a = diffCol.a;
 
 	// Fog
-	float startFogDistance = 3.0f;
-	float endFogDistance = 30;
+	float startFogDistance = 10.0f;
+	float endFogDistance = 50;
 	float3 fogColor = g_fogCol.rgb;
 	float fogFactor = clamp((In.Position.w - startFogDistance) / (endFogDistance - startFogDistance), 0, 1);
 	Out.Color.rgb = lerp(Out.Color.rgb, fogColor, fogFactor);
