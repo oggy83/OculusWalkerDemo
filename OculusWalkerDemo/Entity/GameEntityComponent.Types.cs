@@ -14,7 +14,12 @@ namespace Oggy
 			/// </summary>
 			Invalid = 0,	
 
+            /// <summary>
+            /// process input phase
+            /// </summary>
 			Input,
+
+            Behavior,
 
 			Posing,
 

@@ -37,6 +37,9 @@ namespace Oggy
 				//var animC = new AnimComponent(animRes);
 				//AddComponent(animC);
 
+                var behaviorC = new ChrBehaviorComponent();
+                AddComponent(behaviorC);
+
 				var inputC = new PlayerInputComponent();
 				AddComponent(inputC);
 
