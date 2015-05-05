@@ -83,7 +83,8 @@ namespace Oggy
 
             // other settings
 #if DEBUG
-            CameraSystem.GetInstance().ActivateCamera(CameraSystem.FreeCameraName);
+            CameraSystem.GetInstance().ActivateCamera(CameraSystem.FixedCameraName);
+            //CameraSystem.GetInstance().ActivateCamera(CameraSystem.FreeCameraName);
 #else
             CameraSystem.GetInstance().ActivateCamera(CameraSystem.FixedCameraName);
 #endif // DEBUG
@@ -119,6 +120,7 @@ namespace Oggy
                 drawSys.Camera = cameraSys.GetCameraData().GetViewMatrix();
 
                 entitySys.UpdateComponents(GameEntityComponent.UpdateLines.Input, dt);
+                entitySys.UpdateComponents(GameEntityComponent.UpdateLines.Behavior, dt);
                 entitySys.UpdateComponents(GameEntityComponent.UpdateLines.PreDraw, dt);
                 
 				// start command list generation for the next frame

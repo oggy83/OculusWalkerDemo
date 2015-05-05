@@ -13,28 +13,91 @@ namespace Oggy
         public ChrBehaviorComponent()
 		: base(GameEntityComponent.UpdateLines.Behavior)
 		{
-            // nothing
+            m_reqMoveDir = Vector3.Zero;
+            m_lastAngleY = 0;
 		}
 
         public void RequestMove(Vector3 moveDir)
         {
+            m_reqMoveDir = moveDir;
+           
+        }
+
+        /// <summary>
+		/// Update component
+		/// </summary>
+		/// <param name="dT">spend time [sec]</param>
+        public override void Update(double dT)
+        {
+            if (m_reqMoveDir.IsZero)
+            {
+                return;
+            }
+
             /*
-           // update animation weight
-           if (m_movingTime <= 0.3f)
-           {
-               m_walkHandle.Weight = Math.Max(0.0f, m_walkHandle.Weight - dT * 3);
-               m_pauseHandle.Weight = Math.Min(1.0f, m_pauseHandle.Weight + dT * 3);
-           }
-           else
-           {
-               m_walkHandle.Weight = Math.Min(1.0f, m_walkHandle.Weight + dT * 3);
-               m_pauseHandle.Weight = Math.Max(0.0f, m_pauseHandle.Weight - dT * 3);
-           }
-           */
+          // update animation weight
+          if (m_movingTime <= 0.3f)
+          {
+              m_walkHandle.Weight = Math.Max(0.0f, m_walkHandle.Weight - dT * 3);
+              m_pauseHandle.Weight = Math.Min(1.0f, m_pauseHandle.Weight + dT * 3);
+          }
+          else
+          {
+              m_walkHandle.Weight = Math.Min(1.0f, m_walkHandle.Weight + dT * 3);
+              m_pauseHandle.Weight = Math.Max(0.0f, m_pauseHandle.Weight - dT * 3);
+          }
+          */
 
-            // update layout
-            m_layoutC.Transform *= Matrix.Translation(moveDir);
+            var translation = Matrix.Translation(m_layoutC.Transform.TranslationVector + m_reqMoveDir);
 
+            // calc turn angle
+            // character turns to right or left side so that the angle of turning is shortening.
+            // and the angle is clampled with maxTurnAngle.
+            m_reqMoveDir.Normalize();
+            double angleY = Math.Atan2(m_reqMoveDir.X, m_reqMoveDir.Z);// the range of result is [-PI, PI]
+            angleY += Math.PI;// [0, 2PI]
+
+            double maxTurnAngle = MathUtil.PI * 2.0f * dT;
+            if (m_lastAngleY > angleY)
+            {
+                double turnAngle = angleY - m_lastAngleY;// [-2PI, 0]
+                if (turnAngle < -Math.PI)
+                {
+                    turnAngle = 2 * Math.PI + turnAngle;// [0, PI]
+                    angleY = m_lastAngleY + Math.Min(turnAngle, maxTurnAngle);
+                }
+                else
+                {
+                    // turnAngle;// [-PI, 0]
+                    angleY = m_lastAngleY + Math.Max(turnAngle, -maxTurnAngle);
+                }
+
+            }
+            else if (m_lastAngleY < angleY)
+            {
+                double turnAngle = angleY - m_lastAngleY;// [0, 2PI]
+                if (turnAngle > Math.PI)
+                {
+                    turnAngle = turnAngle - 2 * Math.PI;// [-PI, 0]
+                    angleY = m_lastAngleY + Math.Max(turnAngle, -maxTurnAngle);
+                }
+                else
+                {
+                    // turnAngle;// [0, PI]
+                    angleY = m_lastAngleY + Math.Min(turnAngle, maxTurnAngle);
+                }
+
+            }
+
+            var rotation = Matrix.RotationY((float)angleY);
+            m_layoutC.Transform = rotation * translation;
+
+            // normalize to [0, 2PI]
+            m_lastAngleY = angleY % (2 * Math.PI);
+            if (m_lastAngleY < 0)
+            {
+                m_lastAngleY += 2 * Math.PI;
+            }
         }
 
         public override void OnAddToEntity(GameEntity entity)
@@ -64,6 +127,16 @@ namespace Oggy
         /// layout compoment
         /// </summary>
         private LayoutComponent m_layoutC;
+
+        /// <summary>
+        /// request for moving
+        /// </summary>
+        private Vector3 m_reqMoveDir;
+
+        /// <summary>
+        /// angle y at last frame
+        /// </summary>
+        private double m_lastAngleY;
 
         /// <summary>
         /// animation component
