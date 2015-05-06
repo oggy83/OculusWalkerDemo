@@ -165,7 +165,7 @@ namespace Oggy
             item2.Click += (sender, e) => { ActivateCamera(FixedCameraName); };
             menuItem.DropDownItems.AddRange(new ToolStripItem[] { item1, item2 });
 
-			item1.Checked = true;
+			item2.Checked = true;
 		}
 
 		#region private members
