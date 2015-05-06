@@ -19,7 +19,7 @@ namespace Oggy
 		/// <returns>sharpDX vector</returns>
 		public static Vector3 ChangeCoordsSystem(Vector3 v)
 		{
-			return new Vector3(v.Y, v.Z, -v.X);
+			return new Vector3(v.X, v.Z, v.Y);
 		}
 
 		/// <summary>
@@ -29,7 +29,7 @@ namespace Oggy
 		/// <returns>sharpDX vector</returns>
 		public static Vector4 ChangeCoordsSystem(Vector4 v)
 		{
-			return new Vector4(v.Y, v.Z, -v.X, v.W);
+			return new Vector4(v.X, v.Z, v.Y, v.W);
 		}
 
 		/// <summary>
@@ -40,7 +40,7 @@ namespace Oggy
 		public static Quaternion ChangeCoordsSystem(Quaternion q)
 		{
 			q.Normalize();
-			return new Quaternion(q.Y, q.Z, q.X, q.W);
+			return new Quaternion(q.X, q.Z, q.Y, q.W);
 		}
 
 		/// <summary>
@@ -52,21 +52,21 @@ namespace Oggy
 		{
 			return new Matrix()
 			{
-				M11 = m.M22,
-				M12 = m.M23,
-				M13 = -m.M21,
-				M14 = m.M24,
-				M21 = m.M32,
-				M22 = m.M33,
-				M23 = -m.M31,
-				M24 = m.M34,
-				M31 = m.M12,
-				M32 = m.M13,
-				M33 = -m.M11,
-				M34 = m.M14,
-				M41 = m.M42,
+				M11 = m.M11,
+				M12 = m.M13,
+				M13 = m.M12,
+				M14 = m.M14,
+				M21 = m.M21,
+				M22 = m.M23,
+				M23 = m.M22,
+				M24 = m.M24,
+				M31 = m.M31,
+				M32 = m.M33,
+				M33 = m.M32,
+				M34 = m.M34,
+				M41 = m.M41,
 				M42 = m.M43,
-				M43 = -m.M41,
+				M43 = m.M42,
 				M44 = m.M44,
 			};
 		}
