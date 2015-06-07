@@ -16,11 +16,12 @@ namespace Oggy
 			: base("player")
 		{
 			var entitySys = EntitySystem.GetInstance();
-			var path = "Model/chrtest.blend";
+			var path = "Chr/c9000/test.blend";
+            var searchPath = "Chr/c9000";
 			var scene = BlenderScene.FromFile(path);
 			if (scene != null)
 			{
-				var drawModel = DrawModel.FromScene(path + "/draw", scene);
+				var drawModel = DrawModel.FromScene(path + "/draw", scene, searchPath);
 				//var debugModel = DrawModel.CreateTangentFrame(path + "/debug", scene);
 				//var animRes = AnimResource.FromBlenderScene(path + "/anim", scene);
 
@@ -28,7 +29,7 @@ namespace Oggy
 				//AddComponent(skeletonC);
 
 				var layoutC = new LayoutComponent();
-				layoutC.Transform = Matrix.Translation(0, 1, 0);
+				layoutC.Transform = Matrix.Translation(0, 0, 0);
 				AddComponent(layoutC);
 				
 				//var markerC = new ModelMarkerComponent(scene);

@@ -93,7 +93,7 @@ namespace Oggy
             m_boneArray = null;
         }
 
-        public static DrawModel FromScene(String uid, BlenderScene scene)
+        public static DrawModel FromScene(String uid, BlenderScene scene, string searchPath)
         {
             var drawSys = DrawSystem.GetInstance();
             var drawRepository = drawSys.ResourceRepository;
@@ -140,6 +140,12 @@ namespace Oggy
                     }).ToArray();
                 */
 
+                if (n.Vertics.Count() == 0)
+                {
+                    // empty vertex list
+                    continue;
+                }
+
                 var vertices1 = n.Vertics
                    .Select(v => new _VertexDebug()
                    {
@@ -174,7 +180,7 @@ foreach (var buf in node.Mesh.Buffers)
                 {
                     if (!drawRepository.Contains(texName))
                     {
-                        var tex = TextureView.FromFile(texName, drawSys.D3D, "Image/" + texName);
+                        var tex = TextureView.FromFile(texName, drawSys.D3D, Path.Combine(searchPath, texName));
                         drawRepository.AddResource(tex);
                     }
                 }
