@@ -76,13 +76,11 @@ namespace Oggy
             public float Weight3;
         }
 
-        /*
         private struct _VertexDebug
         {
             public Vector4 Position;
             public Color4 Color;
         }
-        */
 
         #endregion // inner class
 
@@ -109,7 +107,6 @@ namespace Oggy
                 }
 
                 // Build a vertex buffer(s)
-                /*
                 var vertices1 = n.Vertics
                     .Select(v => new _VertexCommon()
                     {
@@ -125,7 +122,7 @@ namespace Oggy
                     .Select(v =>
                     {
                         Debug.Assert(BlenderUtil.GetLengthOf(v.BoneIndices) == BlenderUtil.GetLengthOf(v.BoneWeights), "both of bone index and bone weight must be matched");
-                        Debug.Assert(BlenderUtil.GetLengthOf(v.BoneWeights) <= _VertexBoneWeight.MAX_COUNT, "length of bone weight is over :" + BlenderUtil.GetLengthOf(v.BoneWeights));
+//Debug.Assert(BlenderUtil.GetLengthOf(v.BoneWeights) <= _VertexBoneWeight.MAX_COUNT, "length of bone weight is over :" + BlenderUtil.GetLengthOf(v.BoneWeights));
                         return new _VertexBoneWeight()
                         {
                             Index0 = BlenderUtil.GetLengthOf(v.BoneIndices) > 0 ? v.BoneIndices[0] : 0,
@@ -138,7 +135,6 @@ namespace Oggy
                             Weight3 = BlenderUtil.GetLengthOf(v.BoneWeights) > 3 ? v.BoneWeights[3] : 0.0f,
                         };
                     }).ToArray();
-                */
 
                 if (n.Vertics.Count() == 0)
                 {
@@ -146,6 +142,7 @@ namespace Oggy
                     continue;
                 }
 
+                /*
                 var vertices1 = n.Vertics
                    .Select(v => new _VertexDebug()
                    {
@@ -153,6 +150,7 @@ namespace Oggy
                        UV = v.Texcoord,
                        Normal = v.Normal,
                    }).ToArray();
+                */
 
                 var node = new Node();
                 //node.Mesh = DrawUtil.CreateMeshData(d3d, PrimitiveTopology.TriangleList, vertices1, vertices2, vertices3);
@@ -201,16 +199,7 @@ foreach (var buf in node.Mesh.Buffers)
             return model;
         }
 
-		#region inner class
-
-		private struct _VertexDebug
-		{
-			public Vector4 Position;
-			public Vector2 UV;
-			public Vector3 Normal;
-		}
-
-		#endregion // inner class
+		
 
 		public void Dispose()
 		{
@@ -232,55 +221,55 @@ foreach (var buf in node.Mesh.Buffers)
 			float gs = geometryScale;
 			float us = uvScale;
 
-			var vertices = new _VertexDebug[]
+			var vertices = new _VertexCommon[]
 			{
 				// top plane
-				new _VertexDebug() { Position = new Vector4( -gs,  gs,  gs, 1), UV = new Vector2(0, 0), Normal = Vector3.UnitY },
-				new _VertexDebug() { Position = new Vector4( gs,  gs,  gs, 1), UV = new Vector2(us, 0), Normal = Vector3.UnitY },
-				new _VertexDebug() { Position = new Vector4( gs,  gs,  -gs, 1), UV = new Vector2(us, us), Normal = Vector3.UnitY },
-				new _VertexDebug() { Position = new Vector4( -gs,  gs,  gs, 1), UV = new Vector2(0, 0), Normal = Vector3.UnitY },
-				new _VertexDebug() { Position = new Vector4( gs,  gs,  -gs, 1), UV = new Vector2(us, us), Normal = Vector3.UnitY },
-				new _VertexDebug() { Position = new Vector4( -gs,  gs,  -gs, 1), UV = new Vector2(0, us), Normal = Vector3.UnitY },
+				new _VertexCommon() { Position = new Vector4( -gs,  gs,  gs, 1), Texcoord = new Vector2(0, 0), Normal = Vector3.UnitY },
+				new _VertexCommon() { Position = new Vector4( gs,  gs,  gs, 1), Texcoord = new Vector2(us, 0), Normal = Vector3.UnitY },
+				new _VertexCommon() { Position = new Vector4( gs,  gs,  -gs, 1), Texcoord = new Vector2(us, us), Normal = Vector3.UnitY },
+				new _VertexCommon() { Position = new Vector4( -gs,  gs,  gs, 1), Texcoord = new Vector2(0, 0), Normal = Vector3.UnitY },
+				new _VertexCommon() { Position = new Vector4( gs,  gs,  -gs, 1), Texcoord = new Vector2(us, us), Normal = Vector3.UnitY },
+				new _VertexCommon() { Position = new Vector4( -gs,  gs,  -gs, 1), Texcoord = new Vector2(0, us), Normal = Vector3.UnitY },
 
 				// bottom plane
-				new _VertexDebug() { Position = new Vector4( -gs, -gs,  gs, 1), UV = new Vector2(0, 0), Normal = -Vector3.UnitY },
-				new _VertexDebug() { Position = new Vector4( gs,  -gs,  -gs, 1), UV = new Vector2(us, us), Normal = -Vector3.UnitY },
-				new _VertexDebug() { Position = new Vector4( gs,  -gs,  gs, 1), UV = new Vector2(us, 0), Normal = -Vector3.UnitY },
-				new _VertexDebug() { Position = new Vector4( -gs, -gs,  gs, 1), UV = new Vector2(0, 0), Normal = -Vector3.UnitY },
-				new _VertexDebug() { Position = new Vector4( -gs, -gs,  -gs, 1), UV = new Vector2(0, us), Normal = -Vector3.UnitY },
-				new _VertexDebug() { Position = new Vector4( gs,  -gs,  -gs, 1), UV = new Vector2(us, us), Normal = -Vector3.UnitY },
+				new _VertexCommon() { Position = new Vector4( -gs, -gs,  gs, 1), Texcoord = new Vector2(0, 0), Normal = -Vector3.UnitY },
+				new _VertexCommon() { Position = new Vector4( gs,  -gs,  -gs, 1), Texcoord = new Vector2(us, us), Normal = -Vector3.UnitY },
+				new _VertexCommon() { Position = new Vector4( gs,  -gs,  gs, 1), Texcoord = new Vector2(us, 0), Normal = -Vector3.UnitY },
+				new _VertexCommon() { Position = new Vector4( -gs, -gs,  gs, 1), Texcoord = new Vector2(0, 0), Normal = -Vector3.UnitY },
+				new _VertexCommon() { Position = new Vector4( -gs, -gs,  -gs, 1), Texcoord = new Vector2(0, us), Normal = -Vector3.UnitY },
+				new _VertexCommon() { Position = new Vector4( gs,  -gs,  -gs, 1), Texcoord = new Vector2(us, us), Normal = -Vector3.UnitY },
 
 				// forward plane
-				new _VertexDebug() { Position = new Vector4( -gs,  gs,  -gs, 1), UV = new Vector2(0, 0), Normal = -Vector3.UnitZ },
-				new _VertexDebug() { Position = new Vector4( gs,  gs,  -gs, 1), UV = new Vector2(us, 0), Normal = -Vector3.UnitZ },
-				new _VertexDebug() { Position = new Vector4( gs,  -gs,  -gs, 1), UV = new Vector2(us, us), Normal = -Vector3.UnitZ },
-				new _VertexDebug() { Position = new Vector4( -gs,  gs,  -gs, 1), UV = new Vector2(0, 0), Normal = -Vector3.UnitZ },
-				new _VertexDebug() { Position = new Vector4( gs,  -gs,  -gs, 1), UV = new Vector2(us, us), Normal = -Vector3.UnitZ },
-				new _VertexDebug() { Position = new Vector4( -gs,  -gs,  -gs, 1), UV = new Vector2(0, us), Normal = -Vector3.UnitZ },
+				new _VertexCommon() { Position = new Vector4( -gs,  gs,  -gs, 1), Texcoord = new Vector2(0, 0), Normal = -Vector3.UnitZ },
+				new _VertexCommon() { Position = new Vector4( gs,  gs,  -gs, 1), Texcoord = new Vector2(us, 0), Normal = -Vector3.UnitZ },
+				new _VertexCommon() { Position = new Vector4( gs,  -gs,  -gs, 1), Texcoord = new Vector2(us, us), Normal = -Vector3.UnitZ },
+				new _VertexCommon() { Position = new Vector4( -gs,  gs,  -gs, 1), Texcoord = new Vector2(0, 0), Normal = -Vector3.UnitZ },
+				new _VertexCommon() { Position = new Vector4( gs,  -gs,  -gs, 1), Texcoord = new Vector2(us, us), Normal = -Vector3.UnitZ },
+				new _VertexCommon() { Position = new Vector4( -gs,  -gs,  -gs, 1), Texcoord = new Vector2(0, us), Normal = -Vector3.UnitZ },
 
 				// back plane
-				new _VertexDebug() { Position = new Vector4( -gs,  gs,  gs, 1), UV = new Vector2(0, 0), Normal = Vector3.UnitZ },
-				new _VertexDebug() { Position = new Vector4( gs,  -gs,  gs, 1), UV = new Vector2(us, us), Normal = Vector3.UnitZ },
-				new _VertexDebug() { Position = new Vector4( gs,  gs,  gs, 1), UV = new Vector2(us, 0), Normal = Vector3.UnitZ },
-				new _VertexDebug() { Position = new Vector4( -gs,  gs,  gs, 1), UV = new Vector2(0, 0), Normal = Vector3.UnitZ },
-				new _VertexDebug() { Position = new Vector4( -gs,  -gs,  gs, 1), UV = new Vector2(0, us), Normal = Vector3.UnitZ },
-				new _VertexDebug() { Position = new Vector4( gs,  -gs,  gs, 1), UV = new Vector2(us, us), Normal = Vector3.UnitZ },
+				new _VertexCommon() { Position = new Vector4( -gs,  gs,  gs, 1), Texcoord = new Vector2(0, 0), Normal = Vector3.UnitZ },
+				new _VertexCommon() { Position = new Vector4( gs,  -gs,  gs, 1), Texcoord = new Vector2(us, us), Normal = Vector3.UnitZ },
+				new _VertexCommon() { Position = new Vector4( gs,  gs,  gs, 1), Texcoord = new Vector2(us, 0), Normal = Vector3.UnitZ },
+				new _VertexCommon() { Position = new Vector4( -gs,  gs,  gs, 1), Texcoord = new Vector2(0, 0), Normal = Vector3.UnitZ },
+				new _VertexCommon() { Position = new Vector4( -gs,  -gs,  gs, 1), Texcoord = new Vector2(0, us), Normal = Vector3.UnitZ },
+				new _VertexCommon() { Position = new Vector4( gs,  -gs,  gs, 1), Texcoord = new Vector2(us, us), Normal = Vector3.UnitZ },
 
 				// left plane
-				new _VertexDebug() { Position = new Vector4( -gs,  gs,  gs, 1), UV = new Vector2(0, 0), Normal = -Vector3.UnitX },
-				new _VertexDebug() { Position = new Vector4( -gs,  gs,  -gs, 1), UV = new Vector2(us, 0), Normal = -Vector3.UnitX },
-				new _VertexDebug() { Position = new Vector4( -gs,  -gs,  -gs, 1), UV = new Vector2(us, us), Normal = -Vector3.UnitX },
-				new _VertexDebug() { Position = new Vector4( -gs,  gs,  gs, 1), UV = new Vector2(0, 0), Normal = -Vector3.UnitX },
-				new _VertexDebug() { Position = new Vector4( -gs,  -gs,  -gs, 1), UV = new Vector2(us, us), Normal = -Vector3.UnitX },
-				new _VertexDebug() { Position = new Vector4( -gs,  -gs,  gs, 1), UV = new Vector2(0, us), Normal = -Vector3.UnitX },
+				new _VertexCommon() { Position = new Vector4( -gs,  gs,  gs, 1), Texcoord = new Vector2(0, 0), Normal = -Vector3.UnitX },
+				new _VertexCommon() { Position = new Vector4( -gs,  gs,  -gs, 1), Texcoord = new Vector2(us, 0), Normal = -Vector3.UnitX },
+				new _VertexCommon() { Position = new Vector4( -gs,  -gs,  -gs, 1), Texcoord = new Vector2(us, us), Normal = -Vector3.UnitX },
+				new _VertexCommon() { Position = new Vector4( -gs,  gs,  gs, 1), Texcoord = new Vector2(0, 0), Normal = -Vector3.UnitX },
+				new _VertexCommon() { Position = new Vector4( -gs,  -gs,  -gs, 1), Texcoord = new Vector2(us, us), Normal = -Vector3.UnitX },
+				new _VertexCommon() { Position = new Vector4( -gs,  -gs,  gs, 1), Texcoord = new Vector2(0, us), Normal = -Vector3.UnitX },
 				
 				// right plane
-				new _VertexDebug() { Position = new Vector4( gs,  gs,  gs, 1), UV = new Vector2(0, 0), Normal = Vector3.UnitX },
-				new _VertexDebug() { Position = new Vector4( gs,  -gs,  -gs, 1), UV = new Vector2(us, us), Normal = Vector3.UnitX },
-				new _VertexDebug() { Position = new Vector4( gs,  gs,  -gs, 1), UV = new Vector2(us, 0), Normal = Vector3.UnitX },
-				new _VertexDebug() { Position = new Vector4( gs,  gs,  gs, 1), UV = new Vector2(0, 0), Normal = Vector3.UnitX },
-				new _VertexDebug() { Position = new Vector4( gs,  -gs,  gs, 1), UV = new Vector2(0, us), Normal = Vector3.UnitX },
-				new _VertexDebug() { Position = new Vector4( gs,  -gs,  -gs, 1), UV = new Vector2(us, us), Normal = Vector3.UnitX },
+				new _VertexCommon() { Position = new Vector4( gs,  gs,  gs, 1), Texcoord = new Vector2(0, 0), Normal = Vector3.UnitX },
+				new _VertexCommon() { Position = new Vector4( gs,  -gs,  -gs, 1), Texcoord = new Vector2(us, us), Normal = Vector3.UnitX },
+				new _VertexCommon() { Position = new Vector4( gs,  gs,  -gs, 1), Texcoord = new Vector2(us, 0), Normal = Vector3.UnitX },
+				new _VertexCommon() { Position = new Vector4( gs,  gs,  gs, 1), Texcoord = new Vector2(0, 0), Normal = Vector3.UnitX },
+				new _VertexCommon() { Position = new Vector4( gs,  -gs,  gs, 1), Texcoord = new Vector2(0, us), Normal = Vector3.UnitX },
+				new _VertexCommon() { Position = new Vector4( gs,  -gs,  -gs, 1), Texcoord = new Vector2(us, us), Normal = Vector3.UnitX },
 				
 			};
 
@@ -291,7 +280,7 @@ foreach (var buf in node.Mesh.Buffers)
 			}
 
 			var model = new DrawModel("");
-			var mesh = DrawUtil.CreateMeshData<_VertexDebug>(d3d, PrimitiveTopology.TriangleList, vertices);
+			var mesh = DrawUtil.CreateMeshData<_VertexCommon>(d3d, PrimitiveTopology.TriangleList, vertices);
             model.m_nodeList.Add(new Node() { Mesh = mesh, Material = new DrawSystem.MaterialData(), IsDebug = false, HasBone = false });
 
 			return model;
@@ -304,14 +293,14 @@ foreach (var buf in node.Mesh.Buffers)
 			float gs = geometryScale;
 			float us = uvScale;
 
-			var vertices = new _VertexDebug[]
+			var vertices = new _VertexCommon[]
 			{
-				new _VertexDebug() { Position = new Vector4( -gs,  0,  gs, 1), UV = new Vector2(0, 0), Normal = Vector3.UnitY },
-				new _VertexDebug() { Position = new Vector4( gs,  0,  gs, 1), UV = new Vector2(us, 0), Normal = Vector3.UnitY },
-				new _VertexDebug() { Position = new Vector4( gs,  0,  -gs, 1), UV = new Vector2(us, us), Normal = Vector3.UnitY },
-				new _VertexDebug() { Position = new Vector4( -gs,  0,  gs, 1), UV = new Vector2(0, 0), Normal = Vector3.UnitY },
-				new _VertexDebug() { Position = new Vector4( gs,  0,  -gs, 1), UV = new Vector2(us, us), Normal = Vector3.UnitY },
-				new _VertexDebug() { Position = new Vector4( -gs,  0,  -gs, 1), UV = new Vector2(0, us), Normal = Vector3.UnitY },
+				new _VertexCommon() { Position = new Vector4( -gs,  0,  gs, 1), Texcoord = new Vector2(0, 0), Normal = Vector3.UnitY },
+				new _VertexCommon() { Position = new Vector4( gs,  0,  gs, 1), Texcoord = new Vector2(us, 0), Normal = Vector3.UnitY },
+				new _VertexCommon() { Position = new Vector4( gs,  0,  -gs, 1), Texcoord = new Vector2(us, us), Normal = Vector3.UnitY },
+				new _VertexCommon() { Position = new Vector4( -gs,  0,  gs, 1), Texcoord = new Vector2(0, 0), Normal = Vector3.UnitY },
+				new _VertexCommon() { Position = new Vector4( gs,  0,  -gs, 1), Texcoord = new Vector2(us, us), Normal = Vector3.UnitY },
+				new _VertexCommon() { Position = new Vector4( -gs,  0,  -gs, 1), Texcoord = new Vector2(0, us), Normal = Vector3.UnitY },
 			};
 
 			for (int i = 0; i < vertices.Length; ++i)
@@ -321,10 +310,69 @@ foreach (var buf in node.Mesh.Buffers)
 			}
 
 			var model = new DrawModel("");
-			var mesh = DrawUtil.CreateMeshData<_VertexDebug>(d3d, PrimitiveTopology.TriangleList, vertices);
+			var mesh = DrawUtil.CreateMeshData<_VertexCommon>(d3d, PrimitiveTopology.TriangleList, vertices);
             model.m_nodeList.Add(new Node() { Mesh = mesh, Material = new DrawSystem.MaterialData(), IsDebug = false, HasBone = false });
 
 			return model;
 		}
+
+        public static DrawModel CreateBone(String uid, float length, Color4 color, Vector4 offset)
+        {
+            var drawSys = DrawSystem.GetInstance();
+            var d3d = drawSys.D3D;
+            float w = 0.1f * length;
+            float L = length;
+
+            var vertices = new _VertexDebug[]
+			{
+				// bottom pyramid
+				new _VertexDebug() { Position = new Vector4( 0,  0,  0, 1) },
+				new _VertexDebug() { Position = new Vector4( -w, w, -w, 1) },
+				new _VertexDebug() { Position = new Vector4( 0,  0,  0, 1) },
+				new _VertexDebug() { Position = new Vector4( -w, w,  w, 1) },
+				new _VertexDebug() { Position = new Vector4( 0,  0,  0, 1) },
+				new _VertexDebug() { Position = new Vector4( w,  w, -w, 1) },
+				new _VertexDebug() { Position = new Vector4( 0,  0,  0, 1) },
+				new _VertexDebug() { Position = new Vector4( w,  w,  w, 1) },
+
+				// middle plane
+				new _VertexDebug() { Position = new Vector4( w,  w,  w, 1) },
+				new _VertexDebug() { Position = new Vector4( -w, w,  w, 1) },
+				new _VertexDebug() { Position = new Vector4( -w, w,  w, 1) },
+				new _VertexDebug() { Position = new Vector4( -w, w, -w, 1) },
+				new _VertexDebug() { Position = new Vector4( -w, w, -w, 1) },
+				new _VertexDebug() { Position = new Vector4( w,  w, -w, 1) },
+				new _VertexDebug() { Position = new Vector4( w,  w, -w, 1) },
+				new _VertexDebug() { Position = new Vector4( w,  w,  w, 1) },
+
+				// top pyramid
+				new _VertexDebug() { Position = new Vector4( 0,  L,  0, 1) },
+				new _VertexDebug() { Position = new Vector4( -w, w, -w, 1) },
+				new _VertexDebug() { Position = new Vector4( 0,  L,  0, 1) },
+				new _VertexDebug() { Position = new Vector4( w,  w, -w, 1) },
+				new _VertexDebug() { Position = new Vector4( 0,  L,  0, 1) },
+				new _VertexDebug() { Position = new Vector4( -w, w,  w, 1) },
+				new _VertexDebug() { Position = new Vector4( 0,  L,  0, 1) },
+				new _VertexDebug() { Position = new Vector4( w,  w,  w, 1) },
+			};
+
+            for (int i = 0; i < vertices.Length; ++i)
+            {
+                vertices[i].Position += offset;
+                vertices[i].Position.W = 1;
+                vertices[i].Color = color;
+            }
+
+            var model = new DrawModel(uid);
+            model.m_nodeList.Add(new Node()
+            {
+                Mesh = DrawUtil.CreateMeshData<_VertexDebug>(d3d, PrimitiveTopology.LineList, vertices),
+                Material = new DrawSystem.MaterialData(),
+                IsDebug = true,
+                HasBone = false,
+            });
+
+            return model;
+        }
 	}
 }

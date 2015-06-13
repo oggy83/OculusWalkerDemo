@@ -47,7 +47,7 @@ namespace Oggy
 		
 		virtual public void DrawModel(Matrix worldTrans, Color4 color, DrawSystem.MeshData mesh, TextureView tex, DrawSystem.RenderMode renderMode)
 		{
-			_SetModelParams(mesh, tex, renderMode);
+			_SetModelParams(mesh, tex, renderMode, true);
 
 			// update vertex shader resouce
 			var vdata = new _MainVertexShaderConst()
@@ -68,10 +68,34 @@ namespace Oggy
 			m_context.Draw(mesh.VertexCount, 0);
 			m_drawCallCount++;
 		}
+
+        virtual public void DrawDebugModel(Matrix worldTrans, DrawSystem.MeshData mesh, DrawSystem.RenderMode renderMode)
+        {
+            _SetModelParams(mesh, null, renderMode, false);
+
+            // update vertex shader resouce
+            var vdata = new _MainVertexShaderConst()
+            {
+                // hlsl is column-major memory layout, so we must transpose matrix
+                worldMat = Matrix.Transpose(worldTrans),
+            };
+            m_context.UpdateSubresource(ref vdata, m_mainVtxConst);
+
+            // update pixel shader resouce
+            var pdata = new _MainPixelShaderConst()
+            {
+                instanceColor = Color4.White,
+            };
+            m_context.UpdateSubresource(ref pdata, m_mainPixConst);
+
+            // draw
+            m_context.Draw(mesh.VertexCount, 0);
+            m_drawCallCount++;
+        }
 		
 		virtual public void BeginDrawInstance(DrawSystem.MeshData mesh, TextureView tex, DrawSystem.RenderMode renderMode)
 		{
-			_SetModelParams(mesh, tex, renderMode);
+			_SetModelParams(mesh, tex, renderMode, true);
 		}
 
 		virtual public void AddInstance(Matrix worldTrans, Color4 color)
@@ -141,12 +165,6 @@ namespace Oggy
 				m_context.Rasterizer.SetViewport(new Viewport(0, 0, width, height, 0.0f, 1.0f));
 				m_context.OutputMerger.SetTargets(renderTarget.DepthStencilView, renderTarget.TargetView);
 
-				Effect effect = null;
-				effect = m_initParam.Repository.FindResource<Effect>("Std");
-
-				m_context.InputAssembler.InputLayout = effect.Layout;
-				m_context.VertexShader.Set(effect.VertexShader);
-				m_context.PixelShader.Set(effect.PixelShader);
 			}
 
 			// bind shader 
@@ -216,6 +234,7 @@ namespace Oggy
 		private PrimitiveTopology? m_lastTopology = null;
 		private VertexBufferBinding[] m_lastVertexBuffers = null;
 		private int m_lastVertexCount = 0;
+        private bool? m_useMaterial = null;
 
 		// DrawInstancedModel context
 		private int m_nextInstanceIndex = 0;
@@ -228,14 +247,49 @@ namespace Oggy
 
 		#region private methods
 
-		private void _SetModelParams(DrawSystem.MeshData mesh, TextureView tex, DrawSystem.RenderMode renderMode)
+		private void _SetModelParams(DrawSystem.MeshData mesh, TextureView tex, DrawSystem.RenderMode renderMode, bool useMaterial)
 		{
 			// update texture
 			if (m_lastTexture == null || m_lastTexture.IsDisposed() || m_lastTexture != tex)
 			{
-				tex.SetContext(0, m_context);
+                int slotIndex = 0;
+                if (tex != null)
+                {
+                    m_context.PixelShader.SetShaderResource(slotIndex, tex.View);
+                    m_context.PixelShader.SetSampler(slotIndex, tex.SamplerState);
+                }
+                else
+                {
+                    // set null texture
+                    m_context.PixelShader.SetShaderResource(slotIndex, null);
+                    m_context.PixelShader.SetSampler(slotIndex, null);
+                }
+
 				m_lastTexture = tex;
 			}
+
+            // update material
+            if (m_useMaterial == null || m_useMaterial != useMaterial)
+            {
+                if (useMaterial)
+                {
+                    Effect effect = null;
+                    effect = m_initParam.Repository.FindResource<Effect>("Std");
+                    m_context.InputAssembler.InputLayout = effect.Layout;
+                    m_context.VertexShader.Set(effect.VertexShader);
+                    m_context.PixelShader.Set(effect.PixelShader);
+                }
+                else
+                {
+                    Effect effect = null;
+                    effect = m_initParam.Repository.FindResource<Effect>("Debug");
+                    m_context.InputAssembler.InputLayout = effect.Layout;
+                    m_context.VertexShader.Set(effect.VertexShader);
+                    m_context.PixelShader.Set(effect.PixelShader);
+                }
+
+                m_useMaterial = useMaterial;
+            }
 
 			// update render mode
 			if (m_lastRenderMode == null || m_lastRenderMode != renderMode)

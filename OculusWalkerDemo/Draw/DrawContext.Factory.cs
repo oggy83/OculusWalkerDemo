@@ -57,14 +57,29 @@ namespace Oggy
 					new InputElement[]
 					{
 						new InputElement("POSITION", 0, Format.R32G32B32A32_Float, 0, 0),
-						new InputElement("TEXCOORD", 0, Format.R32G32_Float, 16, 0),
-						new InputElement("NORMAL", 0, Format.R32G32B32_Float, 24, 0),
+                        new InputElement("NORMAL", 0, Format.R32G32B32_Float, 16, 0),
+						new InputElement("TEXCOORD", 0, Format.R32G32_Float, 28, 0),
 					},
 					"Shader/VS_Std.fx",
 					"Shader/PS_Std.fx");
 
 					repository.AddResource(shader);
 				}
+
+                {
+                    var shader = new Effect(
+                    "Debug",
+                    d3d,
+                    new InputElement[]
+					{
+						new InputElement("POSITION", 0, Format.R32G32B32A32_Float, 0, 0),
+						new InputElement("COLOR", 0, Format.R32G32B32A32_Float, 16, 0),
+					},
+                    "Shader/VS_Debug.fx",
+                    "Shader/PS_Debug.fx");
+
+                    repository.AddResource(shader);
+                }
 			}
 
 			virtual public void Dispose()

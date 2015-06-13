@@ -55,6 +55,7 @@
     <Compile Include="Chr\ChrBehaviorComponent.cs" />
     <Compile Include="Chr\PlayerInputComponent.cs" />
     <Compile Include="Chr\PlayerEntity.cs" />
+    <Compile Include="Draw\Debug\DrawDebugCtrl.cs" />
     <Compile Include="Entity\Detail\GameEntityComponentLine.cs" />
     <Compile Include="Entity\EntitySystem.cs" />
     <Compile Include="Entity\GameEntity.cs" />
@@ -94,6 +95,8 @@
     <Compile Include="Draw\DrawUtil.cs" />
     <Compile Include="Draw\Effect.cs" />
     <Compile Include="Model\ModelComponent.cs" />
+    <Compile Include="Model\Skeleton.cs" />
+    <Compile Include="Model\SkeletonComponent.cs" />
     <Compile Include="Util\FpsCounter.cs" />
     <Compile Include="Draw\IDrawContext.cs" />
     <Compile Include="Draw\MonoralDrawContext.cs" />

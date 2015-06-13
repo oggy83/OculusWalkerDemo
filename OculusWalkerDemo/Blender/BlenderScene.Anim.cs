@@ -21,7 +21,7 @@ namespace Oggy
 			// find blend value
 			{
 				var mod = meshObj.GetMember("modifiers").GetMember("first").GetRawValue<BlendAddress>().DereferenceOne();
-				if (mod != null)
+				while (mod != null)
 				{
 					if (mod.Type.Equals(repository.Find("ArmatureModifierData")))
 					{
@@ -31,8 +31,11 @@ namespace Oggy
 						{
 							bArmature = armatureObj.GetMember("data").GetRawValue<BlendAddress>().DereferenceOne();
 							bAnimData = armatureObj.GetMember("adt").GetRawValue<BlendAddress>().DereferenceOne();
+                            break;
 						}
 					}
+
+                    mod = mod.GetMember("modifier").GetMember("next").GetRawValue<BlendAddress>().DereferenceOne();
 				}
 			}
 

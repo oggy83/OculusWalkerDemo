@@ -58,7 +58,7 @@ namespace Oggy
 		{
             ModelContext = new Context();
 			m_layoutC = null;
-			//m_skeletonC = null;
+			m_skeletonC = null;
 		}
 
 		/// <summary>
@@ -69,7 +69,7 @@ namespace Oggy
 		{
 			var drawSys = DrawSystem.GetInstance();
             var context = drawSys.GetDrawContext();
-			//var dbg = DrawSystem.GetInstance().DebugCtrl;
+			var dbg = DrawSystem.GetInstance().DebugCtrl;
 
 			var layout = m_layoutC.Transform;
 
@@ -133,7 +133,6 @@ namespace Oggy
                 }
                 */
 
-                /*
 				// draw bones for debug
 				if (dbg.IsEnableDrawBone)
 				{
@@ -142,7 +141,6 @@ namespace Oggy
 						m_skeletonC.Skeleton.DrawDebugModel(layout);
 					}
 				}
-                */
             }
 			
 		}
@@ -154,12 +152,12 @@ namespace Oggy
 			m_layoutC = Owner.FindComponent<LayoutComponent>();
 			Debug.Assert(m_layoutC != null, "ModelCompoment depends on LayoutCompoment");
 
-			//m_skeletonC = Owner.FindComponent<SkeletonComponent>();
+			m_skeletonC = Owner.FindComponent<SkeletonComponent>();
 		}
 
 		public override void OnRemoveFromEntity(GameEntity entity)
 		{
-			//m_skeletonC = null;
+			m_skeletonC = null;
 			m_layoutC = null;
 
 			base.OnRemoveFromEntity(entity);
@@ -175,7 +173,7 @@ namespace Oggy
 		/// <summary>
 		/// skeleton compoment (optional)
 		/// </summary>
-		//private SkeletonComponent m_skeletonC;
+		private SkeletonComponent m_skeletonC;
 
 		#endregion // private members
 	}

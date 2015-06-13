@@ -110,6 +110,12 @@ namespace Oggy
 			m_context.DrawModel(worldTrans, color, mesh, tex, renderMode);
 		}
 
+        public void DrawDebugModel(Matrix worldTrans, DrawSystem.MeshData mesh, DrawSystem.RenderMode renderMode)
+        {
+            m_isContextDirty = true;
+            m_context.DrawDebugModel(worldTrans, mesh, renderMode);
+        }
+
 		public void BeginDrawInstance(DrawSystem.MeshData mesh, TextureView tex, DrawSystem.RenderMode renderMode)
 		{
 			m_isContextDirty = true;

@@ -37,6 +37,7 @@ namespace Oggy
             m_debugDialog = new DebugDialog();
             m_debugDialog.Show();
             var debugMenu = m_debugDialog.GetSystemMenuItem();
+            DrawSystem.GetInstance().CreateDebugMenu(debugMenu);
             GameSystem.GetInstance().CreateDebugMenu(debugMenu);
             CameraSystem.GetInstance().CreateDebugMenu(debugMenu);
 #endif // DEBUG

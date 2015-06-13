@@ -25,8 +25,11 @@ namespace Oggy
 				//var debugModel = DrawModel.CreateTangentFrame(path + "/debug", scene);
 				//var animRes = AnimResource.FromBlenderScene(path + "/anim", scene);
 
-				//var skeletonC = new SkeletonComponent(drawModel.BoneArray);
-				//AddComponent(skeletonC);
+                if (drawModel.BoneArray.Length != 0)
+                {
+                    var skeletonC = new SkeletonComponent(drawModel.BoneArray);
+                    AddComponent(skeletonC);
+                }
 
 				var layoutC = new LayoutComponent();
 				layoutC.Transform = Matrix.Translation(0, 0, 0);

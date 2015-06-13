@@ -19,6 +19,8 @@ namespace Oggy
 	{
 		void DrawModel(Matrix worldTrans, Color4 color, DrawSystem.MeshData mesh, TextureView tex, DrawSystem.RenderMode renderMode);
 
+        void DrawDebugModel(Matrix worldTrans, DrawSystem.MeshData mesh, DrawSystem.RenderMode renderMode);
+
 		void BeginDrawInstance(DrawSystem.MeshData mesh, TextureView tex, DrawSystem.RenderMode renderMode);
 
 		void AddInstance(Matrix worldTrans, Color4 color);

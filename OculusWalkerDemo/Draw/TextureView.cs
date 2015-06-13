@@ -51,16 +51,5 @@ namespace Oggy
 
 			return result;
 		}
-
-		/// <summary>
-		/// set texture parameters to device context
-		/// </summary>
-		/// <param name="slot">slot index</param>
-		/// <param name="context">device context</param>
-		public void SetContext(int slot, DeviceContext context)
-		{
-			context.PixelShader.SetShaderResource(slot, View);
-			context.PixelShader.SetSampler(slot, SamplerState);
-		}
 	}
 }

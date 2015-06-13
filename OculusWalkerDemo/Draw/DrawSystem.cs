@@ -106,6 +106,15 @@ namespace Oggy
 			}
 		}
 
+        private DrawDebugCtrl m_debug = null;
+        public DrawDebugCtrl DebugCtrl
+        {
+            get
+            {
+                return m_debug;
+            }
+        }
+
 		#endregion // properties
 
 		private DrawSystem(IntPtr hWnd, Device device, SwapChain swapChain, HmdDevice hmd, bool bStereoRendering, int multiThreadCount)
@@ -116,6 +125,8 @@ namespace Oggy
 				SwapChain = swapChain,
 				WindowHandle = hWnd,
 			};
+
+            m_debug = new DrawDebugCtrl();
 			
 			AmbientColor = new Color3(0, 0, 0);
 			m_world.dirLight.Direction = new Vector3(0, 1, 0);
@@ -158,6 +169,15 @@ namespace Oggy
 		{
 			return m_passCtrl.GetSubThreadContext(index);
 		}
+
+        [Conditional("DEBUG")]
+        public void CreateDebugMenu(ToolStripMenuItem parent)
+        {
+            var menuItem = new ToolStripMenuItem("Draw");
+            parent.DropDownItems.Add(menuItem);
+
+            m_debug.CreateDebugMenu(menuItem);
+        }
 
 		#region private members
 

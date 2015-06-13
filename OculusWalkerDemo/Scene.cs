@@ -121,6 +121,7 @@ namespace Oggy
 
                 entitySys.UpdateComponents(GameEntityComponent.UpdateLines.Input, dt);
                 entitySys.UpdateComponents(GameEntityComponent.UpdateLines.Behavior, dt);
+                m_floor.Draw(context);
                 entitySys.UpdateComponents(GameEntityComponent.UpdateLines.PreDraw, dt);
                 
 				// start command list generation for the next frame
@@ -141,7 +142,7 @@ namespace Oggy
 				}
                
 				// draw floor
-				m_floor.Draw(context);
+				//m_floor.Draw(context);
 
 				foreach (var result in tmpTaskResult)
 				{
