@@ -21,6 +21,8 @@ namespace Oggy
 	/// </summary>
 	public partial class DrawContext : IDisposable, IDrawContext
 	{
+        public const int MaxBoneMatrices = 32;
+
 		public DrawContext(DeviceContext context, CommonInitParam initParam)
 		{
 			m_initParam = initParam;
@@ -28,6 +30,7 @@ namespace Oggy
 
 			var d3d = m_initParam.D3D;
 			m_mainVtxConst = DrawUtil.CreateConstantBuffer<_MainVertexShaderConst>(d3d, m_maxInstanceCount);
+            m_boneVtxConst = DrawUtil.CreateConstantBuffer(d3d, Utilities.SizeOf<Matrix>() * MaxBoneMatrices);
 			m_mainPixConst = DrawUtil.CreateConstantBuffer<_MainPixelShaderConst>(d3d, m_maxInstanceCount);
 
 			m_instanceMainVtxConst = new _MainVertexShaderConst[m_maxInstanceCount];
@@ -42,6 +45,7 @@ namespace Oggy
 			}
 
 			m_mainPixConst.Dispose();
+            m_boneVtxConst.Dispose();
 			m_mainVtxConst.Dispose();
 		}
 		
@@ -63,6 +67,37 @@ namespace Oggy
 				instanceColor = color
 			};
 			m_context.UpdateSubresource(ref pdata, m_mainPixConst);
+
+            /*
+            // update a bone constant buffer
+            if (commandData.m_boneMatrices != null)
+            {
+                // UpdateSubresouce supports only to upate entire of resource.
+                // so, we must copy commandData.m_boneMatrices to m_tmpBoneMatrices.
+                // It seems inefficient. we search for better solutions.
+
+                Debug.Assert(commandData.m_boneMatrices.Length <= m_tmpBoneMatrices.Length);
+                for (int i = 0; i < commandData.m_boneMatrices.Length; ++i)
+                {
+                    m_tmpBoneMatrices[i] = commandData.m_boneMatrices[i];
+                    m_tmpBoneMatrices[i].Transpose();
+                }
+
+                context.UpdateSubresource<Matrix>(m_tmpBoneMatrices, m_boneBuf);
+                context.VertexShader.SetConstantBuffer(1, m_boneBuf);
+            }
+            else
+            {
+                // low performance @todo
+                for (int i = 0; i < m_tmpBoneMatrices.Length; ++i)
+                {
+                    m_tmpBoneMatrices[i] = Matrix.Identity;
+                }
+
+                context.UpdateSubresource<Matrix>(m_tmpBoneMatrices, m_boneBuf);
+                context.VertexShader.SetConstantBuffer(1, m_boneBuf);
+            }
+            */
 
 			// draw
 			m_context.Draw(mesh.VertexCount, 0);
@@ -169,7 +204,8 @@ namespace Oggy
 
 			// bind shader 
 			m_context.VertexShader.SetConstantBuffer(0, m_mainVtxConst);
-			m_context.VertexShader.SetConstantBuffer(1, m_initParam.WorldVtxConst);
+            m_context.VertexShader.SetConstantBuffer(1, m_boneVtxConst);
+			m_context.VertexShader.SetConstantBuffer(2, m_initParam.WorldVtxConst);
 			m_context.PixelShader.SetConstantBuffer(0, m_mainPixConst);
 			m_context.PixelShader.SetConstantBuffer(1, m_initParam.WorldPixConst);
 
@@ -226,7 +262,9 @@ namespace Oggy
 
 		// draw param 
 		private Buffer m_mainVtxConst = null;
+        private Buffer m_boneVtxConst = null;
 		private Buffer m_mainPixConst = null;
+        private Matrix[] m_tmpBoneMatrices = new Matrix[MaxBoneMatrices];
 
 		// previous draw setting
 		private DrawSystem.RenderMode? m_lastRenderMode = null;

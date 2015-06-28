@@ -153,8 +153,7 @@ namespace Oggy
                 */
 
                 var node = new Node();
-                //node.Mesh = DrawUtil.CreateMeshData(d3d, PrimitiveTopology.TriangleList, vertices1, vertices2, vertices3);
-                node.Mesh = DrawUtil.CreateMeshData(d3d, PrimitiveTopology.TriangleList, vertices1);
+                node.Mesh = DrawUtil.CreateMeshData(d3d, PrimitiveTopology.TriangleList, vertices1, vertices2, vertices3);
                 node.Material = n.MaterialData;
                 node.IsDebug = false;
                 node.HasBone = BlenderUtil.GetLengthOf(n.BoneArray) > 0;
