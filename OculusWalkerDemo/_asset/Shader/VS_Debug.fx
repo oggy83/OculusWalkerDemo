@@ -10,7 +10,7 @@ cbuffer cbMain : register(b0)
 	float4x4 g_worldMat[MAX_INSTANCE_COUNT];	// word matrix (row major)
 };
 
-cbuffer cbWorld : register(b1)
+cbuffer cbWorld : register(b2)
 {
 	float4x4 g_vpMat;		// view projection matrix (row major)
 };

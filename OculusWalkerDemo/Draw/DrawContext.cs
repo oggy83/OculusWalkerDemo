@@ -48,8 +48,8 @@ namespace Oggy
             m_boneVtxConst.Dispose();
 			m_mainVtxConst.Dispose();
 		}
-		
-		virtual public void DrawModel(Matrix worldTrans, Color4 color, DrawSystem.MeshData mesh, TextureView tex, DrawSystem.RenderMode renderMode)
+
+        virtual public void DrawModel(Matrix worldTrans, Color4 color, DrawSystem.MeshData mesh, TextureView tex, DrawSystem.RenderMode renderMode, Matrix[] boneMatrices)
 		{
 			_SetModelParams(mesh, tex, renderMode, true);
 
@@ -68,23 +68,21 @@ namespace Oggy
 			};
 			m_context.UpdateSubresource(ref pdata, m_mainPixConst);
 
-            /*
             // update a bone constant buffer
-            if (commandData.m_boneMatrices != null)
+            if (boneMatrices != null)
             {
                 // UpdateSubresouce supports only to upate entire of resource.
-                // so, we must copy commandData.m_boneMatrices to m_tmpBoneMatrices.
+                // so, we must copy boneMatrices to m_tmpBoneMatrices.
                 // It seems inefficient. we search for better solutions.
 
-                Debug.Assert(commandData.m_boneMatrices.Length <= m_tmpBoneMatrices.Length);
-                for (int i = 0; i < commandData.m_boneMatrices.Length; ++i)
+                Debug.Assert(boneMatrices.Length <= m_tmpBoneMatrices.Length);
+                for (int i = 0; i < boneMatrices.Length; ++i)
                 {
-                    m_tmpBoneMatrices[i] = commandData.m_boneMatrices[i];
+                    m_tmpBoneMatrices[i] = boneMatrices[i];
                     m_tmpBoneMatrices[i].Transpose();
                 }
 
-                context.UpdateSubresource<Matrix>(m_tmpBoneMatrices, m_boneBuf);
-                context.VertexShader.SetConstantBuffer(1, m_boneBuf);
+                m_context.UpdateSubresource<Matrix>(m_tmpBoneMatrices, m_boneVtxConst);
             }
             else
             {
@@ -94,10 +92,8 @@ namespace Oggy
                     m_tmpBoneMatrices[i] = Matrix.Identity;
                 }
 
-                context.UpdateSubresource<Matrix>(m_tmpBoneMatrices, m_boneBuf);
-                context.VertexShader.SetConstantBuffer(1, m_boneBuf);
+                m_context.UpdateSubresource<Matrix>(m_tmpBoneMatrices, m_boneVtxConst);
             }
-            */
 
 			// draw
 			m_context.Draw(mesh.VertexCount, 0);
@@ -122,6 +118,9 @@ namespace Oggy
                 instanceColor = Color4.White,
             };
             m_context.UpdateSubresource(ref pdata, m_mainPixConst);
+
+            // do not use bone matrices
+            //m_context.UpdateSubresource<Matrix>(m_tmpBoneMatrices, m_boneVtxConst);
 
             // draw
             m_context.Draw(mesh.VertexCount, 0);

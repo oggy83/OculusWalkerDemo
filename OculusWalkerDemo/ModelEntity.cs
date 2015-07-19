@@ -76,7 +76,7 @@ namespace Oggy
 
 		public void Draw(IDrawContext context)
 		{
-			context.DrawModel(m_worldTrans, m_initParam.Color, m_initParam.Model.NodeList[0].Mesh, m_initParam.Texture, DrawSystem.RenderMode.Opaque);
+			context.DrawModel(m_worldTrans, m_initParam.Color, m_initParam.Model.NodeList[0].Mesh, m_initParam.Texture, DrawSystem.RenderMode.Opaque, null);
 		}
 
 		public void BeginDrawInstance(IDrawContext context)

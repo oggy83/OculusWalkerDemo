@@ -49,9 +49,9 @@ namespace Oggy
 			m_d3d.SwapChain.Present(syncInterval, PresentFlags.None);
 		}
 
-		public void DrawModel(Matrix worldTrans, Color4 color, DrawSystem.MeshData mesh, TextureView tex, DrawSystem.RenderMode renderMode)
+        public void DrawModel(Matrix worldTrans, Color4 color, DrawSystem.MeshData mesh, TextureView tex, DrawSystem.RenderMode renderMode, Matrix[] boneMatrices)
 		{
-			m_context.DrawModel(worldTrans, color, mesh, tex, renderMode);
+			m_context.DrawModel(worldTrans, color, mesh, tex, renderMode, boneMatrices);
 		}
 
         public void DrawDebugModel(Matrix worldTrans, DrawSystem.MeshData mesh, DrawSystem.RenderMode renderMode)

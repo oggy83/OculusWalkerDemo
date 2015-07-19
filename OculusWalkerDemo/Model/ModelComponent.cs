@@ -81,30 +81,16 @@ namespace Oggy
 					DrawSystem.MaterialData material;
 					foreach (var node in ModelContext.DrawModel.NodeList)
 					{
-						material = node.Material;
+                        Matrix[] boneMatrices = null;
+                        if (m_skeletonC != null)
+                        {
+                            // has skeleton
+                            boneMatrices = m_skeletonC.Skeleton.GetAllSkinningTransforms();
+                        }
+
+                        material = node.Material;
                         var tex = material.DiffuseTex0;
-                        context.DrawModel(layout, Color4.White, node.Mesh, tex, DrawSystem.RenderMode.Opaque);
-
-                        /*
-						if (node.HasBone && dbg.IsEnableDrawBoneWeight)
-						{
-							// setting as debug bone weight material
-							material.Type = DrawSystem.MaterialTypes.DbgBoneWeight;
-							material.DbgBoneIndex = dbg.BoneIndexForDraw;
-						}
-
-						Matrix[] boneMatrices = null;
-						if (m_skeletonC != null)
-						{
-							boneMatrices = m_skeletonC.Skeleton.GetAllSkinningTransforms();
-						}
-
-						var command = node.IsDebug
-							? DrawCommand.CreateDrawDebugCommand(material, layout, node.Mesh)
-							: DrawCommand.CreateDrawModelCommand(material, layout, node.Mesh, boneMatrices);
-
-						drawSys.AddDrawCommand(command);
-                        */
+                        context.DrawModel(layout, Color4.White, node.Mesh, tex, DrawSystem.RenderMode.Opaque, boneMatrices);
 					}
 				}
 

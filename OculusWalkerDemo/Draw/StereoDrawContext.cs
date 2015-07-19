@@ -104,10 +104,10 @@ namespace Oggy
 			m_commandListTable.Clear();
 		}
 
-		public void DrawModel(Matrix worldTrans, Color4 color, DrawSystem.MeshData mesh, TextureView tex, DrawSystem.RenderMode renderMode)
+        public void DrawModel(Matrix worldTrans, Color4 color, DrawSystem.MeshData mesh, TextureView tex, DrawSystem.RenderMode renderMode, Matrix[] boneMatrices)
 		{
 			m_isContextDirty = true;
-			m_context.DrawModel(worldTrans, color, mesh, tex, renderMode);
+			m_context.DrawModel(worldTrans, color, mesh, tex, renderMode, boneMatrices);
 		}
 
         public void DrawDebugModel(Matrix worldTrans, DrawSystem.MeshData mesh, DrawSystem.RenderMode renderMode)

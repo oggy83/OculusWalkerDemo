@@ -107,6 +107,12 @@ namespace Oggy
                     continue;
                 }
 
+                if (n.Vertics.Count() == 0)
+                {
+                    // empty vertex list
+                    continue;
+                }
+
                 // Build a vertex buffer(s)
                 var vertices1 = n.Vertics
                     .Select(v => new _VertexCommon()
@@ -136,22 +142,6 @@ namespace Oggy
                             Weight3 = BlenderUtil.GetLengthOf(v.BoneWeights) > 3 ? v.BoneWeights[3] : 0.0f,
                         };
                     }).ToArray();
-
-                if (n.Vertics.Count() == 0)
-                {
-                    // empty vertex list
-                    continue;
-                }
-
-                /*
-                var vertices1 = n.Vertics
-                   .Select(v => new _VertexDebug()
-                   {
-                       Position = v.Position,
-                       UV = v.Texcoord,
-                       Normal = v.Normal,
-                   }).ToArray();
-                */
 
                 var node = new Node();
                 node.Mesh = DrawUtil.CreateMeshData(d3d, PrimitiveTopology.TriangleList, vertices1, vertices2, vertices3);

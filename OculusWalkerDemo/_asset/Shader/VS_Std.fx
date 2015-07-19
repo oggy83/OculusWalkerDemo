@@ -50,7 +50,7 @@ VS_OUTPUT main(VS_INPUT In)
 	float4x4 worldMat = g_worldMat[In.InstanceId];
 	float4x4 wvpMat = mul(worldMat, g_vpMat);
 
-	if (false/*g_isEnableSkinning*/)
+	if (true/*g_isEnableSkinning*/)
 	{
 		float4x4 skinningMat
 			= g_boneMatrices[In.BoneIndex.x] * In.BoneWeight.x
