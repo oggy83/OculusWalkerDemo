@@ -64,7 +64,20 @@ namespace Oggy
 			if (bAnimData != null)
 			{
 				var bAnimAction = bAnimData.GetMember("action").GetRawValue<BlendAddress>().DereferenceOne();
-				while (bAnimAction != null)
+
+                // seek the top of action
+                while (bAnimAction != null)
+                {
+                    var bTmpAnimAction = bAnimAction.GetMember("id").GetMember("prev").GetRawValue<BlendAddress>().DereferenceOne();
+                    if (bTmpAnimAction == null)
+                    {
+                        break;
+                    }
+                    bAnimAction = bTmpAnimAction;
+                }
+
+                // load action
+                while (bAnimAction != null)
 				{
 					_LoadAction(repository, bAnimAction, ref animActionList);
 					bAnimAction = bAnimAction.GetMember("id").GetMember("next").GetRawValue<BlendAddress>().DereferenceOne();

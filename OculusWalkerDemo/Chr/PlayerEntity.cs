@@ -16,7 +16,7 @@ namespace Oggy
 			: base("player")
 		{
 			var entitySys = EntitySystem.GetInstance();
-			var path = "Chr/c9000/test.blend";
+			var path = "Chr/c9000/c9000.blend";
             var searchPath = "Chr/c9000";
 			var scene = BlenderScene.FromFile(path);
 			if (scene != null)
@@ -40,7 +40,7 @@ namespace Oggy
 
 				var animC = new AnimComponent(animRes);
 				AddComponent(animC);
-                animC.Play("Pause");
+                animC.Play("Walk");
 
                 var behaviorC = new ChrBehaviorComponent();
                 AddComponent(behaviorC);
