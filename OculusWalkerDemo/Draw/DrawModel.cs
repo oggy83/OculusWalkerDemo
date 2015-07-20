@@ -129,8 +129,8 @@ namespace Oggy
                     .Select(v =>
                     {
                         Debug.Assert(BlenderUtil.GetLengthOf(v.BoneIndices) == BlenderUtil.GetLengthOf(v.BoneWeights), "both of bone index and bone weight must be matched");
-//Debug.Assert(BlenderUtil.GetLengthOf(v.BoneWeights) <= _VertexBoneWeight.MAX_COUNT, "length of bone weight is over :" + BlenderUtil.GetLengthOf(v.BoneWeights));
-                        Debug.Assert(BlenderUtil.GetLengthOf(v.BoneWeights) != 0, "length of bone weight is over :" + BlenderUtil.GetLengthOf(v.BoneWeights));
+                        //Debug.Assert(BlenderUtil.GetLengthOf(v.BoneWeights) <= _VertexBoneWeight.MAX_COUNT, "length of bone weight is over :" + BlenderUtil.GetLengthOf(v.BoneWeights));
+                        Debug.Assert(BlenderUtil.GetLengthOf(v.BoneWeights) != 0, "no bone entry");
                         var tmp = new _VertexBoneWeight()
                         {
                             Index0 = BlenderUtil.GetLengthOf(v.BoneIndices) > 0 ? v.BoneIndices[0] : 0,

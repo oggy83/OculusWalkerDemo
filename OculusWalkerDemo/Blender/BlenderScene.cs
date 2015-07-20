@@ -248,35 +248,27 @@ namespace Oggy
                         //int maxWeightCount = dvertList[vIndex].GetMember("totweight").GetRawValue<int>();
                         var noneZeroWeightList =
                             weights.Select(w => new Tuple<float, int>(w.GetMember("weight").GetRawValue<float>(), w.GetMember("def_nr").GetRawValue<int>()))
-                            .OrderByDescending(tuple => tuple.Item1)
-                            .Where(tuple => tuple.Item1 > 0.0f);// ignore zero value too
+                            .OrderByDescending(tuple => tuple.Item1)    // sort by descending
+                            .Where(tuple => tuple.Item1 > 0.0f);        // ignore zero value too
                         int weightCount = noneZeroWeightList.Count();
 
                         vertex.BoneWeights = new float[weightCount];
                         vertex.BoneIndices = new uint[weightCount];
+                        
+                        int wIndex = 0;
+                        foreach (var tuple in noneZeroWeightList)
                         {
-                            int wIndex = 0;
-                            foreach (var tuple in noneZeroWeightList)
-                            {
-                                float weight = tuple.Item1;
-                                int deformGroupIndex = tuple.Item2;
-                                vertex.BoneWeights[wIndex] = weight;
+                            float weight = tuple.Item1;
+                            int deformGroupIndex = tuple.Item2;
+                            vertex.BoneWeights[wIndex] = weight;
 
-                                // def_nr is NOT index of bones, but index of deform group
-                                // we must replace to index of bones using bone-deform mapping.
-                                vertex.BoneIndices[wIndex] = (uint)deformGroupIndex2BoneIndex[deformGroupIndex];
+                            // def_nr is NOT index of bones, but index of deform group
+                            // we must replace to index of bones using bone-deform mapping.
+                            vertex.BoneIndices[wIndex] = (uint)deformGroupIndex2BoneIndex[deformGroupIndex];
 
-                                wIndex++;
-                            }
+                            wIndex++;
                         }
-
-                        // normalize weight
-                        float sumWeight = vertex.BoneWeights.Sum();
-                        for (int wIndex = 0; wIndex < weightCount; ++wIndex)
-                        {
-                            vertex.BoneWeights[wIndex] /= sumWeight;
-                        }
-
+                        
                     }
 
 					vertices.Add(vertex);
