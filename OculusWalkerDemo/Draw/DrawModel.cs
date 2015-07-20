@@ -129,8 +129,9 @@ namespace Oggy
                     .Select(v =>
                     {
                         Debug.Assert(BlenderUtil.GetLengthOf(v.BoneIndices) == BlenderUtil.GetLengthOf(v.BoneWeights), "both of bone index and bone weight must be matched");
-                        Debug.Assert(BlenderUtil.GetLengthOf(v.BoneWeights) <= _VertexBoneWeight.MAX_COUNT, "length of bone weight is over :" + BlenderUtil.GetLengthOf(v.BoneWeights));
-                        return new _VertexBoneWeight()
+//Debug.Assert(BlenderUtil.GetLengthOf(v.BoneWeights) <= _VertexBoneWeight.MAX_COUNT, "length of bone weight is over :" + BlenderUtil.GetLengthOf(v.BoneWeights));
+                        Debug.Assert(BlenderUtil.GetLengthOf(v.BoneWeights) != 0, "length of bone weight is over :" + BlenderUtil.GetLengthOf(v.BoneWeights));
+                        var tmp = new _VertexBoneWeight()
                         {
                             Index0 = BlenderUtil.GetLengthOf(v.BoneIndices) > 0 ? v.BoneIndices[0] : 0,
                             Weight0 = BlenderUtil.GetLengthOf(v.BoneWeights) > 0 ? v.BoneWeights[0] : 0.0f,
@@ -141,6 +142,12 @@ namespace Oggy
                             Index3 = BlenderUtil.GetLengthOf(v.BoneIndices) > 3 ? v.BoneIndices[3] : 0,
                             Weight3 = BlenderUtil.GetLengthOf(v.BoneWeights) > 3 ? v.BoneWeights[3] : 0.0f,
                         };
+                        float sumWeight = tmp.Weight0 + tmp.Weight1 + tmp.Weight2 + tmp.Weight3;
+                        tmp.Weight0 /= sumWeight;
+                        tmp.Weight1 /= sumWeight;
+                        tmp.Weight2 /= sumWeight;
+                        tmp.Weight3 /= sumWeight;
+                        return tmp;
                     }).ToArray();
 
                 var node = new Node();

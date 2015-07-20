@@ -39,8 +39,7 @@ namespace Oggy
 		/// <returns>sharpDX vector</returns>
 		public static Quaternion ChangeCoordsSystem(Quaternion q)
 		{
-			q.Normalize();
-			return new Quaternion(q.X, q.Z, q.Y, q.W);
+            return q;
 		}
 
 		/// <summary>

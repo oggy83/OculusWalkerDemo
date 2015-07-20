@@ -41,7 +41,14 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Anim\AnimComponent.cs" />
+    <Compile Include="Anim\AnimHandle.cs" />
+    <Compile Include="Anim\AnimPlayer.cs" />
+    <Compile Include="Anim\AnimResource.cs" />
     <Compile Include="Anim\AnimType.cs" />
+    <Compile Include="Anim\Detail\AnimSampler.cs" />
+    <Compile Include="Anim\Detail\AnimUtil.cs" />
+    <Compile Include="Anim\LayeredAnimPlayer.cs" />
     <Compile Include="Blender\BlenderScene.Anim.cs" />
     <Compile Include="Blender\BlenderScene.cs" />
     <Compile Include="Blender\BlenderScene.Material.cs" />

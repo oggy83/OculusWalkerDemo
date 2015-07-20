@@ -16,14 +16,14 @@ namespace Oggy
 			: base("player")
 		{
 			var entitySys = EntitySystem.GetInstance();
-			var path = "Chr/c9000/c9000.blend";
+			var path = "Chr/c9000/test.blend";
             var searchPath = "Chr/c9000";
 			var scene = BlenderScene.FromFile(path);
 			if (scene != null)
 			{
 				var drawModel = DrawModel.FromScene(path + "/draw", scene, searchPath);
+                var animRes = AnimResource.FromBlenderScene(path + "/anim", scene);
 				//var debugModel = DrawModel.CreateTangentFrame(path + "/debug", scene);
-				//var animRes = AnimResource.FromBlenderScene(path + "/anim", scene);
 
                 if (drawModel.BoneArray.Length != 0)
                 {
@@ -38,8 +38,9 @@ namespace Oggy
 				//var markerC = new ModelMarkerComponent(scene);
 				//AddComponent(markerC);
 
-				//var animC = new AnimComponent(animRes);
-				//AddComponent(animC);
+				var animC = new AnimComponent(animRes);
+				AddComponent(animC);
+                animC.Play("Pause");
 
                 var behaviorC = new ChrBehaviorComponent();
                 AddComponent(behaviorC);

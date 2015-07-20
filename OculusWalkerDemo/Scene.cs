@@ -121,6 +121,7 @@ namespace Oggy
 
                 entitySys.UpdateComponents(GameEntityComponent.UpdateLines.Input, dt);
                 entitySys.UpdateComponents(GameEntityComponent.UpdateLines.Behavior, dt);
+                entitySys.UpdateComponents(GameEntityComponent.UpdateLines.Posing, dt);
                 m_floor.Draw(context);
                 entitySys.UpdateComponents(GameEntityComponent.UpdateLines.PreDraw, dt);
                 

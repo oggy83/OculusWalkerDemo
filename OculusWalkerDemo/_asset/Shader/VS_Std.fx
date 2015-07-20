@@ -29,7 +29,7 @@ struct VS_INPUT
 	float2 UV1 : TEXCOORD0;
 	float3 Normal : NORMAL;
 	float3 Tangent : TANGENT;
-	int4 BoneIndex : BONEINDEX;
+	uint4 BoneIndex : BONEINDEX;
 	float4 BoneWeight : BONEWEIGHT;
 	uint InstanceId : SV_InstanceID;   
 };

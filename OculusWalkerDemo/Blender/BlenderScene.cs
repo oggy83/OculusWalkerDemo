@@ -248,7 +248,8 @@ namespace Oggy
                         //int maxWeightCount = dvertList[vIndex].GetMember("totweight").GetRawValue<int>();
                         var noneZeroWeightList =
                             weights.Select(w => new Tuple<float, int>(w.GetMember("weight").GetRawValue<float>(), w.GetMember("def_nr").GetRawValue<int>()))
-                            .Where(tuple => tuple.Item1 > 0.1f);// ignore near zero value too
+                            .OrderByDescending(tuple => tuple.Item1)
+                            .Where(tuple => tuple.Item1 > 0.0f);// ignore zero value too
                         int weightCount = noneZeroWeightList.Count();
 
                         vertex.BoneWeights = new float[weightCount];

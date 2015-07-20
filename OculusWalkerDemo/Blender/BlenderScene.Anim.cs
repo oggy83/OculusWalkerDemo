@@ -89,10 +89,11 @@ namespace Oggy
 				foreach (var defName in deformGroupNameList)
 				{
 					var bone = boneList.Select((n, index) => new { n, index }).FirstOrDefault(ni => ni.n.Name == defName);
-					if (bone != null)
-					{
-						outDeformGroupIndex2BoneIndex[nextIndex++] = bone.index; 
-					}
+                    if (bone != null)
+                    {
+                        outDeformGroupIndex2BoneIndex[nextIndex] = bone.index;
+                    }
+                    nextIndex++;
 				}
 				outBoneArray = boneList.ToArray();
 				if (animActionList.Count == 0)
@@ -176,19 +177,19 @@ namespace Oggy
 						= channelList[0].KeyFrames
 						.Select((key, index) => new AnimType.KeyData<Vector3>(key.Frame, new Vector3(key.Value, channelList[1].KeyFrames[index].Value, channelList[2].KeyFrames[index].Value)))
 						.Select(key => { key.Value = BlenderUtil.ChangeCoordsSystem(key.Value); return key; })
-						.Select(key => { key.Frame--; return key; })	// blender frame index starts from 1
+						//.Select(key => { key.Frame--; return key; })	// blender frame index starts from 1
 						.ToArray();
 					groupData.Rotation.KeyFrames
 						= channelList[3].KeyFrames
 						.Select((key, index) => new AnimType.KeyData<Quaternion>(key.Frame, new Quaternion(channelList[4].KeyFrames[index].Value, channelList[5].KeyFrames[index].Value, channelList[6].KeyFrames[index].Value, key.Value)))
 						.Select(key => { key.Value = BlenderUtil.ChangeCoordsSystem(key.Value); return key; })
-						.Select(key => { key.Frame--; return key; })	// blender frame index starts from 1
+						//.Select(key => { key.Frame--; return key; })	// blender frame index starts from 1
 						.ToArray();
 					groupData.Scale.KeyFrames
 						= channelList[7].KeyFrames
 						.Select((key, index) => new AnimType.KeyData<Vector3>(key.Frame, new Vector3(key.Value, channelList[8].KeyFrames[index].Value, channelList[9].KeyFrames[index].Value)))
 						.Select(key => { key.Value = BlenderUtil.ChangeCoordsSystem(key.Value); return key; })
-						.Select(key => { key.Frame--; return key; })	// blender frame index starts from 1
+						//.Select(key => { key.Frame--; return key; })	// blender frame index starts from 1
 						.ToArray();
 					groupList.Add(groupData);
 
