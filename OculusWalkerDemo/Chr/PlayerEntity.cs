@@ -16,7 +16,7 @@ namespace Oggy
 			: base("player")
 		{
 			var entitySys = EntitySystem.GetInstance();
-			var path = "Chr/c9000/c9000.blend";
+			var path = "Chr/c9000/test.blend";
             var searchPath = "Chr/c9000";
 			var scene = BlenderScene.FromFile(path);
 			if (scene != null)

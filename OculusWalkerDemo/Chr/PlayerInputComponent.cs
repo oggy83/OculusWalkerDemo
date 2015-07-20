@@ -23,7 +23,7 @@ namespace Oggy
 		private const float MinVerticalAngle = PI * -0.3f;
 		private const float MaxVerticalAngle = PI * 0.3f;
 		private const float PadAngleFactor = 1.0f;
-		private const float PadPositionFactor = 1.5f;
+		private const float PadPositionFactor = 0.7f;
 
         public PlayerInputComponent()
 		: base(GameEntityComponent.UpdateLines.Input)
