@@ -40,7 +40,6 @@ namespace Oggy
 
 				var animC = new AnimComponent(animRes);
 				AddComponent(animC);
-                animC.Play("Walk");
 
                 var behaviorC = new ChrBehaviorComponent();
                 AddComponent(behaviorC);

@@ -15,6 +15,7 @@ namespace Oggy
 		{
             m_reqMoveDir = Vector3.Zero;
             m_lastAngleY = 0;
+            m_movingTime = 0;
 		}
 
         public void RequestMove(Vector3 moveDir)
@@ -31,22 +32,18 @@ namespace Oggy
         {
             if (m_reqMoveDir.IsZero)
             {
+                m_walkHandle.Weight = (float)Math.Max(0.0, m_walkHandle.Weight - dT * 10);
+                m_pauseHandle.Weight = (float)Math.Min(1.0, m_pauseHandle.Weight + dT * 10);
+                m_movingTime = 0;
                 return;
             }
 
-            /*
-          // update animation weight
-          if (m_movingTime <= 0.3f)
-          {
-              m_walkHandle.Weight = Math.Max(0.0f, m_walkHandle.Weight - dT * 3);
-              m_pauseHandle.Weight = Math.Min(1.0f, m_pauseHandle.Weight + dT * 3);
-          }
-          else
-          {
-              m_walkHandle.Weight = Math.Min(1.0f, m_walkHandle.Weight + dT * 3);
-              m_pauseHandle.Weight = Math.Max(0.0f, m_pauseHandle.Weight - dT * 3);
-          }
-          */
+            
+            
+            // update animation weight
+            m_movingTime += dT;
+            m_walkHandle.Weight = (float)Math.Min(1.0, m_walkHandle.Weight + dT * 3);
+            m_pauseHandle.Weight = (float)Math.Max(0.0, m_pauseHandle.Weight - dT * 3);
 
             var translation = Matrix.Translation(m_layoutC.Transform.TranslationVector + m_reqMoveDir);
 
@@ -107,11 +104,11 @@ namespace Oggy
             m_layoutC = Owner.FindComponent<LayoutComponent>();
             Debug.Assert(m_layoutC != null, "PlayerInputCompoment depends on LayoutCompoment");
 
-            //m_animC = Owner.FindComponent<AnimComponent>();
-            //Debug.Assert(m_animC != null, "PlayerInputCompoment depends on AnimCompoment");
+            m_animC = Owner.FindComponent<AnimComponent>();
+            Debug.Assert(m_animC != null, "PlayerInputCompoment depends on AnimCompoment");
 
-            //m_walkHandle = m_animC.Play("Walk");
-            //m_pauseHandle = m_animC.Play("Pause");
+            m_walkHandle = m_animC.Play("Walk");
+            m_pauseHandle = m_animC.Play("Pause");
         }
 
         public override void OnRemoveFromEntity(GameEntity entity)
@@ -141,18 +138,22 @@ namespace Oggy
         /// <summary>
         /// animation component
         /// </summary>
-        //private AnimComponent m_animC;
+        private AnimComponent m_animC;
 
         /// <summary>
         /// handle for walk animation
         /// </summary>
-        //private AnimHandle m_walkHandle;
+        private AnimHandle m_walkHandle;
 
         /// <summary>
         /// handle for pause animation
         /// </summary>
-        //private AnimHandle m_pauseHandle;
+        private AnimHandle m_pauseHandle;
 
+        /// <summary>
+        /// continuous moving time [sec]
+        /// </summary>
+        private double m_movingTime;
 
         #endregion // private members
 
