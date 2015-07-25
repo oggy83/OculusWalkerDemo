@@ -38,8 +38,6 @@ namespace Oggy
                 return;
             }
 
-            
-            
             // update animation weight
             m_movingTime += dT;
             m_walkHandle.Weight = (float)Math.Min(1.0, m_walkHandle.Weight + dT * 3);
