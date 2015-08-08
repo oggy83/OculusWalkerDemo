@@ -14,6 +14,8 @@ namespace Oggy
     /// </summary>
     /// <remarks>
     /// this class makes commands for behavior stage by input from gamepad or keyboard.
+    /// to be specific,
+    /// - operates the character move (direction and power)
     /// </remarks>
     public class PlayerInputComponent : GameEntityComponent
     {
@@ -23,7 +25,7 @@ namespace Oggy
 		private const float MinVerticalAngle = PI * -0.3f;
 		private const float MaxVerticalAngle = PI * 0.3f;
 		private const float PadAngleFactor = 1.0f;
-		private const float PadPositionFactor = 0.7f;
+		private const float MinimumPadMagnitude = 0.15f;
 
         public PlayerInputComponent()
 		: base(GameEntityComponent.UpdateLines.Input)
@@ -56,19 +58,19 @@ namespace Oggy
 						var v = Vector3.Zero;
 						if (src.TestKeyState(Keys.W))
 						{
-                            v.Z += PositionFactor * (float)dT;
+                            v.Z += PositionFactor;
 						}
 						if (src.TestKeyState(Keys.A))
 						{
-                            v.X -= PositionFactor * (float)dT;
+                            v.X -= PositionFactor;
 						}
 						if (src.TestKeyState(Keys.D))
 						{
-                            v.X += PositionFactor * (float)dT;
+                            v.X += PositionFactor;
 						}
 						if (src.TestKeyState(Keys.S))
 						{
-                            v.Z -= PositionFactor * (float)dT;
+                            v.Z -= PositionFactor;
 						}
 
                         if (v.X != 0 || v.Z != 0)
@@ -91,11 +93,11 @@ namespace Oggy
                         float angleY = (float)Math.Atan2(moveDirection.X, moveDirection.Z);
 						var thumbDir = src.LeftThumbInput.Direction;
 						float magnitude = src.LeftThumbInput.NormalizedMagnitude;
-						if (magnitude != 0.0f)
+						if (magnitude >= MinimumPadMagnitude)
 						{
                             var v = new Vector3(thumbDir.X, 0, thumbDir.Y);
                             v = Vector3.Transform(v, Matrix3x3.RotationY(angleY));
-                            v = v * magnitude * PadPositionFactor * (float)dT;
+                            v = v * magnitude;
                             m_behaviorC.RequestMove(v);
 						}
                         else

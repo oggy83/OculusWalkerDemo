@@ -16,8 +16,8 @@ namespace Oggy
         public FixedCamera()
         {
             Vector3 eye, lookAt, up;
-            eye = new Vector3(0, 4, -10);
-            lookAt = new Vector3(0, 4, 0);
+            eye = new Vector3(0, 2.5f, -10);
+            lookAt = new Vector3(0, 2.5f, 0);
             up = Vector3.UnitY;
             m_camera = new DrawSystem.CameraData(eye, lookAt, up);
         }

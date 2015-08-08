@@ -45,28 +45,33 @@ namespace Oggy
 			// sample and apply
 			for (int boneIndex = 0; boneIndex < m_skeleton.GetBoneCount(); ++boneIndex)
 			{
-				AnimType.SampleValue value = m_entryList[0].Player.Sample(boneIndex);
-				float sumWeight = m_entryList[0].Handle.Weight;
+                AnimType.SampleValue value = m_entryList[0].Player.Sample(boneIndex);
+                float sumWeight = m_entryList[0].Handle.Weight;
 
-				for (int entryIndex = 1; entryIndex < m_entryList.Count; ++entryIndex)
-				{
-					float weight = m_entryList[1].Handle.Weight;
-					sumWeight += weight;
-					float rate = weight / sumWeight;
+                for (int entryIndex = 1; entryIndex < m_entryList.Count; ++entryIndex)
+                {
+                    float weight = m_entryList[entryIndex].Handle.Weight;
+                    sumWeight += weight;
+                    if (sumWeight == 0)
+                    {
+                        continue;
+                    }
 
-					AnimType.SampleValue tmpValue = m_entryList[entryIndex].Player.Sample(boneIndex);
-					value.Location = AnimUtil.IpoVec3(value.Location, tmpValue.Location, rate);
-					value.Rotation = AnimUtil.IpoQuat(value.Rotation, tmpValue.Rotation, rate);
-					value.Scaling = AnimUtil.IpoFloat(value.Scaling, tmpValue.Scaling, rate);
-				}
+                    float rate = weight / sumWeight;
 
-				m_skeleton.SetBoneMatrix(boneIndex, value.GetMatrix());
+                    AnimType.SampleValue tmpValue = m_entryList[entryIndex].Player.Sample(boneIndex);
+                    value.Location = AnimUtil.IpoVec3(value.Location, tmpValue.Location, rate);
+                    value.Rotation = AnimUtil.IpoQuat(value.Rotation, tmpValue.Rotation, rate);
+                    value.Scaling = AnimUtil.IpoFloat(value.Scaling, tmpValue.Scaling, rate);
+                }
+
+                m_skeleton.SetBoneMatrix(boneIndex, value.GetMatrix());
 			}
 			
 			// update player
 			foreach (var entry in m_entryList)
 			{
-				entry.Player.Update(dt, false);
+				entry.Player.Update(dt * entry.Handle.Speed, false);
 			}
 		}
 

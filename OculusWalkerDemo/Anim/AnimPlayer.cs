@@ -81,6 +81,7 @@ namespace Oggy
 			{
 				Name = action.Name,
 				Weight = 1.0f,
+                Speed = 1.0f,
 			};
 		}
 

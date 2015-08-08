@@ -17,5 +17,10 @@ namespace Oggy
 		/// blending weight
 		/// </summary>
 		public float Weight;
+
+        /// <summary>
+        /// play speed (default is 1.0)
+        /// </summary>
+        public float Speed;
 	}
 }
