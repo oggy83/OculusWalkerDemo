@@ -99,6 +99,7 @@ namespace Oggy
             var d3d = drawSys.D3D;
 
             var model = new DrawModel(uid);
+            bool hasBone = BlenderUtil.GetLengthOf(scene.NodeList[0].BoneArray) > 0;// boneArray is set to the first node
 
             foreach (var n in scene.NodeList)
             {
@@ -125,37 +126,45 @@ namespace Oggy
                 var vertices2 = n.Vertics
                     .Select(v => v.Tangent).ToArray();
 
-                var vertices3 = n.Vertics
-                    .Select(v =>
-                    {
-                        Debug.Assert(BlenderUtil.GetLengthOf(v.BoneIndices) == BlenderUtil.GetLengthOf(v.BoneWeights), "both of bone index and bone weight must be matched");
-                        //Debug.Assert(BlenderUtil.GetLengthOf(v.BoneWeights) <= _VertexBoneWeight.MAX_COUNT, "length of bone weight is over :" + BlenderUtil.GetLengthOf(v.BoneWeights));
-                        Debug.Assert(BlenderUtil.GetLengthOf(v.BoneWeights) != 0, "no bone entry");
-                        var tmp = new _VertexBoneWeight()
-                        {
-                            Index0 = BlenderUtil.GetLengthOf(v.BoneIndices) > 0 ? v.BoneIndices[0] : 0,
-                            Weight0 = BlenderUtil.GetLengthOf(v.BoneWeights) > 0 ? v.BoneWeights[0] : 0.0f,
-                            Index1 = BlenderUtil.GetLengthOf(v.BoneIndices) > 1 ? v.BoneIndices[1] : 0,
-                            Weight1 = BlenderUtil.GetLengthOf(v.BoneWeights) > 1 ? v.BoneWeights[1] : 0.0f,
-                            Index2 = BlenderUtil.GetLengthOf(v.BoneIndices) > 2 ? v.BoneIndices[2] : 0,
-                            Weight2 = BlenderUtil.GetLengthOf(v.BoneWeights) > 2 ? v.BoneWeights[2] : 0.0f,
-                            Index3 = BlenderUtil.GetLengthOf(v.BoneIndices) > 3 ? v.BoneIndices[3] : 0,
-                            Weight3 = BlenderUtil.GetLengthOf(v.BoneWeights) > 3 ? v.BoneWeights[3] : 0.0f,
-                        };
-                        float sumWeight = tmp.Weight0 + tmp.Weight1 + tmp.Weight2 + tmp.Weight3;
-                        tmp.Weight0 /= sumWeight;
-                        tmp.Weight1 /= sumWeight;
-                        tmp.Weight2 /= sumWeight;
-                        tmp.Weight3 /= sumWeight;
-                        return tmp;
-                    }).ToArray();
-
                 var node = new Node();
-                node.Mesh = DrawUtil.CreateMeshData(d3d, PrimitiveTopology.TriangleList, vertices1, vertices2, vertices3);
                 node.Material = n.MaterialData;
                 node.IsDebug = false;
-                node.HasBone = BlenderUtil.GetLengthOf(n.BoneArray) > 0;
+                node.HasBone = hasBone;
+                if (node.HasBone)
+                {
+                    // if model has bone, we create a bone vertex info
+                    var vertices3 = n.Vertics
+                       .Select(v =>
+                       {
+                           Debug.Assert(BlenderUtil.GetLengthOf(v.BoneIndices) == BlenderUtil.GetLengthOf(v.BoneWeights), "both of bone index and bone weight must be matched");
+                           //Debug.Assert(BlenderUtil.GetLengthOf(v.BoneWeights) <= _VertexBoneWeight.MAX_COUNT, "length of bone weight is over :" + BlenderUtil.GetLengthOf(v.BoneWeights));
+                           Debug.Assert(BlenderUtil.GetLengthOf(v.BoneWeights) != 0, "no bone entry");
+                           var tmp = new _VertexBoneWeight()
+                           {
+                               Index0 = BlenderUtil.GetLengthOf(v.BoneIndices) > 0 ? v.BoneIndices[0] : 0,
+                               Weight0 = BlenderUtil.GetLengthOf(v.BoneWeights) > 0 ? v.BoneWeights[0] : 0.0f,
+                               Index1 = BlenderUtil.GetLengthOf(v.BoneIndices) > 1 ? v.BoneIndices[1] : 0,
+                               Weight1 = BlenderUtil.GetLengthOf(v.BoneWeights) > 1 ? v.BoneWeights[1] : 0.0f,
+                               Index2 = BlenderUtil.GetLengthOf(v.BoneIndices) > 2 ? v.BoneIndices[2] : 0,
+                               Weight2 = BlenderUtil.GetLengthOf(v.BoneWeights) > 2 ? v.BoneWeights[2] : 0.0f,
+                               Index3 = BlenderUtil.GetLengthOf(v.BoneIndices) > 3 ? v.BoneIndices[3] : 0,
+                               Weight3 = BlenderUtil.GetLengthOf(v.BoneWeights) > 3 ? v.BoneWeights[3] : 0.0f,
+                           };
+                           float sumWeight = tmp.Weight0 + tmp.Weight1 + tmp.Weight2 + tmp.Weight3;
+                           tmp.Weight0 /= sumWeight;
+                           tmp.Weight1 /= sumWeight;
+                           tmp.Weight2 /= sumWeight;
+                           tmp.Weight3 /= sumWeight;
+                           return tmp;
+                       }).ToArray();
 
+                    node.Mesh = DrawUtil.CreateMeshData(d3d, PrimitiveTopology.TriangleList, vertices1, vertices2, vertices3);
+                }
+                else
+                {
+                    node.Mesh = DrawUtil.CreateMeshData(d3d, PrimitiveTopology.TriangleList, vertices1, vertices2);
+                }
+               
                 // add dispoable
 /*
 foreach (var buf in node.Mesh.Buffers)

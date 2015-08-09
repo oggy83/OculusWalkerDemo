@@ -21,65 +21,106 @@ namespace Oggy
 		private const float EntityRange = 10.0f;
 		
         public Scene(Device device, SwapChain swapChain, Panel renderTarget, HmdDevice hmd, bool bStereoRendering, int multiThreadCount)
-		{
-			var drawSys = DrawSystem.GetInstance();
+        {
+            var drawSys = DrawSystem.GetInstance();
 
-			// load textures
-			var textures = new List<TextureView>(new []
+            // load textures
+            var textures = new List<TextureView>(new[]
 			{
 				TextureView.FromFile("dot", drawSys.D3D, "Image/dot.png"),
 				TextureView.FromFile("floor", drawSys.D3D, "Image/floor.jpg"),
 			});
-			var numTextures = new TextureView[10];
-			for (int i = 0; i < 10; ++i)
-			{
-				var name = String.Format("number_{0}", i);
-				numTextures[i] = TextureView.FromFile(name, drawSys.D3D, String.Format("Image/{0}.png", name));
-			}
-			textures.AddRange(numTextures);
-			foreach (var tex in textures)
-			{
-				drawSys.ResourceRepository.AddResource(tex);
-			}
+            var numTextures = new TextureView[10];
+            for (int i = 0; i < 10; ++i)
+            {
+                var name = String.Format("number_{0}", i);
+                numTextures[i] = TextureView.FromFile(name, drawSys.D3D, String.Format("Image/{0}.png", name));
+            }
+            textures.AddRange(numTextures);
+            foreach (var tex in textures)
+            {
+                drawSys.ResourceRepository.AddResource(tex);
+            }
 
-			// light setting
-			drawSys.SetDirectionalLight(new DrawSystem.DirectionalLightData()
-			{
-				Direction = new Vector3(0.3f, -0.5f, 0),
+            // light setting
+            drawSys.SetDirectionalLight(new DrawSystem.DirectionalLightData()
+            {
+                Direction = new Vector3(0.3f, -0.5f, 0),
                 Color = new Color3(0.6f, 0.6f, 0.5f),
-			});
-			drawSys.AmbientColor = new Color3(0.4f, 0.45f, 0.55f);
-			drawSys.FogColor = new Color3(0.3f, 0.5f, 0.8f);
+            });
+            drawSys.AmbientColor = new Color3(0.4f, 0.45f, 0.55f);
+            drawSys.FogColor = new Color3(0.3f, 0.5f, 0.8f);
 
-			// create number entity
-			m_fps = new FpsCounter();
-			m_numberEntity = new NumberEntity(new NumberEntity.InitParam()
-			{
-				Dot = drawSys.ResourceRepository.FindResource<TextureView>("dot"),
-				Numbers = numTextures,
-				Layout = Matrix.RotationYawPitchRoll(1.0f, -1.5f, 0.0f) * Matrix.Translation(1.5f, 2.5f, 4.5f)
-			});
+            // create number entity
+            m_fps = new FpsCounter();
+            m_numberEntity = new NumberEntity(new NumberEntity.InitParam()
+            {
+                Dot = drawSys.ResourceRepository.FindResource<TextureView>("dot"),
+                Numbers = numTextures,
+                Layout = Matrix.RotationYawPitchRoll(1.0f, -1.5f, 0.0f) * Matrix.Translation(1.5f, 2.5f, 4.5f)
+            });
 
-			// create floor entity
-			var floorModel = DrawModel.CreateFloor(20.0f, 10.0f, Vector4.Zero);
-			m_floor = new ModelEntity(new ModelEntity.InitParam()
-			{
-				Model = floorModel,
-				Texture = drawSys.ResourceRepository.FindResource<TextureView>("floor"),
-				Layout = Matrix.Identity,
-				Delay = 0.0f,
-				Forward = Vector3.Zero,
-				Color = Color4.White,
-				Speed = 1,
-			});
-			m_drawModelList.Add(floorModel);
-			m_multiThreadCount = multiThreadCount;
-			m_taskList = new List<Task>(m_multiThreadCount);
-			m_taskResultList = new List<CommandList>(m_multiThreadCount);
+            // create floor entity
+            var floorModel = DrawModel.CreateFloor(20.0f, 10.0f, Vector4.Zero);
+            m_floor = new ModelEntity(new ModelEntity.InitParam()
+            {
+                Model = floorModel,
+                Texture = drawSys.ResourceRepository.FindResource<TextureView>("floor"),
+                Layout = Matrix.Identity,
+                Delay = 0.0f,
+                Forward = Vector3.Zero,
+                Color = Color4.White,
+                Speed = 1,
+            });
+            m_drawModelList.Add(floorModel);
+            m_multiThreadCount = multiThreadCount;
+            m_taskList = new List<Task>(m_multiThreadCount);
+            m_taskResultList = new List<CommandList>(m_multiThreadCount);
 
             // create player
             m_player = new PlayerEntity();
             ChrSystem.GetInstance().Player = m_player;
+
+            // create map block
+            m_mapEntities = new List<GameEntity>();
+            {
+                var path = "Map/m9000/m9000.blend";
+                var searchPath = "Map/m9000";
+                var scene = BlenderScene.FromFile(path);
+                if (scene != null)
+                {
+                    var drawModel = DrawModel.FromScene(path + "/draw", scene, searchPath);
+                    var entity = new GameEntity("wall");
+
+                    var layoutC = new LayoutComponent();
+                    layoutC.Transform = Matrix.Translation(-10, 0, 0);
+                    entity.AddComponent(layoutC);
+
+                    var modelC = new ModelComponent();
+                    modelC.ModelContext.EnableCastShadow = true;
+                    modelC.ModelContext.DrawModel = drawModel;
+                    entity.AddComponent(modelC);
+
+                    m_mapEntities.Add(entity);
+                }
+
+                if (scene != null)
+                {
+                    var drawModel = DrawModel.FromScene(path + "/draw", scene, searchPath);
+                    var entity = new GameEntity("wall");
+
+                    var layoutC = new LayoutComponent();
+                    layoutC.Transform = Matrix.Translation(10, 0, 0);
+                    entity.AddComponent(layoutC);
+
+                    var modelC = new ModelComponent();
+                    modelC.ModelContext.EnableCastShadow = true;
+                    modelC.ModelContext.DrawModel = drawModel;
+                    entity.AddComponent(modelC);
+
+                    m_mapEntities.Add(entity);
+                }
+            }
 
             // other settings
 #if DEBUG
@@ -88,7 +129,7 @@ namespace Oggy
 #else
             CameraSystem.GetInstance().ActivateCamera(CameraSystem.FixedCameraName);
 #endif // DEBUG
-		}
+        }
 
         public void RenderFrame()
 		{
@@ -167,6 +208,10 @@ namespace Oggy
         /// </summary>
         public void Dispose()
         {
+            foreach (var entity in m_mapEntities)
+            {
+                entity.Dispose();
+            }
             m_player.Dispose();
 			Task.WaitAll(m_taskList.ToArray());
 			m_numberEntity.Dispose();
@@ -188,6 +233,7 @@ namespace Oggy
 		private List<Task> m_taskList = null;
 		private List<CommandList> m_taskResultList = null;
         private PlayerEntity m_player = null;
+        private List<GameEntity> m_mapEntities = null;
 
 		#endregion // private members
 	}
