@@ -22,6 +22,12 @@ namespace Oggy
 			public uint[] BoneIndices;
 		}
 
+        public struct TextureInfo
+        {
+            public string Name;
+            public Vector2 UvScale;
+        }
+
 		public struct SceneNode
 		{
 			public string Name { get; set; }
@@ -30,7 +36,7 @@ namespace Oggy
 
 			public DrawSystem.MaterialData MaterialData { get; set; }
 
-			public Dictionary<DrawSystem.TextureTypes, string> TextureNames { get; set; }
+			public Dictionary<DrawSystem.TextureTypes, TextureInfo> TextureInfos { get; set; }
 
 			/// <summary>
 			/// get/set a bone array (optional)

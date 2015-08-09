@@ -18,7 +18,7 @@ namespace Oggy
 		public struct InitParam
 		{
 			public DrawModel Model;
-			public TextureView Texture;
+            public DrawSystem.TextureData Texture;
 			public Matrix Layout;
 			public float Delay;
 			public Vector3 Forward;

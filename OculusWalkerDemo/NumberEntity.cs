@@ -15,8 +15,8 @@ namespace Oggy
 	{
 		public struct InitParam
 		{
-			public TextureView Dot;
-			public TextureView[] Numbers;
+            public DrawSystem.TextureData Dot;
+            public DrawSystem.TextureData[] Numbers;
 			public Matrix Layout;
 		}
 
@@ -45,7 +45,7 @@ namespace Oggy
 			Matrix layout = m_initParam.Layout;
 			foreach (char c in m_text)
 			{
-				TextureView tex = null;
+                var tex = DrawSystem.TextureData.Null();
 				float offset = 0.0f;
 				switch (c)
 				{
@@ -63,7 +63,7 @@ namespace Oggy
 						break;
 				}
 
-				Debug.Assert(tex != null, "invalid character");
+				Debug.Assert(tex.Resource != null, "invalid character");
 				context.DrawModel(layout, Color4.White, m_plane.NodeList[0].Mesh, tex, DrawSystem.RenderMode.Transparency, null);
 				layout *= Matrix.Translation(offset, 0, 0);
 			}

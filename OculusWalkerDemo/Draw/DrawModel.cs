@@ -180,23 +180,31 @@ foreach (var buf in node.Mesh.Buffers)
                 }
 
                 // load new texture
-                foreach (var texName in n.TextureNames.Values)
+                foreach (var texInfo in n.TextureInfos.Values)
                 {
-                    if (!drawRepository.Contains(texName))
+                    if (!drawRepository.Contains(texInfo.Name))
                     {
-                        var tex = TextureView.FromFile(texName, drawSys.D3D, Path.Combine(searchPath, texName));
+                        var tex = TextureView.FromFile(texInfo.Name, drawSys.D3D, Path.Combine(searchPath, texInfo.Name));
                         drawRepository.AddResource(tex);
                     }
                 }
 
                 // copy textures from cache
-                if (n.TextureNames.ContainsKey(DrawSystem.TextureTypes.Diffuse0))
+                if (n.TextureInfos.ContainsKey(DrawSystem.TextureTypes.Diffuse0))
                 {
-                    node.Material.DiffuseTex0 = drawRepository.FindResource<TextureView>(n.TextureNames[DrawSystem.TextureTypes.Diffuse0]);
+                    node.Material.DiffuseTex0 = new DrawSystem.TextureData
+                    {
+                        Resource = drawRepository.FindResource<TextureView>(n.TextureInfos[DrawSystem.TextureTypes.Diffuse0].Name),
+                        UvScale = n.TextureInfos[DrawSystem.TextureTypes.Diffuse0].UvScale,
+                    };
                 }
-                if (n.TextureNames.ContainsKey(DrawSystem.TextureTypes.Bump0))
+                if (n.TextureInfos.ContainsKey(DrawSystem.TextureTypes.Bump0))
                 {
-                    node.Material.BumpTex0 = drawRepository.FindResource<TextureView>(n.TextureNames[DrawSystem.TextureTypes.Bump0]);
+                    node.Material.BumpTex0 = new DrawSystem.TextureData
+                    {
+                        Resource = drawRepository.FindResource<TextureView>(n.TextureInfos[DrawSystem.TextureTypes.Bump0].Name),
+                        UvScale = n.TextureInfos[DrawSystem.TextureTypes.Bump0].UvScale,
+                    };
                 }
 
                 model.m_nodeList.Add(node);

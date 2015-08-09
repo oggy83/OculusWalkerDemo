@@ -104,7 +104,7 @@ namespace Oggy
 			m_commandListTable.Clear();
 		}
 
-        public void DrawModel(Matrix worldTrans, Color4 color, DrawSystem.MeshData mesh, TextureView tex, DrawSystem.RenderMode renderMode, Matrix[] boneMatrices)
+        public void DrawModel(Matrix worldTrans, Color4 color, DrawSystem.MeshData mesh, DrawSystem.TextureData tex, DrawSystem.RenderMode renderMode, Matrix[] boneMatrices)
 		{
 			m_isContextDirty = true;
 			m_context.DrawModel(worldTrans, color, mesh, tex, renderMode, boneMatrices);
@@ -116,7 +116,7 @@ namespace Oggy
             m_context.DrawDebugModel(worldTrans, mesh, renderMode);
         }
 
-		public void BeginDrawInstance(DrawSystem.MeshData mesh, TextureView tex, DrawSystem.RenderMode renderMode)
+        public void BeginDrawInstance(DrawSystem.MeshData mesh, DrawSystem.TextureData tex, DrawSystem.RenderMode renderMode)
 		{
 			m_isContextDirty = true;
 			m_context.BeginDrawInstance(mesh, tex, renderMode);

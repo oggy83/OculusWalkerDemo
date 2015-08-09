@@ -30,13 +30,17 @@ namespace Oggy
 				TextureView.FromFile("dot", drawSys.D3D, "Image/dot.png"),
 				TextureView.FromFile("floor", drawSys.D3D, "Image/floor.jpg"),
 			});
-            var numTextures = new TextureView[10];
+            var numTextures = new DrawSystem.TextureData[10];
             for (int i = 0; i < 10; ++i)
             {
                 var name = String.Format("number_{0}", i);
-                numTextures[i] = TextureView.FromFile(name, drawSys.D3D, String.Format("Image/{0}.png", name));
+                numTextures[i] = new DrawSystem.TextureData
+                {
+                    Resource = TextureView.FromFile(name, drawSys.D3D, String.Format("Image/{0}.png", name)),
+                    UvScale = Vector2.One,
+                };
             }
-            textures.AddRange(numTextures);
+            textures.AddRange(numTextures.Select(item => item.Resource));
             foreach (var tex in textures)
             {
                 drawSys.ResourceRepository.AddResource(tex);
@@ -55,7 +59,11 @@ namespace Oggy
             m_fps = new FpsCounter();
             m_numberEntity = new NumberEntity(new NumberEntity.InitParam()
             {
-                Dot = drawSys.ResourceRepository.FindResource<TextureView>("dot"),
+                Dot = new DrawSystem.TextureData
+                {
+                    Resource = drawSys.ResourceRepository.FindResource<TextureView>("dot"),
+                    UvScale = Vector2.One,
+                },
                 Numbers = numTextures,
                 Layout = Matrix.RotationYawPitchRoll(1.0f, -1.5f, 0.0f) * Matrix.Translation(1.5f, 2.5f, 4.5f)
             });
@@ -65,7 +73,11 @@ namespace Oggy
             m_floor = new ModelEntity(new ModelEntity.InitParam()
             {
                 Model = floorModel,
-                Texture = drawSys.ResourceRepository.FindResource<TextureView>("floor"),
+                Texture = new DrawSystem.TextureData
+                {
+                    Resource = drawSys.ResourceRepository.FindResource<TextureView>("floor"),
+                    UvScale = Vector2.One
+                },
                 Layout = Matrix.Identity,
                 Delay = 0.0f,
                 Forward = Vector3.Zero,

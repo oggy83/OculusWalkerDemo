@@ -32,6 +32,7 @@ namespace Oggy
 			m_mainVtxConst = DrawUtil.CreateConstantBuffer<_MainVertexShaderConst>(d3d, m_maxInstanceCount);
             m_boneVtxConst = DrawUtil.CreateConstantBuffer(d3d, Utilities.SizeOf<Matrix>() * MaxBoneMatrices);
 			m_mainPixConst = DrawUtil.CreateConstantBuffer<_MainPixelShaderConst>(d3d, m_maxInstanceCount);
+            m_modelPixConst = DrawUtil.CreateConstantBuffer<_ModelPixelShaderConst>(d3d, 1);
 
 			m_instanceMainVtxConst = new _MainVertexShaderConst[m_maxInstanceCount];
 			m_instanceMainPixConst = new _MainPixelShaderConst[m_maxInstanceCount];
@@ -44,29 +45,30 @@ namespace Oggy
 				m_context.Dispose();
 			}
 
+            m_modelPixConst.Dispose();
 			m_mainPixConst.Dispose();
             m_boneVtxConst.Dispose();
 			m_mainVtxConst.Dispose();
 		}
 
-        virtual public void DrawModel(Matrix worldTrans, Color4 color, DrawSystem.MeshData mesh, TextureView tex, DrawSystem.RenderMode renderMode, Matrix[] boneMatrices)
-		{
-			_SetModelParams(mesh, tex, renderMode, true);
+        virtual public void DrawModel(Matrix worldTrans, Color4 color, DrawSystem.MeshData mesh, DrawSystem.TextureData tex, DrawSystem.RenderMode renderMode, Matrix[] boneMatrices)
+        {
+            _SetModelParams(mesh, tex, renderMode, true);
 
-			// update vertex shader resouce
-			var vdata = new _MainVertexShaderConst()
-			{
-				// hlsl is column-major memory layout, so we must transpose matrix
-				worldMat = Matrix.Transpose(worldTrans),
-			};
-			m_context.UpdateSubresource(ref vdata, m_mainVtxConst);
+            // update vertex shader resouce
+            var vdata = new _MainVertexShaderConst()
+            {
+                // hlsl is column-major memory layout, so we must transpose matrix
+                worldMat = Matrix.Transpose(worldTrans),
+            };
+            m_context.UpdateSubresource(ref vdata, m_mainVtxConst);
 
-			// update pixel shader resouce
-			var pdata = new _MainPixelShaderConst()
-			{
-				instanceColor = color
-			};
-			m_context.UpdateSubresource(ref pdata, m_mainPixConst);
+            // update pixel shader resouce
+            var pdata = new _MainPixelShaderConst()
+            {
+                instanceColor = color
+            };
+            m_context.UpdateSubresource(ref pdata, m_mainPixConst);
 
             // update a bone constant buffer
             if (boneMatrices != null)
@@ -95,14 +97,14 @@ namespace Oggy
                 m_context.UpdateSubresource<Matrix>(m_tmpBoneMatrices, m_boneVtxConst);
             }
 
-			// draw
-			m_context.Draw(mesh.VertexCount, 0);
-			m_drawCallCount++;
-		}
+            // draw
+            m_context.Draw(mesh.VertexCount, 0);
+            m_drawCallCount++;
+        }
 
         virtual public void DrawDebugModel(Matrix worldTrans, DrawSystem.MeshData mesh, DrawSystem.RenderMode renderMode)
         {
-            _SetModelParams(mesh, null, renderMode, false);
+            _SetModelParams(mesh, DrawSystem.TextureData.Null(), renderMode, false);
 
             // update vertex shader resouce
             var vdata = new _MainVertexShaderConst()
@@ -126,8 +128,8 @@ namespace Oggy
             m_context.Draw(mesh.VertexCount, 0);
             m_drawCallCount++;
         }
-		
-		virtual public void BeginDrawInstance(DrawSystem.MeshData mesh, TextureView tex, DrawSystem.RenderMode renderMode)
+
+        virtual public void BeginDrawInstance(DrawSystem.MeshData mesh, DrawSystem.TextureData tex, DrawSystem.RenderMode renderMode)
 		{
 			_SetModelParams(mesh, tex, renderMode, true);
 		}
@@ -206,7 +208,8 @@ namespace Oggy
             m_context.VertexShader.SetConstantBuffer(1, m_boneVtxConst);
 			m_context.VertexShader.SetConstantBuffer(2, m_initParam.WorldVtxConst);
 			m_context.PixelShader.SetConstantBuffer(0, m_mainPixConst);
-			m_context.PixelShader.SetConstantBuffer(1, m_initParam.WorldPixConst);
+            m_context.PixelShader.SetConstantBuffer(1, m_modelPixConst);
+			m_context.PixelShader.SetConstantBuffer(2, m_initParam.WorldPixConst);
 
 			m_drawCallCount = 0;
 			m_nextInstanceIndex = 0;
@@ -263,11 +266,13 @@ namespace Oggy
 		private Buffer m_mainVtxConst = null;
         private Buffer m_boneVtxConst = null;
 		private Buffer m_mainPixConst = null;
+        private Buffer m_modelPixConst = null;
         private Matrix[] m_tmpBoneMatrices = new Matrix[MaxBoneMatrices];
 
 		// previous draw setting
 		private DrawSystem.RenderMode? m_lastRenderMode = null;
-		private TextureView m_lastTexture = null;
+        private TextureView m_lastTextureRes = null;
+        private Vector2? m_lastTextureUvScale = null;
 		private PrimitiveTopology? m_lastTopology = null;
 		private VertexBufferBinding[] m_lastVertexBuffers = null;
 		private int m_lastVertexCount = 0;
@@ -284,16 +289,17 @@ namespace Oggy
 
 		#region private methods
 
-		private void _SetModelParams(DrawSystem.MeshData mesh, TextureView tex, DrawSystem.RenderMode renderMode, bool useMaterial)
+        private void _SetModelParams(DrawSystem.MeshData mesh, DrawSystem.TextureData tex, DrawSystem.RenderMode renderMode, bool useMaterial)
 		{
-			// update texture
-			if (m_lastTexture == null || m_lastTexture.IsDisposed() || m_lastTexture != tex)
+			// update texture resouce
+			if (m_lastTextureRes == null || m_lastTextureRes.IsDisposed() || m_lastTextureRes != tex.Resource)
 			{
+                // update resource
                 int slotIndex = 0;
-                if (tex != null)
+                if (tex.Resource != null)
                 {
-                    m_context.PixelShader.SetShaderResource(slotIndex, tex.View);
-                    m_context.PixelShader.SetSampler(slotIndex, tex.SamplerState);
+                    m_context.PixelShader.SetShaderResource(slotIndex, tex.Resource.View);
+                    m_context.PixelShader.SetSampler(slotIndex, tex.Resource.SamplerState);
                 }
                 else
                 {
@@ -302,8 +308,21 @@ namespace Oggy
                     m_context.PixelShader.SetSampler(slotIndex, null);
                 }
 
-				m_lastTexture = tex;
+				m_lastTextureRes = tex.Resource;
 			}
+
+            // update texture uv scale
+            if (m_lastTextureUvScale == null || !m_lastTextureUvScale.Value.Equals(tex.UvScale))
+            {
+                var modelPixConst = new _ModelPixelShaderConst()
+                {
+                    uvScale1 = tex.UvScale,
+                    uvScale2 = new Vector2(1, 1),   // @todo
+                };
+                m_context.UpdateSubresource(ref modelPixConst, m_modelPixConst);
+
+                m_lastTextureUvScale = tex.UvScale;
+            }
 
             // update material
             if (m_useMaterial == null || m_useMaterial != useMaterial)

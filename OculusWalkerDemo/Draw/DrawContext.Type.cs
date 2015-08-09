@@ -48,6 +48,13 @@ namespace Oggy
 			public Color4 instanceColor;
 		}
 
+        [StructLayout(LayoutKind.Sequential, Pack = 16)]
+        private struct _ModelPixelShaderConst
+        {
+            public Vector2 uvScale1;
+            public Vector2 uvScale2;
+        }
+
 		[StructLayout(LayoutKind.Sequential, Pack = 16)]
 		private struct _WorldPixelShaderConst
 		{

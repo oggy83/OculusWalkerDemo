@@ -144,9 +144,9 @@ namespace Oggy
 				var bMaterial = mtls[mtlIndex].GetRawValue<BlendAddress>().DereferenceOne();
 				if (bMaterial != null)
 				{
-					Dictionary<DrawSystem.TextureTypes, string> textureNames = null;
+					Dictionary<DrawSystem.TextureTypes, TextureInfo> textureInfos = null;
 					DrawSystem.MaterialData material;
-					if (!_LoadMaterial(repository, bMaterial, out textureNames, out material))
+					if (!_LoadMaterial(repository, bMaterial, out textureInfos, out material))
 					{
 						continue;
 					}
@@ -156,7 +156,7 @@ namespace Oggy
 						Name = meshName,
 						Vertics = vertices,
 						MaterialData = material,
-						TextureNames = textureNames,
+						TextureInfos = textureInfos,
 						BoneArray = mtlIndex == 0 ? boneArray : null,// set boneArray for the first node
 						Animation = animData.Actions != null ? (AnimType.AnimationData?)animData : null,
 					};

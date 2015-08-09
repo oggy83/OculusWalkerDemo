@@ -10,8 +10,13 @@ cbuffer cbMain : register(b0)
 	float4 g_instanceCol[MAX_INSTANCE_COUNT];	
 };
 
+cbuffer cbModel : register(b1)
+{
+	float2 g_uvScale1;
+	float2 g_uvScale2;
+};
 
-cbuffer cbWorld : register(b1)
+cbuffer cbWorld : register(b2)
 {
 	float4 g_ambientCol;
 	float4 g_fogCol;
@@ -39,6 +44,10 @@ struct PS_OUTPUT
 Texture2D g_Diffuse1Tex : register(t0);
 SamplerState g_Diffuse1Sampler : register(s0);
 
+float2 _ScalingUV(float2 uv, float2 scaleUV)
+{
+	return uv * scaleUV;
+}
 
 PS_OUTPUT main(PS_INPUT In)
 {
@@ -52,7 +61,7 @@ PS_OUTPUT main(PS_INPUT In)
 
 	// Calc Diffuse Term
 	float4 diffLight = g_ambientCol + max(0, dot(Normal, Light1Dir)) * g_lightCol1;
-	float4 diffCol = diffLight * g_Diffuse1Tex.Sample(g_Diffuse1Sampler, In.UV1);
+	float4 diffCol = diffLight * g_Diffuse1Tex.Sample(g_Diffuse1Sampler, _ScalingUV(In.UV1, g_uvScale1));
 
 	// Blinn-Phong Model
 	float3 halfVec = normalize(EyeDir + Light1Dir);

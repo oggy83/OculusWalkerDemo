@@ -76,6 +76,7 @@ namespace Oggy
 			public IntPtr WindowHandle;
 		}
 
+        /*
         public struct TextureData
         {
             public string Name { get; set; }
@@ -90,6 +91,7 @@ namespace Oggy
                 return data;
             }
         }
+        */
 
 		public enum RenderMode
 		{
@@ -110,6 +112,22 @@ namespace Oggy
             Marker,
         }
 
+        public struct TextureData
+        {
+            public TextureView Resource { get; set; }
+
+            public Vector2 UvScale { get; set; }
+
+            public static TextureData Null()
+            {
+                return new TextureData
+                {
+                    Resource = null,
+                    UvScale = Vector2.One,
+                };
+            }
+        }
+
         public struct MaterialData
         {
             public MaterialTypes Type { get; set; }
@@ -117,12 +135,12 @@ namespace Oggy
             /// <summary>
             /// first diffuse texture for Default
             /// </summary>
-            public TextureView DiffuseTex0 { get; set; }
+            public TextureData DiffuseTex0 { get; set; }
 
             /// <summary>
             /// first bump texture for Default
             /// </summary>
-            public TextureView BumpTex0 { get; set; }
+            public TextureData BumpTex0 { get; set; }
 
             /// <summary>
             /// index of showing bone weight for DbgBoneWeight

@@ -15,12 +15,12 @@ namespace Oggy
 	public partial class BlenderScene
 	{
 
-		private bool _LoadMaterial(BlendTypeRepository repository, BlendValueCapsule bMaterial, out Dictionary<DrawSystem.TextureTypes, string> outTextureNames, out DrawSystem.MaterialData outMaterial)
+		private bool _LoadMaterial(BlendTypeRepository repository, BlendValueCapsule bMaterial, out Dictionary<DrawSystem.TextureTypes, TextureInfo> outTextureInfos, out DrawSystem.MaterialData outMaterial)
 		{
 			string mtlName = bMaterial.GetMember("id").GetMember("name").GetAllValueAsString();
 			Console.WriteLine("    found material : " + mtlName);
 
-			var texNames = new Dictionary<DrawSystem.TextureTypes, string>();
+			var texInfos = new Dictionary<DrawSystem.TextureTypes, TextureInfo>();
 			string materialTypeName = Path.GetExtension(mtlName);
 			switch (materialTypeName)
 			{
@@ -35,6 +35,8 @@ namespace Oggy
 							var mtex = mtexs.GetAt(mtexIndex).GetRawValue<BlendAddress>().DereferenceOne();
 							if (mtex != null)
 							{
+                                float scaleU = mtex.GetMember("size").GetAt(0).GetRawValue<float>();
+                                float scaleV = mtex.GetMember("size").GetAt(1).GetRawValue<float>();
 								var tex = mtex.GetMember("tex").GetRawValue<BlendAddress>().DereferenceOne();
 								if (tex != null)
 								{
@@ -63,14 +65,14 @@ namespace Oggy
 												break;
 										}
 
-										texNames.Add(type, path);
+                                        texInfos.Add(type, new TextureInfo { Name = path, UvScale = new Vector2(scaleU, scaleV) });
 									}
 								}
 							}
 						}
 
 						outMaterial = new DrawSystem.MaterialData();
-						outTextureNames = texNames;
+						outTextureInfos = texInfos;
 					}
 					return true;
 
@@ -88,7 +90,7 @@ namespace Oggy
 							Type = DrawSystem.MaterialTypes.Marker,
 							MarkerId = prop.Value,
 						};
-						outTextureNames = texNames;
+						outTextureInfos = texInfos;
 					}
 					return true;
 
@@ -98,7 +100,7 @@ namespace Oggy
 			}
 
 			outMaterial = new DrawSystem.MaterialData();
-			outTextureNames = texNames;
+			outTextureInfos = texInfos;
 			return false;
 		}
 
