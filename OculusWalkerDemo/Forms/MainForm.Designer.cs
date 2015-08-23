@@ -49,6 +49,7 @@
             this.Text = "OculusWalkerDemo";
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this._OnFormClosed);
             this.Load += new System.EventHandler(this._OnLoad);
+            this.KeyDown += new System.Windows.Forms.KeyEventHandler(this._OnKeyDown);
             this.ResumeLayout(false);
 
         }

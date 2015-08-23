@@ -56,11 +56,11 @@ namespace Oggy
 		{
 			get
 			{
-				return m_world.camera;
+				return m_world.Camera;
 			}
 			set
 			{
-				m_world.camera = value;
+				m_world.Camera = value;
 			}
 		}
 
@@ -68,11 +68,11 @@ namespace Oggy
 		{
 			get
 			{
-				return m_world.ambientCol;
+				return m_world.AmbientCol;
 			}
 			set
 			{
-				m_world.ambientCol = value;
+				m_world.AmbientCol = value;
 			}
 		}
 
@@ -80,13 +80,37 @@ namespace Oggy
 		{
 			get
 			{
-				return m_world.fogCol;
+				return m_world.FogCol;
 			}
 			set
 			{
-				m_world.fogCol = value;
+				m_world.FogCol = value;
 			}
 		}
+
+        public float NearClip
+        {
+            get
+            {
+                return m_world.NearClip;
+            }
+            set
+            {
+                m_world.NearClip = value;
+            }
+        }
+
+        public float FarClip
+        {
+            get
+            {
+                return m_world.FarClip;
+            }
+            set
+            {
+                m_world.FarClip = value;
+            }
+        }
 
 		private D3DData m_d3d;
 		public D3DData D3D
@@ -129,8 +153,8 @@ namespace Oggy
             m_debug = new DrawDebugCtrl();
 			
 			AmbientColor = new Color3(0, 0, 0);
-			m_world.dirLight.Direction = new Vector3(0, 1, 0);
-			m_world.dirLight.Color = new Color3(1, 1, 1);
+			m_world.DirLight.Direction = new Vector3(0, 1, 0);
+			m_world.DirLight.Color = new Color3(1, 1, 1);
 
 			m_repository = new DrawResourceRepository(m_d3d);
 			m_passCtrl = new DrawPassCtrl(m_d3d, m_repository, hmd, bStereoRendering, multiThreadCount);
@@ -139,14 +163,14 @@ namespace Oggy
 			m_hmd = hmd;
             if (m_hmd != null)
             {
-                m_hmd.Attach(m_d3d, m_repository.GetDefaultRenderTarget());
+                m_hmd.Setup(m_d3d, m_repository.GetDefaultRenderTarget());
             }
 			
 		}
 
 		public void SetDirectionalLight(DirectionalLightData light)
 		{
-			m_world.dirLight = light;
+			m_world.DirLight = light;
 		}
 
 		public void BeginScene()

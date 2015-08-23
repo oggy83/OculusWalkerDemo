@@ -101,6 +101,8 @@
     <Compile Include="Draw\DrawSystem.Type.cs" />
     <Compile Include="Draw\DrawUtil.cs" />
     <Compile Include="Draw\Effect.cs" />
+    <Compile Include="Hmd\HmdMirrorTexture.cs" />
+    <Compile Include="Hmd\HmdSwapTextureSet.cs" />
     <Compile Include="Model\ModelComponent.cs" />
     <Compile Include="Model\Skeleton.cs" />
     <Compile Include="Model\SkeletonComponent.cs" />

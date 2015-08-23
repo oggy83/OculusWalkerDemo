@@ -63,10 +63,12 @@ namespace Oggy
 		/// </summary>
 		public struct WorldData
 		{
-			public Matrix camera;
-			public Color3 ambientCol;
-			public Color3 fogCol;
-			public DrawSystem.DirectionalLightData dirLight;
+			public Matrix Camera;
+			public Color3 AmbientCol;
+			public Color3 FogCol;
+			public DrawSystem.DirectionalLightData DirLight;
+            public float NearClip;
+            public float FarClip;
 		}
 
 		public struct D3DData

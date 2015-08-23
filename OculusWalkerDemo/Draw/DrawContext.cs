@@ -220,26 +220,19 @@ namespace Oggy
 			// init pixel shader resource
 			var pdata = new _WorldPixelShaderConst()
 			{
-				ambientCol = new Color4(worldData.ambientCol),
-				fogCol = new Color4(worldData.fogCol),
-				light1Col = new Color4(worldData.dirLight.Color),
-				cameraPos = new Vector4(worldData.camera.TranslationVector, 1.0f),
-				light1Dir = new Vector4(worldData.dirLight.Direction, 0.0f),
+				ambientCol = new Color4(worldData.AmbientCol),
+				fogCol = new Color4(worldData.FogCol),
+				light1Col = new Color4(worldData.DirLight.Color),
+				cameraPos = new Vector4(worldData.Camera.TranslationVector, 1.0f),
+				light1Dir = new Vector4(worldData.DirLight.Direction, 0.0f),
 			};
 			m_context.UpdateSubresource(ref pdata, m_initParam.WorldPixConst);
 		}
 
-		public void UpdateEyeParams(DeviceContext context, RenderTarget renderTarget, Matrix eyeOffset)
+		public void UpdateEyeParams(DeviceContext context, RenderTarget renderTarget, Matrix eyeOffset, Matrix proj)
 		{
 			// update view-projection matrix
-			var vpMatrix = m_worldData.camera;
-			vpMatrix *= eyeOffset;
-
-			int width = renderTarget.Resolution.Width;
-			int height = renderTarget.Resolution.Height;
-			Single aspect = (float)width / (float)height;
-			Single fov = (Single)Math.PI / 4;
-			vpMatrix *= Matrix.PerspectiveFovLH(fov, aspect, 0.1f, 100.0f);
+            var vpMatrix = m_worldData.Camera * eyeOffset * proj;
 
 			var vdata = new _WorldVertexShaderConst()
 			{
@@ -252,7 +245,7 @@ namespace Oggy
 		public void ClearRenderTarget(RenderTarget renderTarget)
 		{
 			m_context.ClearDepthStencilView(renderTarget.DepthStencilView, DepthStencilClearFlags.Depth, 1.0f, 0);
-			m_context.ClearRenderTargetView(renderTarget.TargetView, new Color4(m_worldData.fogCol));
+			m_context.ClearRenderTargetView(renderTarget.TargetView, new Color4(m_worldData.FogCol));
 		}
 
 		#region private members

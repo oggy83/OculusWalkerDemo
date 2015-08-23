@@ -54,6 +54,8 @@ namespace Oggy
             });
             drawSys.AmbientColor = new Color3(0.4f, 0.45f, 0.55f);
             drawSys.FogColor = new Color3(0.3f, 0.5f, 0.8f);
+            drawSys.NearClip = 0.01f;
+            drawSys.FarClip = 10000.0f;
 
             // create number entity
             m_fps = new FpsCounter();
@@ -105,7 +107,7 @@ namespace Oggy
                     var entity = new GameEntity("wall");
 
                     var layoutC = new LayoutComponent();
-                    layoutC.Transform = Matrix.Translation(-10, 0, 0);
+                    layoutC.Transform = Matrix.Translation(-10, 0, -5);
                     entity.AddComponent(layoutC);
 
                     var modelC = new ModelComponent();
@@ -122,7 +124,7 @@ namespace Oggy
                     var entity = new GameEntity("wall");
 
                     var layoutC = new LayoutComponent();
-                    layoutC.Transform = Matrix.Translation(10, 0, 0);
+                    layoutC.Transform = Matrix.Translation(10, 0, -5);
                     entity.AddComponent(layoutC);
 
                     var modelC = new ModelComponent();
@@ -132,6 +134,7 @@ namespace Oggy
 
                     m_mapEntities.Add(entity);
                 }
+                
             }
 
             // other settings

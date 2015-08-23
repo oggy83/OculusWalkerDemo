@@ -23,6 +23,11 @@ namespace Oggy
 
 		public ValueType Value;
 
+        public void Clear()
+        {
+            m_ptr = IntPtr.Zero;
+        }
+
 		public static CRef<ValueType> FromPtr(IntPtr ptr)
 		{
 			if (ptr == IntPtr.Zero)

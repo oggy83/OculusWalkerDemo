@@ -145,13 +145,15 @@ namespace Oggy
 			return result;
 		}
 
+        /*
 		public Matrix GetProjection()
 		{
 			// todo : calc fom RenderTarget
-			Single fov = (Single)Math.PI / 4;
+            Single fov = (Single)Math.PI / 4;
 			Single aspect = 4.0f / 3;
 			return Matrix.PerspectiveFovLH(fov, aspect, 0.1f, 100.0f);
 		}
+        */
 
 		[Conditional("DEBUG")]
 		public void CreateDebugMenu(ToolStripMenuItem parent)

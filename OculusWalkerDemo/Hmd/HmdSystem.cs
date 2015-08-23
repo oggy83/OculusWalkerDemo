@@ -8,76 +8,89 @@ using System.Diagnostics;
 
 namespace Oggy
 {
-	public class HmdSystem
-	{
-		#region static
+    public class HmdSystem
+    {
+        #region static
 
-		private static HmdSystem s_singleton = null;
+        private static HmdSystem s_singleton = null;
 
-		static public void Initialize()
-		{
-			s_singleton = new HmdSystem();
-		}
+        static public void Initialize()
+        {
+            s_singleton = new HmdSystem();
+        }
 
-		static public void Dispose()
-		{
-			if (s_singleton.m_hmdHandle != null)
-			{
-				LibOVR.ovrHmd_Destroy(s_singleton.m_hmdHandle.Ptr);
-			}
-			LibOVR.ovr_Shutdown();
-		}
+        static public void Dispose()
+        {
+            if (s_singleton.m_hmdDevice != null)
+            {
+                s_singleton.m_hmdDevice.Dispose();
+                s_singleton.m_hmdDevice = null;
+            }
+            LibOVR.ovr_Shutdown();
+        }
 
-		static public HmdSystem GetInstance()
-		{
-			return s_singleton;
-		}
+        static public HmdSystem GetInstance()
+        {
+            return s_singleton;
+        }
 
-		#endregion // static
+        #endregion // static
 
-		private HmdSystem()
-		{
+        private HmdSystem()
+        {
             //var initParams = new LibOVR.ovrInitParams;
             //initParams.Flags = 0;
 
-			if (!LibOVR.ovr_Initialize(IntPtr.Zero))
-			{
-				MessageBox.Show("Failed to initialize LibOVR.");
-				return;
-			}
+            if (LibOVR.ovr_Initialize(IntPtr.Zero) != 0)
+            {
+                MessageBox.Show("Failed to initialize LibOVR.");
+                return;
+            }
 
-			string version = CRef<string>.FromCharPtr(LibOVR.ovr_GetVersionString()).Value;
-			int detect = LibOVR.ovrHmd_Detect();
+            string version = CRef<string>.FromCharPtr(LibOVR.ovr_GetVersionString()).Value;
+            int detect = LibOVR.ovrHmd_Detect();
 
-			Debug.Print("[HMD] sdk version = {0}", version);
-			Debug.Print("[HMD] detected device count = {0}", detect);
-		}
+            Debug.Print("[HMD] sdk version = {0}", version);
+            Debug.Print("[HMD] detected device count = {0}", detect);
+        }
 
-		/// <summary>
-		/// get the first detected hmd device
-		/// </summary>
-		/// <returns>
-		/// detected hmd
-		/// </returns>
-		public HmdDevice DetectHmd()
-		{
-			var hmd = CRef<LibOVR.ovrHmdDesc>.FromPtr(LibOVR.ovrHmd_Create(0));
-			if (hmd == null)
-			{
-				MessageBox.Show("Oculus Rift not detected.");
-				return null;
-			}
-			else
-			{
-				m_hmdHandle = hmd;
-				return new HmdDevice(hmd);
-			}
-		}
+        /// <summary>
+        /// get the first detected hmd device
+        /// </summary>
+        /// <returns>
+        /// detected hmd
+        /// </returns>
+        public HmdDevice DetectHmd()
+        {
+            IntPtr hmdPtr;
+            if (LibOVR.ovrHmd_Create(0, out hmdPtr) != 0)
+            {
+                MessageBox.Show("Oculus Rift not detected.");
+                return null;
+            }
 
-		#region private members
+            var hmd = CRef<LibOVR.ovrHmdDesc>.FromPtr(hmdPtr);
+            if (hmd == null)
+            {
+                return null;
+            }
+            else
+            {
+                m_hmdDevice = new HmdDevice(hmd);
+                return m_hmdDevice;
+            }
+        }
 
-		private CRef<LibOVR.ovrHmdDesc> m_hmdHandle = null;
+        public HmdDevice GetDevice()
+        {
+            Debug.Assert(m_hmdDevice != null, "no hmd device is detected");
+            return m_hmdDevice;
+        }
 
-		#endregion // private members
-	}
+        #region private members
+
+        private HmdDevice m_hmdDevice = null;
+
+        #endregion // private members
+    }
 }

@@ -49,8 +49,23 @@ namespace Oggy
 		[StructLayout(LayoutKind.Sequential)]
 		public struct ovrMatrix4f
 		{
-			[MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)]
-			public float[] M;
+            public float M11;
+            public float M12;
+            public float M13;
+            public float M14;
+            public float M21;
+            public float M22;
+            public float M23;
+            public float M24;
+            public float M31;
+            public float M32;
+            public float M33;
+            public float M34;
+            public float M41;
+            public float M42;
+            public float M43;
+            public float M44;
+
 		}
 
 		[StructLayout(LayoutKind.Sequential)]
@@ -75,10 +90,10 @@ namespace Oggy
 		[StructLayout(LayoutKind.Sequential)]
 		public struct ovrFovPort
 		{
-			float UpTan;
-			float DownTan;
-			float LeftTan;
-			float RightTan;
+			public float UpTan;
+			public float DownTan;
+			public float LeftTan;
+			public float RightTan;
 		}
 
 		public enum ovrHmdType
@@ -87,24 +102,15 @@ namespace Oggy
 			DK1 = 3,
 			DKHD = 4,
 			DK2 = 6,
-            BlackStar = 7,
             CB = 8,
 			Other = 9,
 		}
 
 		public enum ovrHmdCaps
 		{
-			Present = 0x0001,
-			Available = 0x0002,
-			Captured = 0x0004,
-			ExtendDesktop = 0x0008,
             DebugDevice = 0x0010,
-			NoMirrorToWindow = 0x2000,
-			DisplayOff = 0x0040,
 			LowPersistence = 0x0080,
 			DynamicPrediction = 0x0200,
-			DirectPentile = 0x0400,
-			NoVSync = 0x1000,
 		}
 
 		public enum ovrTrackingCaps
@@ -113,21 +119,6 @@ namespace Oggy
 			MagYawCorrection = 0x0020,
 			Position = 0x0040,
 			Idle = 0x0100,
-		}
-
-		public enum ovrDistortionCaps
-		{
-			TimeWarp = 0x02,
-			Vigette = 0x08,
-			NoRestore = 0x10,
-			FlipInput = 0x20,
-			SRGB = 0x40,
-			Overdrive = 0x80,
-			HqDistortion = 0x100,
-			LinuxDevFullscreen = 0x200,
-			Computeshader = 0x400,
-            TimewarpJitDelay = 0x1000,
-			ProfileNoSpinWaits = 0x10000,
 		}
 
 		public enum ovrEyeType
@@ -142,7 +133,8 @@ namespace Oggy
 		public struct ovrHmdDesc
 		{
 			public IntPtr Handle;
-			ovrHmdType Type;
+			public ovrHmdType Type;
+            private int _Padding;
 
 			[MarshalAs(UnmanagedType.LPStr)]
 			public string ProductName;
@@ -165,7 +157,6 @@ namespace Oggy
 
 			public uint HmdCaps;
 			public uint TrackingCaps;
-			public uint DistortionCaps;
 
 			[MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)]
 			public ovrFovPort[] DefaultEyeFov;
@@ -174,11 +165,6 @@ namespace Oggy
 			[MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)]
 			public ovrEyeType[] EyeRenderOrder;
 			public ovrSizei Resolution;
-			public ovrVector2i WindowPos;
-
-			[MarshalAs(UnmanagedType.LPStr)]
-			public string DisplayDeviceName;
-			int DisplayId;
 		}
 
 		public enum ovrStatusBits
@@ -208,24 +194,17 @@ namespace Oggy
 			public ovrPosef LeveledCameraPose;
 			public ovrSensorData RawSensorData;
 			public uint StatusFlags;
-			public double LastVisionProcessingTime;
-			public double LastVisionFrameLatency;
 			public uint LastCameraFrameCounter;
+            private int _Padding;
 		}
 
 		[StructLayout(LayoutKind.Sequential)]
 		public struct ovrFrameTiming
 		{
-			public float DeltaSeconds;
-            private float _Padding;
-			public double ThisFrameSeconds;
-			public double TimewarpPointSeconds;
-			public double NextFrameSeconds;
-			public double ScanoutMidpointseconds;
-			//[MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)]
-			//public double[] EyeScanoutSeconds;
-			public double EyeScanoutSeconds_0;
-			public double EyeScanoutSeconds_1;
+            public double DisplayMidpointSeconds;
+            public double FrameIntervalSeconds;
+            public uint AppFrameIndex;
+            public uint DisplayFrameIndex;
 		}
 
 		[StructLayout(LayoutKind.Sequential)]
@@ -250,43 +229,18 @@ namespace Oggy
 			Count,
 		}
 
-		[StructLayout(LayoutKind.Sequential, Pack=8)]
-		public struct ovrRenderAPIConfigHeader
-		{
-			public ovrRenderAPIType API;
-			public ovrSizei BackBufferSize;
-			public int Multisample;
-		}
-
-		[StructLayout(LayoutKind.Sequential, Pack = 8)]
-		public struct ovrRenderAPIConfig
-		{
-			public ovrRenderAPIConfigHeader Header;
-
-			// DirectX11 config params
-			public IntPtr Device;
-			public IntPtr DeviceContext;
-			public IntPtr BackBufferRT;
-			public IntPtr BackBufferUAV;
-			public IntPtr SwapChain;
-			IntPtr _PAD0_;
-			IntPtr _PAD1_;
-			IntPtr _PAD2_;
-		}
-
 		[StructLayout(LayoutKind.Sequential, Pack = 8)]
 		public struct ovrTextureHeader
 		{
 			public ovrRenderAPIType API;
 			public ovrSizei TextureSize;
-			public ovrRecti RenderViewport;
-			uint _PAD0_;
 		}
 
 		[StructLayout(LayoutKind.Sequential, Pack = 8)]
 		public struct ovrTexture
 		{
 			public ovrTextureHeader Header;
+            uint _Padding;
 
 			// DirectX11 config params
 			public IntPtr Texture;
@@ -297,14 +251,6 @@ namespace Oggy
 			IntPtr _PAD3_;
 			IntPtr _PAD4_;
 			IntPtr _PAD5_;
-		}
-
-		[StructLayout(LayoutKind.Sequential)]
-		public struct ovrHSWDisplayState
-		{
-			public bool Displayed;
-			public double StartTime;
-			public double DismissibleTime;
 		}
 
         public enum ovrInitFlags
@@ -329,16 +275,99 @@ namespace Oggy
             public uint RequestedMinorVersion;
             public IntPtr LogCallback;
             public uint ConnectionTimeoutMS;
+            private uint _Padding;
         }
 
-        [DllImport("libovr.dll")]
-        public extern static bool ovr_InitializeRenderingShimVersion(int requestedMinorVersion);
+        public enum ovrProjectionModifier
+        {
+            /// <summary>
+            /// default setting
+            /// </summary>
+            /// <remarks>
+            /// * Left-handed
+            /// * Near depth values stored in the depth buffer are smaller than far depth values
+            /// * Both near and far are explicitly defined
+            /// * With a clipping range that is (0 to w)
+            /// </remarks>
+            None = 0x00,
 
-		[DllImport("libovr.dll")]
-		public extern static bool ovr_InitializeRenderingShim();
+            RightHanded = 0x01,
+            FarLessThanNear = 0x02,
+            FarClipAtInfinity = 0x04,
+            ClipRangeOpenGL = 0x08,
+        }
 
+        [StructLayout(LayoutKind.Sequential)]
+        public struct ovrSwapTextureSet
+        {
+            /// <summary>
+            /// pointer of array of ovrTextures
+            /// </summary>
+            public IntPtr Textures;
+
+            public int TextureCount;
+
+            /// <summary>
+            /// index specifies which of the Textures will be used by ovrHmd_SubmitFrame()
+            /// </summary>
+            public int CurrentIndex;
+        }
+
+        public enum ovrLayerType
+        {
+            Disabled = 0,
+            EyeFov = 1,
+            EyeFovDepth = 2,
+            QuadInWorld = 3,
+            QuadHeadLocked = 4,
+            Direct = 6,
+        }
+
+        public enum ovrLayerFlags
+        {
+            HighQuality = 1,
+            TextureOriginAtBottomLeft = 2
+        }
+
+        [StructLayout(LayoutKind.Sequential)]
+        public struct ovrLayerHeader
+        {
+            public ovrLayerType Type;
+            public uint Flags;
+        }
+
+        [StructLayout(LayoutKind.Sequential)]
+        public struct ovrLayerEyeFov
+        {
+            public ovrLayerHeader Header;
+
+            /// <summary>
+            /// pointer of ovrSwapTextureSet for left eye
+            /// </summary>
+            public IntPtr ColorTexture_Left;
+
+            /// <summary>
+            /// pointer of ovrSwapTextureSet for right eye
+            /// </summary>
+            public IntPtr ColorTexture_Right;
+
+            public ovrRecti Viewport_Left;
+            public ovrRecti Viewport_Right;
+            public ovrFovPort Fov_Left;
+            public ovrFovPort Fov_Right;
+            public ovrPosef RnderPose_Left;
+            public ovrPosef RnderPose_Right;
+        }
+
+        public enum ovrPerHudMode
+        {
+            Off = 0,
+            LatencyTiming = 1,
+            RenderTiming = 2,
+        }
+ 
 		[DllImport("libovr.dll")]
-		public extern static bool ovr_Initialize(IntPtr initParams);
+		public extern static int ovr_Initialize(IntPtr initParams);
 
 		[DllImport("libovr.dll")]
 		public extern static void ovr_Shutdown();
@@ -350,19 +379,19 @@ namespace Oggy
 		public extern static int ovrHmd_Detect();
 
 		[DllImport("libovr.dll")]
-		public extern static IntPtr ovrHmd_Create(int index);
+		public extern static int ovrHmd_Create(int index, out IntPtr outHmd);
 
 		[DllImport("libovr.dll")]
 		public extern static void ovrHmd_Destroy(IntPtr hmd);
 
 		[DllImport("libovr.dll")]
-		public extern static IntPtr ovrHmd_CreateDebug(ovrHmdType type);
+		public extern static int ovrHmd_CreateDebug(ovrHmdType type, out IntPtr outHmd);
 
-		[DllImport("libovr.dll")]
-		public extern static IntPtr ovrHmd_GetLastError(IntPtr hmd);
+        // change
+		//[DllImport("libovr.dll")]
+		//public extern static IntPtr ovrHmd_GetLastError(IntPtr hmd);
 
-		[DllImport("libovr.dll")]
-		public extern static bool ovrHmd_AttachToWindow(IntPtr hmd, IntPtr window, IntPtr destMirrorRect, IntPtr sourceRenderTargetRect);
+        //Improved error reporting, including adding the ovrResult type. Some API functions were changed to return ovrResult. ovrHmd_GetLastError was replaced with ovr_GetLastErrorInfo.
 
 		[DllImport("libovr.dll")]
 		public extern static uint ovrHmd_GetEnabledCaps(IntPtr hmd);
@@ -371,7 +400,7 @@ namespace Oggy
 		public extern static void ovrHmd_SetEnabledCaps(IntPtr hmd, uint hmdCaps);
 
 		[DllImport("libovr.dll")]
-		public extern static bool ovrHmd_ConfigureTracking(IntPtr hmd, uint supportedtrackingCaps, uint requirdTrackingCaps);
+		public extern static int ovrHmd_ConfigureTracking(IntPtr hmd, uint supportedtrackingCaps, uint requirdTrackingCaps);
 
 		[DllImport("libovr.dll")]
 		public extern static void ovrHmd_RecenterPose(IntPtr hmd);
@@ -382,25 +411,35 @@ namespace Oggy
 		[DllImport("libovr.dll")]
 		public extern static ovrSizei ovrHmd_GetFovTextureSize(IntPtr hmd, ovrEyeType eye, ovrFovPort fov, float pixelsPerDisplayPixel);
 
-		[DllImport("libovr.dll")]
-		public extern static bool ovrHmd_ConfigureRendering(IntPtr hmd, IntPtr apiConfig, uint distortionCaps, ovrFovPort[] eyeFovIn, [Out] ovrEyeRenderDesc[] eyeRenderDescOut);
+        [DllImport("libovr.dll")]
+        public extern static int ovrHmd_CreateSwapTextureSetD3D11(IntPtr hmd, IntPtr device, IntPtr desc, out IntPtr outTextureSet);
+
+        [DllImport("libovr.dll")]
+        public extern static int ovrHmd_DestroySwapTextureSet(IntPtr hmd, IntPtr textureSet);
+
+        [DllImport("libovr.dll")]
+        public extern static int ovrHmd_CreateMirrorTextureD3D11(IntPtr hmd, IntPtr device, IntPtr desc, out IntPtr outMirrorTexture);
+
+        [DllImport("libovr.dll")]
+        public extern static int ovrHmd_DestroyMirrorTexture(IntPtr hmd, IntPtr mirrorTexture);
+
+        [DllImport("libovr.dll")]
+        public extern static ovrEyeRenderDesc ovrHmd_GetRenderDesc(IntPtr hmd, ovrEyeType eyeType, ovrFovPort fov);
+
+        [DllImport("libovr.dll")]
+        public extern static int ovrHmd_SubmitFrame(IntPtr hmd, uint frameIndex, IntPtr viewScaleDesc, IntPtr layerPtrList, uint layerCount);
 
 		[DllImport("libovr.dll")]
-		public extern static ovrFrameTiming ovrHmd_BeginFrame(IntPtr hmd, uint frameIndex);
+		public extern static ovrFrameTiming ovrHmd_GetFrameTiming(IntPtr hmd, uint frameIndex);
 
-		[DllImport("libovr.dll")]
-		public extern static void ovrHmd_EndFrame(IntPtr hmd, ovrPosef[] renderPose, ovrTexture[] eyeTexture);
+        [DllImport("libovr.dll")]
+        public extern static bool ovrHmd_SetInt(IntPtr hmd, string propertyName, int value);
 
-		[DllImport("libovr.dll")]
-		public extern static void ovrHmd_GetEyePoses(IntPtr hmd, uint frameIndex, ovrVector3f[] hmdToEyeViewOffset, [Out] ovrPosef[] outEyePoses, [Out] IntPtr outHmdTrackingState);
+        [DllImport("libovr.dll")]
+        public extern static ovrMatrix4f ovrMatrix4f_Projection(ovrFovPort fov, float znear, float zfar, uint projectionModFlags);
 
-		[DllImport("libovr.dll")]
-		public extern static ovrPosef ovrHmd_GetHmdPosePerEye(IntPtr hmd, ovrEyeType eye);
+        [DllImport("libovr.dll")]
+        public extern static void ovr_CalcEyePoses(ovrPosef headPose, ovrVector3f[] hmdToEyeViewOffset, [Out] ovrPosef[] outEyePoses);
 
-		[DllImport("libovr.dll")]
-		public extern static void ovrHmd_GetHSWDisplayState(IntPtr hmd, [Out] IntPtr hasWarningState);
-
-		[DllImport("libovr.dll")]
-		public extern static bool ovrHmd_DismissHSWDisplay(IntPtr hmd);
 	}
 }

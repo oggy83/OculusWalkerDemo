@@ -69,23 +69,13 @@ namespace Oggy
 			var form = new MainForm();
 			form.ClientSize = resolution;
 
-            bool isEnableWindowMode = false;
-            if (hmd == null)
-            {
-                isEnableWindowMode = true;
-            }
-            else
-            {
-                isEnableWindowMode = hmd.IsEnableWindowMode;
-            }
-
 			// Create Device & SwapChain
 			var desc = new SwapChainDescription()
 			{
 				BufferCount = 2,
 				ModeDescription =
 					new ModeDescription(resolution.Width, resolution.Height, new Rational(0, 1), Format.R8G8B8A8_UNorm),
-				IsWindowed = isEnableWindowMode,
+				IsWindowed = true,
 				OutputHandle = form.GetRenderTarget().Handle,
 				SampleDescription = new SampleDescription(1, 0),
 				SwapEffect = SwapEffect.Sequential,

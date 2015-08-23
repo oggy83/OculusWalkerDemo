@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Drawing;
 using System.Threading.Tasks;
 using SharpDX;
 using SharpDX.Windows;
@@ -24,14 +25,29 @@ namespace Oggy
 			m_context = context;
 			m_hmd = hmd;
 
-			// Create render targets for each HMD eye
-			var sizeArray = hmd.EyeResolutions;
-			var resNames = new string[] { "OVRLeftEye", "OVRRightEye" };
-			for (int index = 0; index < 2; ++index)
-			{
-				var renderTarget = RenderTarget.CreateRenderTarget(m_d3d, resNames[index], sizeArray[index].Width, sizeArray[index].Height);
-				m_repository.AddResource(renderTarget);
-			}
+            // Create render targets for each HMD eye
+            m_textureSets = new HmdSwapTextureSet[2];
+            var eyeResolution = hmd.EyeResolution;
+            var resNames = new string[] { "OVRLeftEye", "OVRRightEye" };
+            for (int index = 0; index < 2; ++index)
+            {
+                var textureSet = m_hmd.CreateSwapTextureSet(d3d.Device, eyeResolution.Width, eyeResolution.Height);
+                m_textureSets[index] = textureSet;
+
+                var renderTargetList = RenderTarget.FromSwapTextureSet(m_d3d, resNames[index], textureSet);
+                foreach (var renderTarget in renderTargetList)
+                {
+                    m_repository.AddResource(renderTarget);
+                }
+            }
+
+            // Create temporaly render target
+            var tmpRt = RenderTarget.CreateRenderTarget(d3d, "Temp", eyeResolution.Width, eyeResolution.Height);
+            m_repository.AddResource(tmpRt);
+
+            // Create texture for Mirroring
+            Size defaultRenderTargetSize = m_repository.GetDefaultRenderTarget().Resolution;
+            m_mirrorTexture = m_hmd.CreateMirrorTexture(m_d3d.Device, defaultRenderTargetSize.Width, defaultRenderTargetSize.Height);
 
 			m_commandListTable = new List<CommandList>();
 		}
@@ -43,19 +59,28 @@ namespace Oggy
 				commandList.Dispose();
 			}
 
+            m_mirrorTexture.Dispose();
+
+            foreach (var textureSet in m_textureSets)
+            {
+                textureSet.Dispose();
+            }
+
 			m_context.Dispose();
 		}
 
 		public RenderTarget StartPass(DrawSystem.WorldData data)
 		{
-			var renderTarget = m_repository.FindResource<RenderTarget>("OVRLeftEye");
+            m_worldData = data;
+            var renderTarget = m_repository.FindResource<RenderTarget>("Temp");
 			var eyeOffset = m_hmd.GetEyePoses();
+            var proj = _CalcProjection(1, m_worldData.NearClip, m_worldData.FarClip);
 
 			m_context.SetWorldParams(renderTarget, data);
 			m_hmd.BeginScene();
 
 			m_context.UpdateWorldParams(m_d3d.Device.ImmediateContext, data);
-			m_context.UpdateEyeParams(m_d3d.Device.ImmediateContext, renderTarget, eyeOffset[1]);// set right eye settings
+            m_context.UpdateEyeParams(m_d3d.Device.ImmediateContext, renderTarget, eyeOffset[1], proj);// set right eye settings
 			m_context.ClearRenderTarget(renderTarget);
 			m_isContextDirty = true;
 
@@ -64,44 +89,55 @@ namespace Oggy
 
 		public void EndPass()
 		{
-			var renderTargets = new[] { m_repository.FindResource<RenderTarget>("OVRLeftEye"), m_repository.FindResource<RenderTarget>("OVRRightEye") };
-			var eyeOffset = m_hmd.GetEyePoses();
+            int texIndex = m_textureSets[0].CurrentIndex;
+            var renderTargets = new[] { m_repository.FindResource<RenderTarget>("OVRLeftEye" + texIndex), m_repository.FindResource<RenderTarget>("OVRRightEye" + texIndex) };
+            var tmpRenderTarget = m_repository.FindResource<RenderTarget>("Temp");
+            var eyeOffset = m_hmd.GetEyePoses();
+            var proj = _CalcProjection(0, m_worldData.NearClip, m_worldData.FarClip);
 
-			if (m_isContextDirty)
-			{
-				var prevCommandList = m_context.FinishCommandList();
-				m_commandListTable.Add(prevCommandList);
-				m_isContextDirty = false;
-			}
+            if (m_isContextDirty)
+            {
+                var prevCommandList = m_context.FinishCommandList();
+                m_commandListTable.Add(prevCommandList);
+                m_isContextDirty = false;
+            }
 
-			// render right eye image to left eye buffer
-			foreach (var commandList in m_commandListTable)
-			{
-				m_d3d.Device.ImmediateContext.ExecuteCommandList(commandList, true);
-			}
+            // render right eye image to temp buffer
+            foreach (var commandList in m_commandListTable)
+            {
+                m_d3d.Device.ImmediateContext.ExecuteCommandList(commandList, true);
+            }
 
-			// copy left eye buffer to right eye buffer
-			m_d3d.Device.ImmediateContext.CopyResource(renderTargets[0].TargetTexture, renderTargets[1].TargetTexture);
+            // copy temp buffer to right eye buffer
+            m_d3d.Device.ImmediateContext.CopyResource(tmpRenderTarget.TargetTexture, renderTargets[1].TargetTexture);
 
-			// set left eye settings
-			m_context.UpdateEyeParams(m_d3d.Device.ImmediateContext, renderTargets[0], eyeOffset[0]);
+            // set left eye settings
+            m_context.UpdateEyeParams(m_d3d.Device.ImmediateContext, renderTargets[0], eyeOffset[0], proj);
 
-			// render left eye image to left eye buffer
-			foreach (var commandList in m_commandListTable)
-			{
-				m_d3d.Device.ImmediateContext.ExecuteCommandList(commandList, true);
-			}
+            // render left eye image to temp buffer
+            foreach (var commandList in m_commandListTable)
+            {
+                m_d3d.Device.ImmediateContext.ExecuteCommandList(commandList, true);
+            }
 
-			var leftEyeRT = m_repository.FindResource<RenderTarget>("OVRLeftEye");
-			var rightEyeRT = m_repository.FindResource<RenderTarget>("OVRRightEye");
-			m_hmd.EndScene(leftEyeRT, rightEyeRT);
+            // copy temp buffer to left eye buffer
+            m_d3d.Device.ImmediateContext.CopyResource(tmpRenderTarget.TargetTexture, renderTargets[0].TargetTexture);
 
-			// delete command list
-			foreach (var commandList in m_commandListTable)
-			{
-				commandList.Dispose();
-			}
-			m_commandListTable.Clear();
+            m_hmd.EndScene(m_textureSets[0], m_textureSets[1]);
+
+            // delete command list
+            foreach (var commandList in m_commandListTable)
+            {
+                commandList.Dispose();
+            }
+            m_commandListTable.Clear();
+
+            // mirroring
+            var defaultRenderTarget = m_repository.GetDefaultRenderTarget();
+            m_d3d.Device.ImmediateContext.CopyResource(m_mirrorTexture.GetResource(), defaultRenderTarget.TargetTexture);
+
+            int syncInterval = 0;// 0 => immediately return, 1 => vsync
+            m_d3d.SwapChain.Present(syncInterval, PresentFlags.None);
 		}
 
         public void DrawModel(Matrix worldTrans, Color4 color, DrawSystem.MeshData mesh, DrawSystem.TextureData tex, DrawSystem.RenderMode renderMode, Matrix[] boneMatrices)
@@ -165,7 +201,40 @@ namespace Oggy
 		private HmdDevice m_hmd = null;
 		private List<CommandList> m_commandListTable = null;
 		private bool m_isContextDirty = false;
+        private DrawSystem.WorldData m_worldData;
+        private HmdSwapTextureSet[] m_textureSets = null;
+        private HmdMirrorTexture m_mirrorTexture = null;
 
 		#endregion // private members
+
+        #region private methods
+
+        private Matrix _CalcProjection(int eyeIndex, float nearClip, float farClip)
+        {
+            var fov = m_hmd.GetEyeFovs()[eyeIndex];
+            uint flag = (uint)LibOVR.ovrProjectionModifier.None;
+
+            LibOVR.ovrMatrix4f ovrProj = LibOVR.ovrMatrix4f_Projection(fov, nearClip, farClip, flag);
+            Matrix tmp = new Matrix();
+            tmp.M11 = ovrProj.M11;
+            tmp.M12 = ovrProj.M21;
+            tmp.M13 = ovrProj.M31;
+            tmp.M14 = ovrProj.M41;
+            tmp.M21 = ovrProj.M12;
+            tmp.M22 = ovrProj.M22;
+            tmp.M23 = ovrProj.M32;
+            tmp.M24 = ovrProj.M42;
+            tmp.M31 = ovrProj.M13;
+            tmp.M32 = ovrProj.M23;
+            tmp.M33 = ovrProj.M33;
+            tmp.M34 = ovrProj.M43;
+            tmp.M41 = ovrProj.M14;
+            tmp.M42 = ovrProj.M24;
+            tmp.M43 = ovrProj.M34;
+            tmp.M44 = ovrProj.M44;
+            return tmp;
+        }
+
+        #endregion // private methods
 	}
 }
