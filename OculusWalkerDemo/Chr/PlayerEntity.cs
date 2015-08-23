@@ -44,7 +44,8 @@ namespace Oggy
                 var behaviorC = new ChrBehaviorComponent();
                 AddComponent(behaviorC);
 
-				var inputC = new PlayerInputComponent();
+				//var inputC = new GodViewInputComponent();
+                var inputC = new FpsInputComponent();
 				AddComponent(inputC);
 
 				var modelC = new ModelComponent();

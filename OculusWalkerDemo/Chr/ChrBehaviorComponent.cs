@@ -20,19 +20,28 @@ namespace Oggy
         public ChrBehaviorComponent()
 		: base(GameEntityComponent.UpdateLines.Behavior)
 		{
-            m_reqMoveDir = Vector3.Zero;
+            m_reqMoving = Vector3.Zero;
             m_lastAngleY = 0;
             m_movingTime = 0;
 		}
 
         /// <summary>
+        /// set position for moving for next update
+        /// </summary>
+        /// <param name="move">translation vector</param>
+        /// <remarks>the length of move represents speed, and it must be set to between 0.0 and 1.0.</remarks>
+        public void RequestMove(Vector3 move)
+        {
+            m_reqMoving = move;
+        }
+
+        /// <summary>
         /// set bothe of direction and speed for moving for next update
         /// </summary>
-        /// <param name="moveDir">moving vector</param>
-        /// <remarks>the length of moveDir represents speed, and it must be set to between 0.0 and 1.0.</remarks>
-        public void RequestMove(Vector3 moveDir)
+        /// <param name="moveDir">rotate vector</param>
+        public void RequestTurn(Vector3 dir)
         {
-            m_reqMoveDir = moveDir;
+            m_reqFowardDir = dir;
         }
 
         /// <summary>
@@ -41,9 +50,11 @@ namespace Oggy
 		/// <param name="dT">spend time [sec]</param>
         public override void Update(double dT)
         {
-            float movePower = m_reqMoveDir.Length();
-            Vector3 moveDir = m_reqMoveDir * (float)dT * MoveSpeed;
-            m_reqMoveDir = Vector3.Zero;
+            float movePower = m_reqMoving.Length();
+            Vector3 moveDir = m_reqMoving * (float)dT * MoveSpeed;
+            Vector3 rotDir = m_reqFowardDir;
+            m_reqMoving = Vector3.Zero;
+            m_reqFowardDir = Vector3.Zero;
 
             if (moveDir.IsZero)
             {
@@ -51,25 +62,25 @@ namespace Oggy
                 m_jogHandle.Weight = (float)Math.Max(0.0, m_jogHandle.Weight - dT * 10);
                 m_pauseHandle.Weight = (float)Math.Min(1.0, m_pauseHandle.Weight + dT * 10);
                 m_movingTime = 0;
-                return;
+            }
+            else
+            {
+                // update animation weight
+                m_movingTime += dT;
+
+                float jogWeight = movePower > 0.4f ? (movePower - 0.4f) : 0.0f;
+                float walkWeight = 1 - movePower;
+
+                m_walkHandle.Weight = (float)Math.Min(walkWeight, m_walkHandle.Weight + dT * 3);
+                m_jogHandle.Weight = (float)Math.Min(jogWeight, m_jogHandle.Weight + dT * 3);
+                m_pauseHandle.Weight = (float)Math.Max(0.0, m_pauseHandle.Weight - dT * 3);
+
+                m_walkHandle.Speed = movePower * WalkAnimPlaySpeed;
+                m_jogHandle.Speed = movePower * JogAnimPlaySpeed;
             }
 
-            // update animation weight
-            m_movingTime += dT;
-
-            float jogWeight =  movePower > 0.4f ? (movePower - 0.4f) : 0.0f;
-            float walkWeight = 1 - movePower;
-
-            m_walkHandle.Weight = (float)Math.Min(walkWeight, m_walkHandle.Weight + dT * 3);
-            m_jogHandle.Weight = (float)Math.Min(jogWeight, m_jogHandle.Weight + dT * 3);
-            m_pauseHandle.Weight = (float)Math.Max(0.0, m_pauseHandle.Weight - dT * 3);
-            
-            m_walkHandle.Speed = movePower * WalkAnimPlaySpeed;
-            m_jogHandle.Speed = movePower * JogAnimPlaySpeed;
-
-            
             // update layout transform
-            double angleY = Math.Atan2(moveDir.X, moveDir.Z);
+            double angleY = Math.Atan2(rotDir.X, rotDir.Z);
             angleY = _CalcNextYAngle(dT, angleY);
 
             var translation = Matrix.Translation(m_layoutC.Transform.TranslationVector + moveDir);
@@ -169,7 +180,12 @@ namespace Oggy
         /// <summary>
         /// request for moving
         /// </summary>
-        private Vector3 m_reqMoveDir;
+        private Vector3 m_reqMoving;
+
+        /// <summary>
+        /// request for rotation
+        /// </summary>
+        private Vector3 m_reqFowardDir;
 
         /// <summary>
         /// angle y at last frame

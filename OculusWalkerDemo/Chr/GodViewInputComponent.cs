@@ -16,8 +16,9 @@ namespace Oggy
     /// this class makes commands for behavior stage by input from gamepad or keyboard.
     /// to be specific,
     /// - operates the character move (direction and power)
+    /// - this class cooperates with FixedCamera
     /// </remarks>
-    public class PlayerInputComponent : GameEntityComponent
+    public class GodViewInputComponent : GameEntityComponent
     {
         private const float AngleFactor = 0.50f;
 		private const float PositionFactor = 1.0f;
@@ -27,7 +28,7 @@ namespace Oggy
 		private const float PadAngleFactor = 1.0f;
 		private const float MinimumPadMagnitude = 0.15f;
 
-        public PlayerInputComponent()
+        public GodViewInputComponent()
 		: base(GameEntityComponent.UpdateLines.Input)
 		{
             // nothing
@@ -78,10 +79,12 @@ namespace Oggy
                             float angleY = (float)Math.Atan2(moveDirection.X, moveDirection.Z);
                             v = Vector3.Transform(v, Matrix3x3.RotationY(angleY));
                             m_behaviorC.RequestMove(v);
+                            m_behaviorC.RequestTurn(v);
                         }
                         else
                         {
                             m_behaviorC.RequestMove(Vector3.Zero);
+                            m_behaviorC.RequestTurn(Vector3.Zero);
                         }
 				}
 					break;
@@ -99,10 +102,12 @@ namespace Oggy
                             v = Vector3.Transform(v, Matrix3x3.RotationY(angleY));
                             v = v * magnitude;
                             m_behaviorC.RequestMove(v);
+                            m_behaviorC.RequestTurn(v);
 						}
                         else
                         {
                             m_behaviorC.RequestMove(Vector3.Zero);
+                            m_behaviorC.RequestTurn(Vector3.Zero);
                         }
 					}
 					break;

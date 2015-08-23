@@ -58,9 +58,11 @@
     <Compile Include="Camera\FixedCamera.cs" />
     <Compile Include="Camera\FreeCamera.cs" />
     <Compile Include="Camera\ICamera.cs" />
+    <Compile Include="Camera\FollowEntityCamera.cs" />
+    <Compile Include="Chr\FpsInputComponent.cs" />
     <Compile Include="Chr\ChrSystem.cs" />
     <Compile Include="Chr\ChrBehaviorComponent.cs" />
-    <Compile Include="Chr\PlayerInputComponent.cs" />
+    <Compile Include="Chr\GodViewInputComponent.cs" />
     <Compile Include="Chr\PlayerEntity.cs" />
     <Compile Include="Draw\Debug\DrawDebugCtrl.cs" />
     <Compile Include="Entity\Detail\GameEntityComponentLine.cs" />

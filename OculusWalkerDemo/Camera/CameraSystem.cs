@@ -30,8 +30,8 @@ namespace Oggy
 		}
 
 		public static readonly string FreeCameraName = "free";
-
         public static readonly string FixedCameraName = "fixed";
+        public static readonly string FollowEntityCameraName = "follow entity";
 
 		#endregion // static
 
@@ -65,6 +65,14 @@ namespace Oggy
             }
         }
 
+        public ICamera IngameCamera
+        {
+            get
+            {
+                return m_cameraTable[FollowEntityCameraName];
+            }
+        }
+
 		#endregion // properties
 
 
@@ -75,6 +83,7 @@ namespace Oggy
 			// register system camera
 			RegisterCamera(FreeCameraName, new FreeCamera());
             RegisterCamera(FixedCameraName, new FixedCamera());
+            RegisterCamera(FollowEntityCameraName, new FollowEntityCamera());
 			ActivateCamera(FreeCameraName);
         }
 
@@ -145,16 +154,6 @@ namespace Oggy
 			return result;
 		}
 
-        /*
-		public Matrix GetProjection()
-		{
-			// todo : calc fom RenderTarget
-            Single fov = (Single)Math.PI / 4;
-			Single aspect = 4.0f / 3;
-			return Matrix.PerspectiveFovLH(fov, aspect, 0.1f, 100.0f);
-		}
-        */
-
 		[Conditional("DEBUG")]
 		public void CreateDebugMenu(ToolStripMenuItem parent)
 		{
@@ -165,9 +164,11 @@ namespace Oggy
 			item1.Click += (sender, e) => { ActivateCamera(FreeCameraName); };
             var item2 = new ToolStripRadioButtonMenuItem("fixed camera");
             item2.Click += (sender, e) => { ActivateCamera(FixedCameraName); };
-            menuItem.DropDownItems.AddRange(new ToolStripItem[] { item1, item2 });
+            var item3 = new ToolStripRadioButtonMenuItem("follow entity camera");
+            item3.Click += (sender, e) => { ActivateCamera(FollowEntityCameraName); };
+            menuItem.DropDownItems.AddRange(new ToolStripItem[] { item1, item2, item3 });
 
-			item2.Checked = true;
+			item3.Checked = true;
 		}
 
 		#region private members
