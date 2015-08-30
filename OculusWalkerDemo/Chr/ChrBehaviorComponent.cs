@@ -20,8 +20,9 @@ namespace Oggy
         public ChrBehaviorComponent()
 		: base(GameEntityComponent.UpdateLines.Behavior)
 		{
-            m_reqMoving = Vector3.Zero;
-            m_lastAngleY = 0;
+            m_reqMove = Vector3.Zero;
+            m_reqMoveTo = Vector3.Zero;
+            m_reqForwardDir = Vector3.Zero;
             m_movingTime = 0;
 		}
 
@@ -32,16 +33,23 @@ namespace Oggy
         /// <remarks>the length of move represents speed, and it must be set to between 0.0 and 1.0.</remarks>
         public void RequestMove(Vector3 move)
         {
-            m_reqMoving = move;
+            m_reqMove = move;
+			m_reqForwardDir = move;
+			m_isTurning = true;
+			m_isMoving = true;
         }
 
-        /// <summary>
-        /// set bothe of direction and speed for moving for next update
-        /// </summary>
-        /// <param name="moveDir">rotate vector</param>
+        public void RequestMoveTo(Vector3 pos)
+        {
+			m_reqMoveTo = pos;
+			m_reqMove = Vector3.Zero;
+			m_isMoving = true;
+        }
+
         public void RequestTurn(Vector3 dir)
         {
-            m_reqFowardDir = dir;
+            m_reqForwardDir = dir;
+            m_isTurning = true;
         }
 
         /// <summary>
@@ -50,49 +58,76 @@ namespace Oggy
 		/// <param name="dT">spend time [sec]</param>
         public override void Update(double dT)
         {
-            float movePower = m_reqMoving.Length();
-            Vector3 moveDir = m_reqMoving * (float)dT * MoveSpeed;
-            Vector3 rotDir = m_reqFowardDir;
-            m_reqMoving = Vector3.Zero;
-            m_reqFowardDir = Vector3.Zero;
+			Vector3 moveDir = Vector3.Zero;
+			if (m_isMoving)
+			{
+				float movePower = 1;
+				if (!m_reqMove.IsZero)
+				{
+					// move relatively
+					movePower = m_reqMove.Length();
+					moveDir = m_reqMove * (float)dT * MoveSpeed;
 
-            if (moveDir.IsZero)
+					m_reqMove = Vector3.Zero;
+					m_isMoving = false;
+				}
+				else if (!m_reqMoveTo.IsZero)
+				{
+					Vector3 diffVec = m_reqMoveTo - m_layoutC.Transform.TranslationVector;
+					movePower = 1;
+
+					double requestSpeed = diffVec.Length();
+					if (requestSpeed <= 1E-3)
+					{
+						m_reqMoveTo = Vector3.Zero;
+						m_isMoving = false;
+					}
+
+					double speed = Math.Min(requestSpeed, MoveSpeed * dT);
+					diffVec.Normalize();
+					moveDir = diffVec * (float)speed;
+				}
+
+				// update animation weight
+				m_movingTime += dT;
+
+				float jogWeight = movePower > 0.4f ? (movePower - 0.4f) : 0.0f;
+				float walkWeight = 1 - movePower;
+
+				m_walkHandle.Weight = (float)Math.Min(walkWeight, m_walkHandle.Weight + dT * 3);
+				m_jogHandle.Weight = (float)Math.Min(jogWeight, m_jogHandle.Weight + dT * 3);
+				m_pauseHandle.Weight = (float)Math.Max(0.0, m_pauseHandle.Weight - dT * 3);
+
+				m_walkHandle.Speed = movePower * WalkAnimPlaySpeed;
+				m_jogHandle.Speed = movePower * JogAnimPlaySpeed;
+			}
+			else
+			{
+				// stop motion
+				m_walkHandle.Weight = (float)Math.Max(0.0, m_walkHandle.Weight - dT * 10);
+				m_jogHandle.Weight = (float)Math.Max(0.0, m_jogHandle.Weight - dT * 10);
+				m_pauseHandle.Weight = (float)Math.Min(1.0, m_pauseHandle.Weight + dT * 10);
+				m_movingTime = 0;
+			}
+
+            // update turning
+            double angleY = Math.Atan2(m_layoutC.Transform.Forward.X, m_layoutC.Transform.Forward.Z);
+            if (m_isTurning)
             {
-                m_walkHandle.Weight = (float)Math.Max(0.0, m_walkHandle.Weight - dT * 10);
-                m_jogHandle.Weight = (float)Math.Max(0.0, m_jogHandle.Weight - dT * 10);
-                m_pauseHandle.Weight = (float)Math.Min(1.0, m_pauseHandle.Weight + dT * 10);
-                m_movingTime = 0;
-            }
-            else
-            {
-                // update animation weight
-                m_movingTime += dT;
-
-                float jogWeight = movePower > 0.4f ? (movePower - 0.4f) : 0.0f;
-                float walkWeight = 1 - movePower;
-
-                m_walkHandle.Weight = (float)Math.Min(walkWeight, m_walkHandle.Weight + dT * 3);
-                m_jogHandle.Weight = (float)Math.Min(jogWeight, m_jogHandle.Weight + dT * 3);
-                m_pauseHandle.Weight = (float)Math.Max(0.0, m_pauseHandle.Weight - dT * 3);
-
-                m_walkHandle.Speed = movePower * WalkAnimPlaySpeed;
-                m_jogHandle.Speed = movePower * JogAnimPlaySpeed;
+                double goalAngleY = Math.Atan2(m_reqForwardDir.X, m_reqForwardDir.Z);
+                double currentAngleY = angleY;
+                angleY = _CalcNextYAngle(dT, goalAngleY, currentAngleY);
+                if (Math.Abs(goalAngleY - angleY) <= 1E-6)
+                {
+                    m_isTurning = false;
+                    m_reqForwardDir = Vector3.Zero;
+                }
             }
 
             // update layout transform
-            double angleY = Math.Atan2(rotDir.X, rotDir.Z);
-            angleY = _CalcNextYAngle(dT, angleY);
-
             var translation = Matrix.Translation(m_layoutC.Transform.TranslationVector + moveDir);
-            var rotation = Matrix.RotationY((float)angleY);
+            var rotation = Matrix.RotationY((float)(angleY + Math.PI));// forward is z-
             m_layoutC.Transform = rotation * translation;
-
-            // normalize to [0, 2PI]
-            m_lastAngleY = angleY % (2 * Math.PI);
-            if (m_lastAngleY < 0)
-            {
-                m_lastAngleY += 2 * Math.PI;
-            }
         }
 
         public override void OnAddToEntity(GameEntity entity)
@@ -117,55 +152,66 @@ namespace Oggy
             base.OnRemoveFromEntity(entity);
         }
 
+        /// <summary>
+        /// get whether character is idling 
+        /// </summary>
+        public bool IsIdling()
+        {
+            return !m_isMoving && !m_isTurning;
+        }
+
         #region private methods
 
         /// <summary>
         /// calculate a character turn angle
         /// </summary>
         /// <param name="dt">delta time [sec]</param>
-        /// <param name="yAngle">y angle input</param>
+        /// <param name="yAngle">y angle input [-PI, PI]</param>
+        /// <param name="currentAngleY">current y angle</param>
         /// <returns>next y angle [-PI, PI]</returns>
         /// <remarks>
         /// character turns to right or left side so that the angle of turning is shortening.
         /// and the angle is clampled with maxTurnAngle.
         /// </remarks>
-        private double _CalcNextYAngle(double dT, double angleY)
+        private static double _CalcNextYAngle(double dT, double inputAngleY, double currentAngleY)
         {
-            angleY += Math.PI;// [0, 2PI]
+            double nextAngle = inputAngleY + Math.PI;// [0, 2PI]
+            double lastAngle = currentAngleY + Math.PI;// [0, 2PI]
 
             double maxTurnAngle = MathUtil.PI * 2.0f * dT;
-            if (m_lastAngleY > angleY)
+            if (lastAngle > nextAngle)
             {
-                double turnAngle = angleY - m_lastAngleY;// [-2PI, 0]
+                double turnAngle = nextAngle - lastAngle;// [-2PI, 0]
                 if (turnAngle < -Math.PI)
                 {
                     turnAngle = 2 * Math.PI + turnAngle;// [0, PI]
-                    angleY = m_lastAngleY + Math.Min(turnAngle, maxTurnAngle);
+                    nextAngle = lastAngle + Math.Min(turnAngle, maxTurnAngle);
                 }
                 else
                 {
                     // turnAngle;// [-PI, 0]
-                    angleY = m_lastAngleY + Math.Max(turnAngle, -maxTurnAngle);
+                    nextAngle = lastAngle + Math.Max(turnAngle, -maxTurnAngle);
                 }
 
             }
-            else if (m_lastAngleY < angleY)
+            else if (lastAngle < nextAngle)
             {
-                double turnAngle = angleY - m_lastAngleY;// [0, 2PI]
+                double turnAngle = nextAngle - lastAngle;// [0, 2PI]
                 if (turnAngle > Math.PI)
                 {
                     turnAngle = turnAngle - 2 * Math.PI;// [-PI, 0]
-                    angleY = m_lastAngleY + Math.Max(turnAngle, -maxTurnAngle);
+                    nextAngle = lastAngle + Math.Max(turnAngle, -maxTurnAngle);
                 }
                 else
                 {
                     // turnAngle;// [0, PI]
-                    angleY = m_lastAngleY + Math.Min(turnAngle, maxTurnAngle);
+                    nextAngle = lastAngle + Math.Min(turnAngle, maxTurnAngle);
                 }
 
             }
-    
-            return angleY;
+
+            nextAngle -= Math.PI;// [-PI, PI]
+            return nextAngle;
         }
 
         #endregion // private methods
@@ -178,19 +224,19 @@ namespace Oggy
         private LayoutComponent m_layoutC;
 
         /// <summary>
-        /// request for moving
+        /// request for moving (relatively)
         /// </summary>
-        private Vector3 m_reqMoving;
+        private Vector3 m_reqMove;
 
         /// <summary>
-        /// request for rotation
+        /// request to move to the given position
         /// </summary>
-        private Vector3 m_reqFowardDir;
+        private Vector3 m_reqMoveTo;
 
         /// <summary>
-        /// angle y at last frame
+        /// request to turning to the given direction
         /// </summary>
-        private double m_lastAngleY;
+        private Vector3 m_reqForwardDir;
 
         /// <summary>
         /// animation component
@@ -216,6 +262,10 @@ namespace Oggy
         /// continuous moving time [sec]
         /// </summary>
         private double m_movingTime;
+
+        private bool m_isTurning = false;
+
+        private bool m_isMoving = false;
 
         /// <summary>
         /// scale factor of move speed

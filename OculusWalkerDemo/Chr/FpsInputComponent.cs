@@ -37,14 +37,26 @@ namespace Oggy
         /// <param name="dT">spend time [sec]</param>
         public override void Update(double dT)
         {
+            if (!m_behaviorC.IsIdling())
+            {
+                // wait for end of behavior
+                return;
+            }
+
             var cameraSys = CameraSystem.GetInstance();
             var drawSys = DrawSystem.GetInstance();
 
             // Calc camera 
-            var viewHeadMat = cameraSys.GetCameraData().GetViewMatrix() * drawSys.GetDrawContext().GetHeadMatrix();
+            var viewHeadMat = cameraSys.GetCameraData().GetViewMatrix();
             viewHeadMat.Invert();
+			var position = viewHeadMat.TranslationVector;
+			position.Y = 0;
             var moveDirection = new Vector3(viewHeadMat.Backward.X, 0, viewHeadMat.Backward.Z);
             moveDirection.Normalize();
+			float angleY = (float)Math.Atan2(moveDirection.X, moveDirection.Z);
+			Matrix3x3 localToWorldMat = Matrix3x3.RotationY(angleY);
+
+
 
             var gameSys = GameSystem.GetInstance();
             switch (gameSys.Config.InputDevice)
@@ -73,62 +85,51 @@ namespace Oggy
 
                         if (v.X != 0 || v.Z != 0)
                         {
-                            float angleY = (float)Math.Atan2(moveDirection.X, moveDirection.Z);
-                            v = Vector3.Transform(v, Matrix3x3.RotationY(angleY));
-                            m_behaviorC.RequestMove(v);
-                        }
-                        else
-                        {
-                            m_behaviorC.RequestMove(Vector3.Zero);
+							// @todo
                         }
                     }
                     break;
 
                 case GameConfig.UserInputDevices.Pad:
                     {
+                       
                         IPadInputSource src = InputSystem.GetInstance().Pad;
-
-                        float angleY = (float)Math.Atan2(moveDirection.X, moveDirection.Z);
-                        var thumbDir = src.LeftThumbInput.Direction;
-                        float magnitude = src.LeftThumbInput.NormalizedMagnitude;
-                        if (magnitude >= MinimumPadMagnitude)
+                       
+                        // update move
                         {
-                            var v = new Vector3(thumbDir.X, 0, thumbDir.Y);
-                            v = Vector3.Transform(v, Matrix3x3.RotationY(angleY));
-                            v = v * magnitude;
-                            m_behaviorC.RequestMove(v);
-                        }
-                        else
-                        {
-                            m_behaviorC.RequestMove(Vector3.Zero);
-                        }
-
-                        /*
-                        {
-                            // update angle
-                            var direction = src.RightThumbInput.Direction;
-                            float magnitude = src.RightThumbInput.NormalizedMagnitude;
-                            float hAngle = direction.X * magnitude * PadAngleFactor * dT;
-                            float vAngle = -direction.Y * magnitude * PadAngleFactor * dT;
-
-                            m_angle.X = (m_angle.X + hAngle) % (2 * PI);
-                            m_angle.Y = MathUtil.Clamp(m_angle.Y + vAngle, MinVerticalAngle, MaxVerticalAngle);
-                        }
-
-                        {
-                            // update position
-                            var direction = src.LeftThumbInput.Direction;
+                            var thumbDir = src.LeftThumbInput.Direction;
                             float magnitude = src.LeftThumbInput.NormalizedMagnitude;
-                            if (magnitude != 0.0f)
+                            if (magnitude >= MinimumPadMagnitude)
                             {
-                                isMoving = true;
+                                var v = new Vector3(0, 0, 10);
+                                v = Vector3.Transform(v, localToWorldMat) + position;
+                                m_behaviorC.RequestMoveTo(v);
                             }
-
-                            var v = new Vector4(direction.X, 0, direction.Y, 1);
-                            v = Vector4.Transform(v, Matrix.RotationY(m_angle.X));
-                            m_position -= (MathUtil.ToVector3(v) * magnitude * PadPositionFactor * dT);
                         }
-                        */
+
+                        // update angle
+                        {
+                            var thumbDir = src.RightThumbInput.Direction;
+                            float magnitude = src.RightThumbInput.NormalizedMagnitude;
+                            if (magnitude >= MinimumPadMagnitude )
+                            {
+                                if (thumbDir.X > 0)
+                                {
+                                    var v = new Vector3(1, 0, 0);
+                                    v = Vector3.Transform(v, localToWorldMat);
+                                    m_behaviorC.RequestTurn(v);
+                                    m_lastAngle = v;
+                                }
+                                else if (thumbDir.X < 0)
+                                {
+                                    var v = new Vector3(-1, 0, 0);
+                                    v = Vector3.Transform(v, localToWorldMat);
+                                    m_behaviorC.RequestTurn(v);
+                                    m_lastAngle = v;
+                                }
+                            }
+                        }
+                       
                     }
                     break;
 
@@ -159,6 +160,8 @@ namespace Oggy
         /// behavior component
         /// </summary>
         private ChrBehaviorComponent m_behaviorC;
+
+        private Vector3 m_lastAngle = Vector3.Zero;
 
         #endregion // private members
     }

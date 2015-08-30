@@ -70,27 +70,6 @@ namespace Oggy
                 Layout = Matrix.RotationYawPitchRoll(1.0f, -1.5f, 0.0f) * Matrix.Translation(1.5f, 2.5f, 4.5f)
             });
 
-            // create floor entity
-            var floorModel = DrawModel.CreateFloor(20.0f, 10.0f, Vector4.Zero);
-            m_floor = new ModelEntity(new ModelEntity.InitParam()
-            {
-                Model = floorModel,
-                Texture = new DrawSystem.TextureData
-                {
-                    Resource = drawSys.ResourceRepository.FindResource<TextureView>("floor"),
-                    UvScale = Vector2.One
-                },
-                Layout = Matrix.Identity,
-                Delay = 0.0f,
-                Forward = Vector3.Zero,
-                Color = Color4.White,
-                Speed = 1,
-            });
-            m_drawModelList.Add(floorModel);
-            m_multiThreadCount = multiThreadCount;
-            m_taskList = new List<Task>(m_multiThreadCount);
-            m_taskResultList = new List<CommandList>(m_multiThreadCount);
-
             // create player
             m_player = new PlayerEntity();
             ChrSystem.GetInstance().Player = m_player;
@@ -101,40 +80,63 @@ namespace Oggy
                 var path = "Map/m9000/m9000.blend";
                 var searchPath = "Map/m9000";
                 var scene = BlenderScene.FromFile(path);
-                if (scene != null)
-                {
-                    var drawModel = DrawModel.FromScene(path + "/draw", scene, searchPath);
-                    var entity = new GameEntity("wall");
+				var drawModel = DrawModel.FromScene(path + "/draw", scene, searchPath);
 
-                    var layoutC = new LayoutComponent();
-                    layoutC.Transform = Matrix.Translation(-10, 0, -5);
-                    entity.AddComponent(layoutC);
+				var mapTable = new bool[][]
+				{
+					new bool[] { false, false, false, false },
+					new bool[] { false, true, true, false },
+					new bool[] { true , true, true, true },
+					new bool[] { false, true, true, false },
+					new bool[] { false, false, false, false },
+				};
+				int mapBlockWidth = mapTable[0].Length;
+				int mapBlockHeight = mapTable.Length;
 
-                    var modelC = new ModelComponent();
-                    modelC.ModelContext.EnableCastShadow = true;
-                    modelC.ModelContext.DrawModel = drawModel;
-                    entity.AddComponent(modelC);
+				for (int i = 0; i < mapBlockHeight; ++i)
+				{
+					for (int j = 0; j < mapBlockWidth; ++j)
+					{
+						bool flg = mapTable[i][j];
+						if (!flg)
+						{
+							var v = new Vector3((j - (float)mapBlockWidth * 0.5f) * 10, 0, (i - (float)mapBlockHeight * 0.5f) * 10 + 5);
+							var entity = new GameEntity("wall");
 
-                    m_mapEntities.Add(entity);
-                }
+							var layoutC = new LayoutComponent();
+							layoutC.Transform = Matrix.Translation(v);
+							entity.AddComponent(layoutC);
 
-                if (scene != null)
-                {
-                    var drawModel = DrawModel.FromScene(path + "/draw", scene, searchPath);
-                    var entity = new GameEntity("wall");
+							var modelC = new ModelComponent();
+							modelC.ModelContext.EnableCastShadow = true;
+							modelC.ModelContext.DrawModel = drawModel;
+							entity.AddComponent(modelC);
 
-                    var layoutC = new LayoutComponent();
-                    layoutC.Transform = Matrix.Translation(10, 0, -5);
-                    entity.AddComponent(layoutC);
+							m_mapEntities.Add(entity);
+						}
+					}
+				}
 
-                    var modelC = new ModelComponent();
-                    modelC.ModelContext.EnableCastShadow = true;
-                    modelC.ModelContext.DrawModel = drawModel;
-                    entity.AddComponent(modelC);
-
-                    m_mapEntities.Add(entity);
-                }
-                
+				// create floor entity
+				var floorModel = DrawModel.CreateFloor(mapBlockHeight * 5, 10.0f, Vector4.Zero);
+				m_floor = new ModelEntity(new ModelEntity.InitParam()
+				{
+					Model = floorModel,
+					Texture = new DrawSystem.TextureData
+					{
+						Resource = drawSys.ResourceRepository.FindResource<TextureView>("floor"),
+						UvScale = Vector2.One
+					},
+					Layout = Matrix.Identity,
+					Delay = 0.0f,
+					Forward = Vector3.Zero,
+					Color = Color4.White,
+					Speed = 1,
+				});
+				m_drawModelList.Add(floorModel);
+				m_multiThreadCount = multiThreadCount;
+				m_taskList = new List<Task>(m_multiThreadCount);
+				m_taskResultList = new List<CommandList>(m_multiThreadCount);
             }
 
             // other settings

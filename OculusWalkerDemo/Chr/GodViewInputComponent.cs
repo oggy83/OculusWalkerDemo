@@ -81,12 +81,7 @@ namespace Oggy
                             m_behaviorC.RequestMove(v);
                             m_behaviorC.RequestTurn(v);
                         }
-                        else
-                        {
-                            m_behaviorC.RequestMove(Vector3.Zero);
-                            m_behaviorC.RequestTurn(Vector3.Zero);
-                        }
-				}
+					}
 					break;
 
 				case GameConfig.UserInputDevices.Pad:
@@ -104,11 +99,6 @@ namespace Oggy
                             m_behaviorC.RequestMove(v);
                             m_behaviorC.RequestTurn(v);
 						}
-                        else
-                        {
-                            m_behaviorC.RequestMove(Vector3.Zero);
-                            m_behaviorC.RequestTurn(Vector3.Zero);
-                        }
 					}
 					break;
 

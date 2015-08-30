@@ -8,6 +8,7 @@
 /// projectionFlags is a combination of the ovrProjectionModifier flags defined above
 OVR_PUBLIC_FUNCTION(ovrMatrix4f) ovrMatrix4f_Projection(ovrFovPort fov, float znear, float zfar, unsigned int projectionModFlags);
 
+PlayerとAvatar
 
 配列データからブロックを置いて迷路をつくる
 迷路内を進めるようにする
