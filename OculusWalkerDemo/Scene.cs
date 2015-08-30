@@ -82,25 +82,19 @@ namespace Oggy
                 var scene = BlenderScene.FromFile(path);
 				var drawModel = DrawModel.FromScene(path + "/draw", scene, searchPath);
 
-				var mapTable = new bool[][]
-				{
-					new bool[] { false, false, false, false },
-					new bool[] { false, true, true, false },
-					new bool[] { true , true, true, true },
-					new bool[] { false, true, true, false },
-					new bool[] { false, false, false, false },
-				};
-				int mapBlockWidth = mapTable[0].Length;
-				int mapBlockHeight = mapTable.Length;
+				// load map from image file
+				var bitmap = (Bitmap)Image.FromFile("Image/testmap.png");
+				int mapBlockWidth = bitmap.Width;
+				int mapBlockHeight = bitmap.Height;
 
 				for (int i = 0; i < mapBlockHeight; ++i)
 				{
 					for (int j = 0; j < mapBlockWidth; ++j)
 					{
-						bool flg = mapTable[i][j];
-						if (!flg)
+						System.Drawing.Color color = bitmap.GetPixel(j, i);
+						if (color.R == 0 && color.G == 0 && color.B == 0)	// black is wall
 						{
-							var v = new Vector3((j - (float)mapBlockWidth * 0.5f) * 10, 0, (i - (float)mapBlockHeight * 0.5f) * 10 + 5);
+							var v = new Vector3((j - (float)mapBlockWidth * 0.5f) * 10, 0, (i - (float)mapBlockHeight * 0.5f) * 10);
 							var entity = new GameEntity("wall");
 
 							var layoutC = new LayoutComponent();
@@ -118,7 +112,7 @@ namespace Oggy
 				}
 
 				// create floor entity
-				var floorModel = DrawModel.CreateFloor(mapBlockHeight * 5, 10.0f, Vector4.Zero);
+				var floorModel = DrawModel.CreateFloor(mapBlockHeight * 5, 60.0f, Vector4.Zero);
 				m_floor = new ModelEntity(new ModelEntity.InitParam()
 				{
 					Model = floorModel,
@@ -137,6 +131,8 @@ namespace Oggy
 				m_multiThreadCount = multiThreadCount;
 				m_taskList = new List<Task>(m_multiThreadCount);
 				m_taskResultList = new List<CommandList>(m_multiThreadCount);
+
+				bitmap.Dispose();
             }
 
             // other settings
