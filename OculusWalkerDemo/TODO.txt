@@ -4,23 +4,29 @@
 ----- TODO -----------------------------
 
 
-/// Used to generate projection from ovrEyeDesc::Fov.
-/// projectionFlags is a combination of the ovrProjectionModifier flags defined above
-OVR_PUBLIC_FUNCTION(ovrMatrix4f) ovrMatrix4f_Projection(ovrFovPort fov, float znear, float zfar, unsigned int projectionModFlags);
-
 PlayerとAvatar
+直進の切れ目がわかるように修正
+回転の速度を調整
+直進以外の移動に対応（進行方向に回転してから直進）
+進めない場所に移動できないように対応
 
-配列データからブロックを置いて迷路をつくる
-迷路内を進めるようにする
+ブロックのインスタンス描画に対応
 キャラクターも付いてくるようにする
-画像データからブロックを置いて迷路をつくる
 ６人のキャラクターが付いてくるようにする
 簡易戦闘を実装
 
-
+光の柱に対応
+扉に対応
+鉄格子に対応
+スタート地点に対応
+水場に対応
 
 平行光源の影に対応
 複数の点光源に対応
+
+天井付の経路に対応
+
+徘徊者に対応
 
 <優先度低>p
 カメラを動かしながらWASD移動するとガタガタする(Padではそんなことなかった)
@@ -120,3 +126,6 @@ BoneWeightに0が入っている場合があるのに対応
 アニメ再生速度倍率
 
 ブロックを置いて迷路をつくる
+配列データからブロックを置いて迷路をつくる
+迷路内を進めるようにする
+画像データからブロックを置いて迷路をつくる

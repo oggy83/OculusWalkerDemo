@@ -57,7 +57,6 @@ namespace Oggy
 			Matrix3x3 localToWorldMat = Matrix3x3.RotationY(angleY);
 
 
-
             var gameSys = GameSystem.GetInstance();
             switch (gameSys.Config.InputDevice)
             {
@@ -92,7 +91,6 @@ namespace Oggy
 
                 case GameConfig.UserInputDevices.Pad:
                     {
-                       
                         IPadInputSource src = InputSystem.GetInstance().Pad;
                        
                         // update move
@@ -118,14 +116,12 @@ namespace Oggy
                                     var v = new Vector3(1, 0, 0);
                                     v = Vector3.Transform(v, localToWorldMat);
                                     m_behaviorC.RequestTurn(v);
-                                    m_lastAngle = v;
                                 }
                                 else if (thumbDir.X < 0)
                                 {
                                     var v = new Vector3(-1, 0, 0);
                                     v = Vector3.Transform(v, localToWorldMat);
                                     m_behaviorC.RequestTurn(v);
-                                    m_lastAngle = v;
                                 }
                             }
                         }
@@ -160,8 +156,6 @@ namespace Oggy
         /// behavior component
         /// </summary>
         private ChrBehaviorComponent m_behaviorC;
-
-        private Vector3 m_lastAngle = Vector3.Zero;
 
         #endregion // private members
     }
