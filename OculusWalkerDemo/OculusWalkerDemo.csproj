@@ -64,6 +64,10 @@
     <Compile Include="Chr\ChrBehaviorComponent.cs" />
     <Compile Include="Chr\GodViewInputComponent.cs" />
     <Compile Include="Chr\PlayerEntity.cs" />
+    <Compile Include="Coroutine\Coroutine.cs" />
+    <Compile Include="Coroutine\Coroutine.WaitDelegate.cs" />
+    <Compile Include="Coroutine\Coroutine.WaitTime.cs" />
+    <Compile Include="Coroutine\CoroutineTask.cs" />
     <Compile Include="Draw\Debug\DrawDebugCtrl.cs" />
     <Compile Include="Entity\Detail\GameEntityComponentLine.cs" />
     <Compile Include="Entity\EntitySystem.cs" />

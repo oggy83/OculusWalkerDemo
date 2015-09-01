@@ -28,7 +28,7 @@ namespace Oggy
         public FpsInputComponent()
             : base(GameEntityComponent.UpdateLines.Input)
         {
-            // nothing
+			m_coroutine = new Coroutine();
         }
 
         /// <summary>
@@ -37,9 +37,11 @@ namespace Oggy
         /// <param name="dT">spend time [sec]</param>
         public override void Update(double dT)
         {
-            if (!m_behaviorC.IsIdling())
+			m_coroutine.Update(dT);
+
+            if (!m_coroutine.HasCompleted())
             {
-                // wait for end of behavior
+				// wait for end of character operation
                 return;
             }
 
@@ -101,7 +103,7 @@ namespace Oggy
                             {
                                 var v = new Vector3(0, 0, 10);
                                 v = Vector3.Transform(v, localToWorldMat) + position;
-                                m_behaviorC.RequestMoveTo(v);
+								m_coroutine.Start(new _MoveToTask(this, v));
                             }
                         }
 
@@ -115,17 +117,16 @@ namespace Oggy
                                 {
                                     var v = new Vector3(1, 0, 0);
                                     v = Vector3.Transform(v, localToWorldMat);
-                                    m_behaviorC.RequestTurn(v);
+									m_coroutine.Start(new _TurnToTask(this, v));
                                 }
                                 else if (thumbDir.X < 0)
                                 {
                                     var v = new Vector3(-1, 0, 0);
                                     v = Vector3.Transform(v, localToWorldMat);
-                                    m_behaviorC.RequestTurn(v);
+									m_coroutine.Start(new _TurnToTask(this, v));
                                 }
                             }
                         }
-                       
                     }
                     break;
 
@@ -134,7 +135,7 @@ namespace Oggy
                     break;
             }
         }
-
+		
         public override void OnAddToEntity(GameEntity entity)
         {
             base.OnAddToEntity(entity);
@@ -150,12 +151,73 @@ namespace Oggy
             base.OnRemoveFromEntity(entity);
         }
 
-        #region private members
+		#region private types
 
-        /// <summary>
+		private class _MoveToTask : CoroutineTask
+		{
+			public _MoveToTask(FpsInputComponent parent, Vector3 targetPos)
+			{
+				m_parent = parent;
+				m_targetPos = targetPos;
+			}
+
+			public override IEnumerator<CoroutineTask> Execute()
+			{
+				m_parent.m_behaviorC.RequestMoveTo(m_targetPos);
+
+				yield return new Coroutine.WaitDelegate(() =>
+				{
+					// wait for end of behavior
+					return m_parent.m_behaviorC.IsIdling();
+				});
+
+				yield return new Coroutine.WaitTime(0.1);
+				yield break;
+			}
+
+			private FpsInputComponent m_parent;
+			private Vector3 m_targetPos;
+		}
+
+		private class _TurnToTask : CoroutineTask
+		{
+			public _TurnToTask(FpsInputComponent parent, Vector3 targetDir)
+			{
+				m_parent = parent;
+				m_targetDir = targetDir;
+			}
+
+			public override IEnumerator<CoroutineTask> Execute()
+			{
+				m_parent.m_behaviorC.RequestTurn(m_targetDir);
+
+				yield return new Coroutine.WaitDelegate(() =>
+				{
+					// wait for end of behavior
+					return m_parent.m_behaviorC.IsIdling();
+				});
+
+				yield return new Coroutine.WaitTime(0.1);
+				yield break;
+			}
+
+			private FpsInputComponent m_parent;
+			private Vector3 m_targetDir;
+		}
+
+		#endregion // private types
+
+		#region private members
+
+		/// <summary>
         /// behavior component
         /// </summary>
         private ChrBehaviorComponent m_behaviorC;
+
+		/// <summary>
+		/// coroutine for character operation 
+		/// </summary>
+		private Coroutine m_coroutine;
 
         #endregion // private members
     }
