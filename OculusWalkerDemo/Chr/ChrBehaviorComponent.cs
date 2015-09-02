@@ -270,7 +270,7 @@ namespace Oggy
         /// <summary>
         /// scale factor of move speed
         /// </summary>
-        private const float MoveSpeed = 3.0f;
+        private const float MoveSpeed = 5.0f;
 
         #endregion // private members
 

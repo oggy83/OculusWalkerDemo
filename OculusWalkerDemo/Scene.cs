@@ -53,7 +53,7 @@ namespace Oggy
                 Color = new Color3(0.6f, 0.6f, 0.5f),
             });
             drawSys.AmbientColor = new Color3(0.4f, 0.45f, 0.55f);
-            drawSys.FogColor = new Color3(0.3f, 0.5f, 0.8f);
+			drawSys.FogColor = new Color3(0.3f, 0.5f, 0.8f);
             drawSys.NearClip = 0.01f;
             drawSys.FarClip = 10000.0f;
 

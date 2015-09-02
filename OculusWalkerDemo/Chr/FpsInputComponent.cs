@@ -171,7 +171,7 @@ namespace Oggy
 					return m_parent.m_behaviorC.IsIdling();
 				});
 
-				yield return new Coroutine.WaitTime(0.1);
+				yield return new Coroutine.WaitTime(0.01);
 				yield break;
 			}
 
@@ -197,7 +197,7 @@ namespace Oggy
 					return m_parent.m_behaviorC.IsIdling();
 				});
 
-				yield return new Coroutine.WaitTime(0.1);
+				yield return new Coroutine.WaitTime(0.3);
 				yield break;
 			}
 
