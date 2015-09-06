@@ -101,9 +101,36 @@ namespace Oggy
                             float magnitude = src.LeftThumbInput.NormalizedMagnitude;
                             if (magnitude >= MinimumPadMagnitude)
                             {
-                                var v = new Vector3(0, 0, 10);
-                                v = Vector3.Transform(v, localToWorldMat) + position;
-								m_coroutine.Start(new _MoveToTask(this, v));
+								if (thumbDir.Y <= -0.851)
+								{
+									// go backward
+									var dir = Vector3.Transform(-Vector3.UnitZ, localToWorldMat);
+									var pos = Vector3.Transform(-Vector3.UnitZ * 10, localToWorldMat) + position;
+									m_coroutine.Start(Coroutine.Join(new _TurnToTask(this, dir), new _MoveToTask(this, pos)));
+								}
+								else if (thumbDir.Y >= 0.851)
+								{
+									// go forward
+									var pos = Vector3.Transform(Vector3.UnitZ * 10, localToWorldMat) + position;
+									m_coroutine.Start(new _MoveToTask(this, pos));
+								}
+								else
+								{
+									if (thumbDir.X < 0)
+									{
+										// go left
+										var dir = Vector3.Transform(-Vector3.UnitX, localToWorldMat);
+										var pos = Vector3.Transform(-Vector3.UnitX * 10, localToWorldMat) + position;
+										m_coroutine.Start(Coroutine.Join(new _TurnToTask(this, dir), new _MoveToTask(this, pos)));
+									}
+									else
+									{
+										// go right
+										var dir = Vector3.Transform(Vector3.UnitX, localToWorldMat);
+										var pos = Vector3.Transform(Vector3.UnitX * 10, localToWorldMat) + position;
+										m_coroutine.Start(Coroutine.Join(new _TurnToTask(this, dir), new _MoveToTask(this, pos)));
+									}
+								}
                             }
                         }
 

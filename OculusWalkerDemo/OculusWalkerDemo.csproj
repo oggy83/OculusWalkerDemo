@@ -65,6 +65,7 @@
     <Compile Include="Chr\GodViewInputComponent.cs" />
     <Compile Include="Chr\PlayerEntity.cs" />
     <Compile Include="Coroutine\Coroutine.cs" />
+    <Compile Include="Coroutine\Coroutine.Join.cs" />
     <Compile Include="Coroutine\Coroutine.WaitDelegate.cs" />
     <Compile Include="Coroutine\Coroutine.WaitTime.cs" />
     <Compile Include="Coroutine\CoroutineTask.cs" />
