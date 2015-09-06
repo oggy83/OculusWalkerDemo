@@ -18,7 +18,7 @@ using Blender;
 
 namespace Oggy
 {
-	public partial class BlenderScene : IDisposable
+	public partial class BlenderScene 
 	{
 		#region properties
 
@@ -38,11 +38,6 @@ namespace Oggy
 			m_nodeList = new List<SceneNode>();
 		}
 
-		public void Dispose()
-		{
-			m_nodeList.Clear();
-		}
-
 		public static BlenderScene FromFile(string path)
 		{
 			var repository = new BlendTypeRepository();
@@ -56,7 +51,6 @@ namespace Oggy
 			var scene = new BlenderScene();
 			if (!scene._LoadScene(repository, entityList))
 			{
-				scene.Dispose();
 				return null;
 			}
 

@@ -23,6 +23,7 @@ namespace Oggy
         public Scene(Device device, SwapChain swapChain, Panel renderTarget, HmdDevice hmd, bool bStereoRendering, int multiThreadCount)
         {
             var drawSys = DrawSystem.GetInstance();
+			var mapSys = MapSystem.GetInstance();
 
             // load textures
             var textures = new List<TextureView>(new[]
@@ -70,70 +71,16 @@ namespace Oggy
                 Layout = Matrix.RotationYawPitchRoll(1.0f, -1.5f, 0.0f) * Matrix.Translation(1.5f, 2.5f, 4.5f)
             });
 
-            // create player
-            m_player = new PlayerEntity();
-            ChrSystem.GetInstance().Player = m_player;
+			// create player
+			m_player = new PlayerEntity();
+			ChrSystem.GetInstance().Player = m_player;
 
-            // create map block
-            m_mapEntities = new List<GameEntity>();
-            {
-                var path = "Map/m9000/m9000.blend";
-                var searchPath = "Map/m9000";
-                var scene = BlenderScene.FromFile(path);
-				var drawModel = DrawModel.FromScene(path + "/draw", scene, searchPath);
+			mapSys.LoadResource();
+			mapSys.CreageMap("Image/testmap.png");
 
-				// load map from image file
-				var bitmap = (Bitmap)Image.FromFile("Image/testmap.png");
-				int mapBlockWidth = bitmap.Width;
-				int mapBlockHeight = bitmap.Height;
-
-				for (int i = 0; i < mapBlockHeight; ++i)
-				{
-					for (int j = 0; j < mapBlockWidth; ++j)
-					{
-						System.Drawing.Color color = bitmap.GetPixel(j, i);
-						if (color.R == 0 && color.G == 0 && color.B == 0)	// black is wall
-						{
-							var v = new Vector3((j - (float)mapBlockWidth * 0.5f) * 10, 0, (i - (float)mapBlockHeight * 0.5f) * 10);
-							var entity = new GameEntity("wall");
-
-							var layoutC = new LayoutComponent();
-							layoutC.Transform = Matrix.Translation(v);
-							entity.AddComponent(layoutC);
-
-							var modelC = new ModelComponent();
-							modelC.ModelContext.EnableCastShadow = true;
-							modelC.ModelContext.DrawModel = drawModel;
-							entity.AddComponent(modelC);
-
-							m_mapEntities.Add(entity);
-						}
-					}
-				}
-
-				// create floor entity
-				var floorModel = DrawModel.CreateFloor(mapBlockHeight * 5, 60.0f, Vector4.Zero);
-				m_floor = new ModelEntity(new ModelEntity.InitParam()
-				{
-					Model = floorModel,
-					Texture = new DrawSystem.TextureData
-					{
-						Resource = drawSys.ResourceRepository.FindResource<TextureView>("floor"),
-						UvScale = Vector2.One
-					},
-					Layout = Matrix.Identity,
-					Delay = 0.0f,
-					Forward = Vector3.Zero,
-					Color = Color4.White,
-					Speed = 1,
-				});
-				m_drawModelList.Add(floorModel);
-				m_multiThreadCount = multiThreadCount;
-				m_taskList = new List<Task>(m_multiThreadCount);
-				m_taskResultList = new List<CommandList>(m_multiThreadCount);
-
-				bitmap.Dispose();
-            }
+			m_multiThreadCount = multiThreadCount;
+			m_taskList = new List<Task>(m_multiThreadCount);
+			m_taskResultList = new List<CommandList>(m_multiThreadCount);
 
             // other settings
 #if DEBUG
@@ -153,6 +100,7 @@ namespace Oggy
             var cameraSys = CameraSystem.GetInstance();
             var inputSys = InputSystem.GetInstance();
             var entitySys = EntitySystem.GetInstance();
+			var mapSys = MapSystem.GetInstance();
 
 			// update fps
 			{
@@ -178,7 +126,7 @@ namespace Oggy
                 entitySys.UpdateComponents(GameEntityComponent.UpdateLines.Behavior, dt);
                 cameraSys.Update(dt);
                 entitySys.UpdateComponents(GameEntityComponent.UpdateLines.Posing, dt);
-                m_floor.Draw(context);
+                mapSys.Update(dt, context);
                 entitySys.UpdateComponents(GameEntityComponent.UpdateLines.PreDraw, dt);
                 
 				// start command list generation for the next frame
@@ -198,9 +146,6 @@ namespace Oggy
 					}));
 				}
                
-				// draw floor
-				//m_floor.Draw(context);
-
 				foreach (var result in tmpTaskResult)
 				{
 					context.ExecuteCommandList(result);
@@ -223,14 +168,12 @@ namespace Oggy
         /// </summary>
         public void Dispose()
         {
-            foreach (var entity in m_mapEntities)
-            {
-                entity.Dispose();
-            }
-            m_player.Dispose();
+			var mapSys = MapSystem.GetInstance();
+
+			m_player.Dispose();
+			mapSys.UnloadResource();
 			Task.WaitAll(m_taskList.ToArray());
 			m_numberEntity.Dispose();
-			m_floor.Dispose();
 			foreach (var model in m_drawModelList)
 			{
 				model.Dispose();
@@ -241,14 +184,12 @@ namespace Oggy
 
 		private FpsCounter m_fps;
 		private List<DrawModel> m_drawModelList = new List<DrawModel>();
-		private ModelEntity m_floor;
 		private NumberEntity m_numberEntity = null;
 		private double m_accTime = 0;
 		private int m_multiThreadCount;
 		private List<Task> m_taskList = null;
 		private List<CommandList> m_taskResultList = null;
         private PlayerEntity m_player = null;
-        private List<GameEntity> m_mapEntities = null;
 
 		#endregion // private members
 	}

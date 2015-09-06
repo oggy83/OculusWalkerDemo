@@ -103,6 +103,7 @@ namespace Oggy
 			DrawSystem.Initialize(form.GetRenderTarget().Handle, device, swapChain, hmd, bStereoRendering, multiThreadCount);
             InputSystem.Initialize(form.GetRenderTarget());
             EntitySystem.Initialize();
+			MapSystem.Initialize();
             ChrSystem.Initialize();
             CameraSystem.Initialize();
             GameSystem.Initialize();
@@ -116,6 +117,7 @@ namespace Oggy
             GameSystem.Dispose();
             CameraSystem.Dispose();
             ChrSystem.Dispose();
+			MapSystem.Dispose();
             EntitySystem.Dispose();
             InputSystem.Dispose();
 			DrawSystem.Dispose();
