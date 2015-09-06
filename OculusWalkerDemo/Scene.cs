@@ -76,7 +76,7 @@ namespace Oggy
 			ChrSystem.GetInstance().Player = m_player;
 
 			mapSys.LoadResource();
-			mapSys.CreageMap("Image/testmap.png");
+			mapSys.CreateMap("Image/testmap.png");
 
 			m_multiThreadCount = multiThreadCount;
 			m_taskList = new List<Task>(m_multiThreadCount);

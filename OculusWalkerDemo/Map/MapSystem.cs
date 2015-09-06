@@ -53,7 +53,7 @@ namespace Oggy
 
 		#endregion // static
 
-		public void CreageMap(string mapSrcImage)
+		public void CreateMap(string mapSrcImage)
 		{
 			// create map block
 			{
