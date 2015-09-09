@@ -56,6 +56,31 @@ namespace Oggy
             {
                 return Matrix.LookAtLH(eye, lookAt, up);
             }
+
+			public static CameraData GetIdentity()
+			{
+				return new CameraData(Vector3.Zero, Vector3.UnitZ, Vector3.UnitY);
+			}
+
+			public static CameraData Conbine(CameraData a, CameraData b)
+			{
+				var z = (a.lookAt - a.eye);
+				z.Normalize();
+				var x = Vector3.Cross(a.up, z);
+				x.Normalize();
+				var y = Vector3.Cross(z, x);
+
+				var trans = new Matrix3x3(x.X, x.Y, x.Z, y.X, y.Y, y.Z, z.X, z.Y, z.Z);
+
+				var result = new CameraData(
+					MathUtil.Transform3(b.eye, trans),
+					MathUtil.Transform3(b.lookAt, trans), 
+					MathUtil.Transform3(b.up, trans));
+				result.eye += a.eye;
+				result.lookAt += a.eye;
+				result.up.Normalize();
+				return result;
+			}
         }
 
 		/// <summary>
@@ -63,7 +88,7 @@ namespace Oggy
 		/// </summary>
 		public struct WorldData
 		{
-			public Matrix Camera;
+			public CameraData Camera;
 			public Color3 AmbientCol;
 			public Color3 FogCol;
 			public DrawSystem.DirectionalLightData DirLight;
@@ -77,23 +102,6 @@ namespace Oggy
 			public SwapChain SwapChain;
 			public IntPtr WindowHandle;
 		}
-
-        /*
-        public struct TextureData
-        {
-            public string Name { get; set; }
-
-            public static TextureData FromName(string name)
-            {
-                var data = new TextureData()
-                {
-                    Name = name,
-                };
-
-                return data;
-            }
-        }
-        */
 
 		public enum RenderMode
 		{

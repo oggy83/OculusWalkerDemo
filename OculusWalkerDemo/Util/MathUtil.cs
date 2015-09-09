@@ -20,6 +20,11 @@ namespace Oggy
 			return ToVector3(tmp);
 		}
 
+		public static Vector3 Transform3(Vector3 v, Matrix3x3 M)
+		{
+			return Vector3.Transform(v, M);
+		}
+
 		public static Vector3 ToVector3(Vector4 v)
 		{
 			return new Vector3(v.X , v.Y, v.Z);

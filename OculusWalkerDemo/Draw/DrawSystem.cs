@@ -52,7 +52,7 @@ namespace Oggy
 		/// <summary>
 		/// get/set a camera which makes Transform for World => View
 		/// </summary>
-		public Matrix Camera
+		public CameraData Camera
 		{
 			get
 			{

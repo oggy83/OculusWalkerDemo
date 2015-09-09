@@ -50,7 +50,7 @@ namespace Oggy
             // light setting
             drawSys.SetDirectionalLight(new DrawSystem.DirectionalLightData()
             {
-                Direction = new Vector3(0.3f, -0.5f, 0),
+				Direction = new Vector3(0.3f, -0.2f, 0.4f),
                 Color = new Color3(0.6f, 0.6f, 0.5f),
             });
             drawSys.AmbientColor = new Color3(0.4f, 0.45f, 0.55f);
@@ -120,7 +120,7 @@ namespace Oggy
                 // camera setting
                 inputSys.Update(dt);
                 
-                drawSys.Camera = cameraSys.GetCameraData().GetViewMatrix();
+                drawSys.Camera = cameraSys.GetCameraData();
 
                 entitySys.UpdateComponents(GameEntityComponent.UpdateLines.Input, dt);
                 entitySys.UpdateComponents(GameEntityComponent.UpdateLines.Behavior, dt);
