@@ -73,7 +73,7 @@ namespace Oggy
 		{
             m_worldData = data;
             var renderTarget = m_repository.FindResource<RenderTarget>("Temp");
-			var eyeOffset = m_hmd.GetEyePoses2();
+			var eyeOffset = m_hmd.GetEyePoses();
             var proj = _CalcProjection(1, m_worldData.NearClip, m_worldData.FarClip);
 
 			m_context.SetWorldParams(renderTarget, data);
@@ -92,7 +92,7 @@ namespace Oggy
             int texIndex = m_textureSets[0].CurrentIndex;
             var renderTargets = new[] { m_repository.FindResource<RenderTarget>("OVRLeftEye" + texIndex), m_repository.FindResource<RenderTarget>("OVRRightEye" + texIndex) };
             var tmpRenderTarget = m_repository.FindResource<RenderTarget>("Temp");
-            var eyeOffset = m_hmd.GetEyePoses2();
+            var eyeOffset = m_hmd.GetEyePoses();
             var proj = _CalcProjection(0, m_worldData.NearClip, m_worldData.FarClip);
 
             if (m_isContextDirty)
