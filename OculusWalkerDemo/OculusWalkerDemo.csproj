@@ -70,6 +70,7 @@
     <Compile Include="Coroutine\Coroutine.WaitTime.cs" />
     <Compile Include="Coroutine\CoroutineTask.cs" />
     <Compile Include="Draw\Debug\DrawDebugCtrl.cs" />
+    <Compile Include="Draw\DrawSystem.Config.cs" />
     <Compile Include="Entity\Detail\GameEntityComponentLine.cs" />
     <Compile Include="Entity\EntitySystem.cs" />
     <Compile Include="Entity\GameEntity.cs" />

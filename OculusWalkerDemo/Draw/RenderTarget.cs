@@ -64,7 +64,7 @@ namespace Oggy
         {
             var backBuffer = new Texture2D(d3d.Device, new Texture2DDescription()
             {
-                Format = Format.R8G8B8A8_UNorm,
+                Format = DrawSystem.GetRenderTargetFormat(),
                 ArraySize = 1,
                 MipLevels = 1,
                 Width = width,

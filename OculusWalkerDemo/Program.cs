@@ -74,7 +74,7 @@ namespace Oggy
 			{
 				BufferCount = 2,
 				ModeDescription =
-					new ModeDescription(resolution.Width, resolution.Height, new Rational(0, 1), Format.R8G8B8A8_UNorm),
+					new ModeDescription(resolution.Width, resolution.Height, new Rational(0, 1), DrawSystem.GetRenderTargetFormat()),
 				IsWindowed = true,
 				OutputHandle = form.GetRenderTarget().Handle,
 				SampleDescription = new SampleDescription(1, 0),

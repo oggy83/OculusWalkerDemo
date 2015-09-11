@@ -69,7 +69,7 @@ namespace Oggy
                 Height = (uint)height,
                 MipLevels = (uint)1,
                 ArraySize = (uint)1,
-                Format = (uint)Format.R8G8B8A8_UNorm,
+				Format = (uint)DrawSystem.GetRenderTargetFormat(),
                 SampleDesc_Count = (uint)1,
                 SampleDesc_Quality = (uint)0,
                 Usage = (uint)ResourceUsage.Default,
