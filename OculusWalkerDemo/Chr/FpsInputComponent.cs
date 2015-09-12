@@ -37,6 +37,8 @@ namespace Oggy
         /// <param name="dT">spend time [sec]</param>
         public override void Update(double dT)
         {
+			var mapSys = MapSystem.GetInstance();
+
 			m_coroutine.Update(dT);
 
             if (!m_coroutine.HasCompleted())
@@ -94,7 +96,7 @@ namespace Oggy
                 case GameConfig.UserInputDevices.Pad:
                     {
                         IPadInputSource src = InputSystem.GetInstance().Pad;
-                       
+
                         // update move
                         {
                             var thumbDir = src.LeftThumbInput.Direction;
@@ -106,13 +108,22 @@ namespace Oggy
 									// go backward
 									var dir = Vector3.Transform(-Vector3.UnitZ, localToWorldMat);
 									var pos = Vector3.Transform(-Vector3.UnitZ * 10, localToWorldMat) + position;
-									m_coroutine.Start(Coroutine.Join(new _TurnToTask(this, dir), new _MoveToTask(this, pos)));
+
+									var address = mapSys.GetBlockAddress(pos);
+									if (mapSys.GetBlockInfo(address).CanWalk())
+									{
+										m_coroutine.Start(Coroutine.Join(new _TurnToTask(this, dir), new _MoveToTask(this, pos)));
+									}
 								}
 								else if (thumbDir.Y >= 0.851)
 								{
 									// go forward
 									var pos = Vector3.Transform(Vector3.UnitZ * 10, localToWorldMat) + position;
-									m_coroutine.Start(new _MoveToTask(this, pos));
+									var address = mapSys.GetBlockAddress(pos);
+									if (mapSys.GetBlockInfo(address).CanWalk())
+									{
+										m_coroutine.Start(new _MoveToTask(this, pos));
+									}
 								}
 								else
 								{
@@ -121,14 +132,22 @@ namespace Oggy
 										// go left
 										var dir = Vector3.Transform(-Vector3.UnitX, localToWorldMat);
 										var pos = Vector3.Transform(-Vector3.UnitX * 10, localToWorldMat) + position;
-										m_coroutine.Start(Coroutine.Join(new _TurnToTask(this, dir), new _MoveToTask(this, pos)));
+										var address = mapSys.GetBlockAddress(pos);
+										if (mapSys.GetBlockInfo(address).CanWalk())
+										{
+											m_coroutine.Start(Coroutine.Join(new _TurnToTask(this, dir), new _MoveToTask(this, pos)));
+										}
 									}
 									else
 									{
 										// go right
 										var dir = Vector3.Transform(Vector3.UnitX, localToWorldMat);
 										var pos = Vector3.Transform(Vector3.UnitX * 10, localToWorldMat) + position;
-										m_coroutine.Start(Coroutine.Join(new _TurnToTask(this, dir), new _MoveToTask(this, pos)));
+										var address = mapSys.GetBlockAddress(pos);
+										if (mapSys.GetBlockInfo(address).CanWalk())
+										{
+											m_coroutine.Start(Coroutine.Join(new _TurnToTask(this, dir), new _MoveToTask(this, pos)));
+										}
 									}
 								}
                             }

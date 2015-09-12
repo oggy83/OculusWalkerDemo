@@ -53,9 +53,30 @@ namespace Oggy
 
 		#endregion // static
 
+		#region properties
+
+		#endregion // properties
+
+		public BlockInfo GetBlockInfo(BlockAddress address)
+		{
+			return m_blockInfoMap[address.X, address.Y];
+		}
+
+		public BlockAddress GetBlockAddress(Vector3 v)
+		{
+			// temporary code
+			int height = m_blockInfoMap.GetLength(0);
+			int width = m_blockInfoMap.GetLength(1);
+			float blockSize = 10.0f;
+			Vector3 origin = new Vector3((float)width * -0.5f * blockSize, 0.0f, (float)height * -0.5f * blockSize);
+			Vector3 bias = new Vector3(0.5f * blockSize, 0.0f, 0.5f * blockSize);
+
+			var address = (v - origin + bias) / blockSize;
+			return new BlockAddress((int)address.X, (int)address.Z);
+		}
+
 		public void CreateMap(string mapSrcImage)
 		{
-
 			m_blockInfoMap = MapFactory.CreateBlockInfoMap("Image/testmap.png");
 			int height = m_blockInfoMap.GetLength(0);
 			int width = m_blockInfoMap.GetLength(1);
@@ -139,10 +160,9 @@ namespace Oggy
 
 		private MapSystem()
 		{
-			
+			// @todo
 		}
-
-		
+				
 		#endregion // private methods
 
 		#region private members

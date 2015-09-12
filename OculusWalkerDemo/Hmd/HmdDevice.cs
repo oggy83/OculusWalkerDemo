@@ -240,6 +240,7 @@ namespace Oggy
         private LibOVR.ovrEyeRenderDesc[] m_eyeDescArray = null;
         private LibOVR.ovrPosef[] m_tmpEyePoses = new LibOVR.ovrPosef[2];
         private bool m_isDisposed = false;
+        private int m_perfModeIndex = 0;
 
         #endregion // private members
 

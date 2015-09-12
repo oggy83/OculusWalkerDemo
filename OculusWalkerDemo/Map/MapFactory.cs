@@ -35,6 +35,7 @@ namespace Oggy
 
 				var blockInfoMap = new BlockInfo[mapBlockHeight, mapBlockWidth];
 
+				// create blockInfo
 				for (int i = 0; i < mapBlockHeight; ++i)
 				{
 					for (int j = 0; j < mapBlockWidth; ++j)
@@ -46,7 +47,6 @@ namespace Oggy
 						{
 							// black is wall
 							type = BlockInfo.BlockTypes.Wall;
-							
 						}
 						else if (color.R == 255 && color.G == 255 && color.B == 255)
 						{ 
@@ -54,7 +54,34 @@ namespace Oggy
 							type = BlockInfo.BlockTypes.Floor;
 						}
 
-						blockInfoMap[i, j] = new BlockInfo(new BlockAddress(j, i), type);
+						blockInfoMap[j, i] = new BlockInfo(new BlockAddress(j, i), type);
+					}
+				}
+
+				// connect 
+				for (int i = 0; i < mapBlockHeight; ++i)
+				{
+					for (int j = 0; j < mapBlockWidth; ++j)
+					{
+						if (i > 0)
+						{
+							blockInfoMap[j, i].Up = blockInfoMap[j, i - 1];
+						}
+
+						if (i < mapBlockHeight - 1)
+						{
+							blockInfoMap[j, i].Down = blockInfoMap[j, i + 1];
+						}
+
+						if (j > 0)
+						{
+							blockInfoMap[j, i].Left = blockInfoMap[j - 1, i];
+						}
+
+						if (j < mapBlockWidth - 1)
+						{
+							blockInfoMap[j, i].Right = blockInfoMap[j + 1, i];
+						}
 					}
 				}
 
@@ -82,7 +109,7 @@ namespace Oggy
 				{
 					var basePosition = new Vector3(j * blockSize + origin.X, origin.Y, i * blockSize + origin.Z);
 
-					var type = blockInfo[i, j].Type;
+					var type = blockInfo[j, i].Type;
 					switch (type)
 					{
 						case BlockInfo.BlockTypes.Wall :

@@ -7,8 +7,7 @@
 PlayerとAvatar
 
 
-BlockInfo, BlockAddress を追加
-MapFactoryを追加
+
 進めない場所に移動できないように対応
 
 ブロックのインスタンス描画に対応
@@ -136,3 +135,5 @@ BoneWeightに0が入っている場合があるのに対応
 直進の切れ目がわかるように修正
 回転の速度を調整
 直進以外の移動に対応（進行方向に回転してから直進）
+BlockInfo, BlockAddress を追加
+MapFactoryを追加

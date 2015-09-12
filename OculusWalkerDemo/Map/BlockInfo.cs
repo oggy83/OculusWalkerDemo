@@ -30,12 +30,17 @@ namespace Oggy
 			}
 		}
 
-		private BlockTypes m_types;
+		public BlockInfo Up;
+		public BlockInfo Down;
+		public BlockInfo Left;
+		public BlockInfo Right;
+
+		private BlockTypes m_type;
 		public BlockTypes Type
 		{
 			get
 			{
-				return m_types;
+				return m_type;
 			}
 		}
 
@@ -44,8 +49,13 @@ namespace Oggy
 
 		public BlockInfo(BlockAddress address, BlockTypes type)
 		{
-			m_types = type;
+			m_type = type;
 			m_addres = address;
+		}
+
+		public bool CanWalk()
+		{
+			return m_type != BlockTypes.Wall;
 		}
 	}
 }
