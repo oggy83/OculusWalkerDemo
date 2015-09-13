@@ -16,6 +16,8 @@ namespace Oggy
 			: base("player")
 		{
 			var entitySys = EntitySystem.GetInstance();
+			var mapSys = MapSystem.GetInstance();
+
 			var path = "Chr/c9000/test.blend";
             var searchPath = "Chr/c9000";
 			var scene = BlenderScene.FromFile(path);
@@ -32,7 +34,7 @@ namespace Oggy
                 }
 
 				var layoutC = new LayoutComponent();
-				layoutC.Transform = Matrix.Translation(0, 0, 0);
+				layoutC.Transform = mapSys.GetStartPose();
 				AddComponent(layoutC);
 				
 				//var markerC = new ModelMarkerComponent(scene);

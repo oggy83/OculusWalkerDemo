@@ -58,6 +58,11 @@ namespace Oggy
 						// floor
 						type = BlockInfo.BlockTypes.Floor;
 					}
+					else if (gid == 57)
+					{
+						// start point
+						type = BlockInfo.BlockTypes.StartPoint;
+					}
 
 					blockInfoMap[j, i] = new BlockInfo(new BlockAddress(j, i), type);
 				}

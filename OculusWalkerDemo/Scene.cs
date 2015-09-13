@@ -71,12 +71,13 @@ namespace Oggy
                 Layout = Matrix.RotationYawPitchRoll(1.0f, -1.5f, 0.0f) * Matrix.Translation(1.5f, 2.5f, 4.5f)
             });
 
+			// create map
+			mapSys.LoadResource();
+			mapSys.CreateMap("Level/l9000.tmx");
+
 			// create player
 			m_player = new PlayerEntity();
 			ChrSystem.GetInstance().Player = m_player;
-
-			mapSys.LoadResource();
-			mapSys.CreateMap("Image/testmap.png");
 
 			m_multiThreadCount = multiThreadCount;
 			m_taskList = new List<Task>(m_multiThreadCount);

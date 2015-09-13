@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using SharpDX;
 
 namespace Oggy
 {
@@ -16,5 +17,6 @@ namespace Oggy
 			X = x;
 			Y = y;
 		}
+
 	}
 }

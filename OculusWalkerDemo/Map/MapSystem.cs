@@ -75,10 +75,39 @@ namespace Oggy
 			return new BlockAddress((int)address.X, (int)address.Z);
 		}
 
-		public void CreateMap(string mapSrcImage)
+		public Matrix GetStartPose()
+		{
+			Vector3 startPos = Vector3.Zero;
+			Vector3 startDir = Vector3.UnitZ;
+			float blockSize = 10.0f;
+
+			int height = m_blockInfoMap.GetLength(0);
+			int width = m_blockInfoMap.GetLength(1);
+			for (int i = 0; i < height; ++i)
+			{
+				for (int j = 0; j < width; ++j)
+				{
+					BlockInfo info = m_blockInfoMap[j, i];
+					if (info.Type == BlockInfo.BlockTypes.StartPoint)
+					{
+						// found start point!
+						Vector3 origin = new Vector3((float)width * -0.5f * blockSize, 0.0f, (float)height * -0.5f * blockSize);
+						startPos = new Vector3(blockSize * info.Address.X + origin.X, 0, blockSize * info.Address.Y + origin.Z);
+
+						BlockAddress nextBlockAddr = info.GetJointBlockInfos().First().Address;// we assumes that start point has only one joint
+						startDir = new Vector3(nextBlockAddr.X - info.Address.X, 0, nextBlockAddr.Y - info.Address.Y);
+						startDir.Normalize();
+					}
+				}
+			}
+
+			return MathUtil.GetRotationY(startDir) * Matrix.Translation(startPos);
+		}
+
+		public void CreateMap(string tmxPath)
 		{
 			
-			m_blockInfoMap = MapFactory.CreateBlockInfoMap("Level/l9000.tmx");
+			m_blockInfoMap = MapFactory.CreateBlockInfoMap(tmxPath);
 			int height = m_blockInfoMap.GetLength(0);
 			int width = m_blockInfoMap.GetLength(1);
 			float blockSize = 10.0f;

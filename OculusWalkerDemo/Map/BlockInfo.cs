@@ -15,6 +15,7 @@ namespace Oggy
 			None = 0,
 			Wall,
 			Floor,
+			StartPoint,
 		}
 
 		#endregion // public types
@@ -56,6 +57,17 @@ namespace Oggy
 		public bool CanWalk()
 		{
 			return m_type != BlockTypes.Wall;
+		}
+
+		/// <summary>
+		/// get all connected block infos with this block
+		/// </summary>
+		/// <returns>
+		/// list of connected block info
+		/// </returns>
+		public IEnumerable<BlockInfo> GetJointBlockInfos()
+		{
+			return new BlockInfo[] { Up, Down, Left, Right }.Where(v => v.CanWalk());
 		}
 	}
 }

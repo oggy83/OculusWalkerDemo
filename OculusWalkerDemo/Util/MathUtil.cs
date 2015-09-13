@@ -30,6 +30,17 @@ namespace Oggy
 			return new Vector3(v.X , v.Y, v.Z);
 		}
 
+		public static Matrix GetRotationY(Vector3 forward)
+		{
+			var z = -forward;
+			z.Normalize();
+			var x = Vector3.Cross(Vector3.UnitY, z);
+			x.Normalize();
+			var y = Vector3.Cross(z, x);
+
+			return new Matrix(x.X, x.Y, x.Z, 0, y.X, y.Y, y.Z, 0, z.X, z.Y, z.Z, 0, 0, 0, 0, 1);
+		}
+
 		/// <summary>
 		/// get matrix to transform project space to uv space
 		/// </summary>

@@ -6,7 +6,6 @@
 
 PlayerとAvatar
 
-スタート地点対応
 鉄格子に対応
 ブロックのインスタンス描画に対応
 Zソートに対応
@@ -144,3 +143,4 @@ BoneWeightに0が入っている場合があるのに対応
 BlockInfo, BlockAddress を追加
 MapFactoryを追加
 進めない場所に移動できないように対応
+スタート地点対応
