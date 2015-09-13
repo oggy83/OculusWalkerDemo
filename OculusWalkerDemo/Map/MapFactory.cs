@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Drawing;
+using System.Xml.Linq;
 using System.Threading.Tasks;
 using SharpDX;
 using SharpDX.D3DCompiler;
@@ -17,45 +18,48 @@ namespace Oggy
 	public class MapFactory
 	{
 		/// <summary>
-		/// create a set of block info from a map image
+		/// create a set of block info from .tmx file
 		/// </summary>
-		/// <param name="mapSrcImage">path of map image</param>
+		/// <param name="tmx path">path of tmx path</param>
 		/// <returns>the created set of block info</returns>
 		/// <remarks>
+		/// .tmx file is the output format of Tiled Map Editor (http://www.mapeditor.org/)
 		/// block info represents 
 		/// </remarks>
-		public static BlockInfo[,] CreateBlockInfoMap(string mapSrcImage)
+		public static BlockInfo[,] CreateBlockInfoMap(string tmxPath)
 		{
 			// create map block
 			{
-				// load map from image file
-				var bitmap = (Bitmap)Image.FromFile("Image/testmap.png");
-				int mapBlockWidth = bitmap.Width;
-				int mapBlockHeight = bitmap.Height;
+				var doc = XElement.Load(tmxPath);
+				int mapBlockWidth = int.Parse(doc.Attribute("tilewidth").Value);
+				int mapBlockHeight = int.Parse(doc.Attribute("tileheight").Value);
+				var tileList = doc.Descendants("layer").Descendants("data").Descendants("tile").ToList();
 
 				var blockInfoMap = new BlockInfo[mapBlockHeight, mapBlockWidth];
 
-				// create blockInfo
-				for (int i = 0; i < mapBlockHeight; ++i)
+				// create blockInfo(s)
+				for (int tileIndex = 0; tileIndex < tileList.Count(); ++tileIndex)
 				{
-					for (int j = 0; j < mapBlockWidth; ++j)
+					var tile = tileList[tileIndex];
+					int gid = int.Parse(tile.Attribute("gid").Value);
+
+					int i = tileIndex / mapBlockHeight;
+					int j = tileIndex % mapBlockHeight;
+
+					BlockInfo.BlockTypes type = BlockInfo.BlockTypes.None;
+
+					if (gid == 3)
 					{
-						BlockInfo.BlockTypes type = BlockInfo.BlockTypes.None;
-
-						System.Drawing.Color color = bitmap.GetPixel(j, i);
-						if (color.R == 0 && color.G == 0 && color.B == 0)	
-						{
-							// black is wall
-							type = BlockInfo.BlockTypes.Wall;
-						}
-						else if (color.R == 255 && color.G == 255 && color.B == 255)
-						{ 
-							// white is floor
-							type = BlockInfo.BlockTypes.Floor;
-						}
-
-						blockInfoMap[j, i] = new BlockInfo(new BlockAddress(j, i), type);
+						// wall
+						type = BlockInfo.BlockTypes.Wall;
 					}
+					else if (gid == 9)
+					{
+						// floor
+						type = BlockInfo.BlockTypes.Floor;
+					}
+
+					blockInfoMap[j, i] = new BlockInfo(new BlockAddress(j, i), type);
 				}
 
 				// connect 
@@ -84,8 +88,6 @@ namespace Oggy
 						}
 					}
 				}
-
-				bitmap.Dispose();
 
 				return blockInfoMap;
 			}

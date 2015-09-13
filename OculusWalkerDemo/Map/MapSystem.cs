@@ -77,7 +77,8 @@ namespace Oggy
 
 		public void CreateMap(string mapSrcImage)
 		{
-			m_blockInfoMap = MapFactory.CreateBlockInfoMap("Image/testmap.png");
+			
+			m_blockInfoMap = MapFactory.CreateBlockInfoMap("Level/l9000.tmx");
 			int height = m_blockInfoMap.GetLength(0);
 			int width = m_blockInfoMap.GetLength(1);
 			float blockSize = 10.0f;
@@ -118,7 +119,7 @@ namespace Oggy
 				Color = Color4.White,
 				Speed = 1,
 			});
-			m_drawModelList.Add(new _ModelInfo() { Model = floorModel, ModelId = -1});
+			m_drawModelList.Add(new _ModelInfo() { Model = floorModel, ModelId = -1 });
 		}
 
 		public void LoadResource()
