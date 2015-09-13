@@ -153,12 +153,25 @@ namespace Oggy
 
 		public void LoadResource()
 		{
-			var path = "Map/m9000/m9000.blend";
-			var searchPath = "Map/m9000";
-			var scene = BlenderScene.FromFile(path);
-			m_wallModel = DrawModel.FromScene(path + "/draw", scene, searchPath);
+			// load wall
+			{
+				var path = "Map/m9000/m9000.blend";
+				var searchPath = "Map/m9000";
+				var scene = BlenderScene.FromFile(path);
+				m_wallModel = DrawModel.FromScene(path + "/draw", scene, searchPath);
 
-			m_drawModelList.Add(new _ModelInfo() { Model = m_wallModel, ModelId = 9000});
+				m_drawModelList.Add(new _ModelInfo() { Model = m_wallModel, ModelId = 9000 });
+			}
+			
+			// load closed gate
+			{
+				var path = "Map/m9100/m9100.blend";
+				var searchPath = "Map/m9100";
+				var scene = BlenderScene.FromFile(path);
+				m_wallModel = DrawModel.FromScene(path + "/draw", scene, searchPath);
+
+				m_drawModelList.Add(new _ModelInfo() { Model = m_wallModel, ModelId = 9100 });
+			}
 		}
 
 		public void UnloadResource()

@@ -58,6 +58,11 @@ namespace Oggy
 						// floor
 						type = BlockInfo.BlockTypes.Floor;
 					}
+					else if (gid == 49)
+					{
+						// closed gate
+						type = BlockInfo.BlockTypes.ClosedGate;
+					}
 					else if (gid == 57)
 					{
 						// start point
@@ -122,9 +127,30 @@ namespace Oggy
 						case BlockInfo.BlockTypes.Wall :
 							layoutList.Add(new LayoutInfo() 
 							{
-								ModelId = 9000,// m9000
+								ModelId = 9000,
 								Layout = Matrix.Translation(basePosition)
 							});
+							break;
+
+						case BlockInfo.BlockTypes.ClosedGate:
+							if (blockInfo[j, i].Left.CanWalk())
+							{
+								// x-axis direction gate
+								layoutList.Add(new LayoutInfo()
+								{
+									ModelId = 9100,
+									Layout = Matrix.RotationY(MathUtil.PI * 0.5f) * Matrix.Translation(basePosition)
+								});
+							}
+							else
+							{
+								// y-axis direction gate
+								layoutList.Add(new LayoutInfo()
+								{
+									ModelId = 9100,
+									Layout = Matrix.Translation(basePosition)
+								});
+							}
 							break;
 
 						case BlockInfo.BlockTypes.Floor:

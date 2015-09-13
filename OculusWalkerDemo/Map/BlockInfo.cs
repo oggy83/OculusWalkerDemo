@@ -16,6 +16,7 @@ namespace Oggy
 			Wall,
 			Floor,
 			StartPoint,
+			ClosedGate,
 		}
 
 		#endregion // public types
@@ -56,7 +57,7 @@ namespace Oggy
 
 		public bool CanWalk()
 		{
-			return m_type != BlockTypes.Wall;
+			return m_type != BlockTypes.Wall && m_type != BlockTypes.ClosedGate;
 		}
 
 		/// <summary>
