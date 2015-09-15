@@ -55,9 +55,14 @@ namespace Oggy
 			m_addres = address;
 		}
 
-		public bool CanWalk()
+		public bool CanWalkThrough()
 		{
 			return m_type != BlockTypes.Wall && m_type != BlockTypes.ClosedGate;
+		}
+
+		public bool CanWalkHalf()
+		{
+			return m_type == BlockTypes.ClosedGate;
 		}
 
 		/// <summary>
@@ -68,7 +73,7 @@ namespace Oggy
 		/// </returns>
 		public IEnumerable<BlockInfo> GetJointBlockInfos()
 		{
-			return new BlockInfo[] { Up, Down, Left, Right }.Where(v => v.CanWalk());
+			return new BlockInfo[] { Up, Down, Left, Right }.Where(v => v.CanWalkThrough());
 		}
 
 		public static IEnumerable<BlockInfo> ToFlatArray(BlockInfo[,] src)

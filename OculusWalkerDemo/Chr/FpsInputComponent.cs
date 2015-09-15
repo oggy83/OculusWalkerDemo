@@ -110,7 +110,7 @@ namespace Oggy
 									var pos = Vector3.Transform(-Vector3.UnitZ * 10, localToWorldMat) + position;
 
 									var address = mapSys.GetBlockAddress(pos);
-									if (mapSys.GetBlockInfo(address).CanWalk())
+									if (mapSys.GetBlockInfo(address).CanWalkThrough())
 									{
 										m_coroutine.Start(Coroutine.Join(new _TurnToTask(this, dir), new _MoveToTask(this, pos)));
 									}
@@ -120,7 +120,7 @@ namespace Oggy
 									// go forward
 									var pos = Vector3.Transform(Vector3.UnitZ * 10, localToWorldMat) + position;
 									var address = mapSys.GetBlockAddress(pos);
-									if (mapSys.GetBlockInfo(address).CanWalk())
+									if (mapSys.GetBlockInfo(address).CanWalkThrough())
 									{
 										m_coroutine.Start(new _MoveToTask(this, pos));
 									}
@@ -133,7 +133,7 @@ namespace Oggy
 										var dir = Vector3.Transform(-Vector3.UnitX, localToWorldMat);
 										var pos = Vector3.Transform(-Vector3.UnitX * 10, localToWorldMat) + position;
 										var address = mapSys.GetBlockAddress(pos);
-										if (mapSys.GetBlockInfo(address).CanWalk())
+										if (mapSys.GetBlockInfo(address).CanWalkThrough())
 										{
 											m_coroutine.Start(Coroutine.Join(new _TurnToTask(this, dir), new _MoveToTask(this, pos)));
 										}
@@ -144,7 +144,7 @@ namespace Oggy
 										var dir = Vector3.Transform(Vector3.UnitX, localToWorldMat);
 										var pos = Vector3.Transform(Vector3.UnitX * 10, localToWorldMat) + position;
 										var address = mapSys.GetBlockAddress(pos);
-										if (mapSys.GetBlockInfo(address).CanWalk())
+										if (mapSys.GetBlockInfo(address).CanWalkThrough())
 										{
 											m_coroutine.Start(Coroutine.Join(new _TurnToTask(this, dir), new _MoveToTask(this, pos)));
 										}

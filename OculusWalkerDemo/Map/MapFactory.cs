@@ -128,7 +128,7 @@ namespace Oggy
 						break;
 
 					case BlockInfo.BlockTypes.ClosedGate:
-						if (block.Left.CanWalk())
+						if (block.Left.CanWalkThrough())
 						{
 							// x-axis direction gate
 							layoutList.Add(new LayoutInfo()
