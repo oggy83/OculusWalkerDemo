@@ -59,7 +59,7 @@ namespace Oggy
 		public ModelEntity(InitParam initParam)
 		{
 			m_initParam = initParam;
-			m_worldTrans = Matrix.Identity;
+			m_worldTrans = m_initParam.Layout;
 		}
 
 		public void Dispose()

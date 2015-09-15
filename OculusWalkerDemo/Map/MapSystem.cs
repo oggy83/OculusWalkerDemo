@@ -61,19 +61,15 @@ namespace Oggy
 
 		public BlockInfo GetBlockInfo(BlockAddress address)
 		{
-			return m_blockInfoMap[address.X, address.Y];
+			return m_blockInfoMap[address.Y, address.X];
 		}
 
 		public BlockAddress GetBlockAddress(Vector3 v)
 		{
-			// temporary code
-			int height = m_blockInfoMap.GetLength(0);
-			int width = m_blockInfoMap.GetLength(1);
-			Vector3 origin = new Vector3((float)width * -0.5f * BlockSize, 0.0f, (float)height * -0.5f * BlockSize);
-			Vector3 bias = new Vector3(0.5f * BlockSize, 0.0f, 0.5f * BlockSize);
+			Vector3 bias = new Vector3(0.5f * BlockSize, 0.0f, -0.5f * BlockSize);
 
-			var address = (v - origin + bias) / BlockSize;
-			return new BlockAddress((int)address.X, (int)address.Z);
+			var address = (v + bias) / BlockSize;
+			return new BlockAddress((int)address.X, -(int)address.Z);
 		}
 
 		public Matrix GetStartPose()
@@ -81,18 +77,15 @@ namespace Oggy
 			Vector3 startPos = Vector3.Zero;
 			Vector3 startDir = Vector3.UnitZ;
 
-			int width = m_blockInfoMap.GetLength(1);
-			int height = m_blockInfoMap.GetLength(0);
 			foreach (var blockInfo in BlockInfo.ToFlatArray(m_blockInfoMap))
 			{
 				if (blockInfo.Type == BlockInfo.BlockTypes.StartPoint)
 				{
 					// found start point!
-					Vector3 origin = new Vector3((float)width * -0.5f * BlockSize, 0.0f, (float)height * -0.5f * BlockSize);
-					startPos = new Vector3(BlockSize * blockInfo.Address.X + origin.X, 0, BlockSize * blockInfo.Address.Y + origin.Z);
+					startPos = new Vector3(BlockSize * blockInfo.Address.X, 0, -BlockSize * blockInfo.Address.Y);
 
 					BlockAddress nextBlockAddr = blockInfo.GetJointBlockInfos().First().Address;// we assumes that start point has only one joint
-					startDir = new Vector3(nextBlockAddr.X - blockInfo.Address.X, 0, nextBlockAddr.Y - blockInfo.Address.Y);
+					startDir = new Vector3(nextBlockAddr.X - blockInfo.Address.X, 0, -nextBlockAddr.Y + blockInfo.Address.Y);
 					startDir.Normalize();
 				}
 			}
@@ -106,9 +99,8 @@ namespace Oggy
 			m_blockInfoMap = MapFactory.CreateBlockInfoMap(tmxPath);
 			int height = m_blockInfoMap.GetLength(0);
 			int width = m_blockInfoMap.GetLength(1);
-			Vector3 origin = new Vector3((float)width * -0.5f * BlockSize, 0.0f, (float)height * -0.5f * BlockSize);
 
-			var layoutList = MapFactory.CreateMapLayout(m_blockInfoMap, origin, BlockSize);
+			var layoutList = MapFactory.CreateMapLayout(m_blockInfoMap, Vector3.Zero, BlockSize);
 			foreach (var layout in layoutList)
 			{
 				var entity = new GameEntity("map");
@@ -128,7 +120,7 @@ namespace Oggy
 
 			// create floor entity
 			var drawSys = DrawSystem.GetInstance();
-			var floorModel = DrawModel.CreateFloor(height * 5, 60.0f, Vector4.Zero);
+			var floorModel = DrawModel.CreateFloor(height * BlockSize * 0.5f, 60.0f, Vector4.Zero);
 			m_floor = new ModelEntity(new ModelEntity.InitParam()
 			{
 				Model = floorModel,
@@ -137,7 +129,7 @@ namespace Oggy
 					Resource = drawSys.ResourceRepository.FindResource<TextureView>("floor"),
 					UvScale = Vector2.One
 				},
-				Layout = Matrix.Identity,
+				Layout = Matrix.Translation(BlockSize * 0.5f * width, 0, BlockSize * -0.5f * height),
 				Delay = 0.0f,
 				Forward = Vector3.Zero,
 				Color = Color4.White,

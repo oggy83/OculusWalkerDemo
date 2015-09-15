@@ -69,7 +69,7 @@ namespace Oggy
 						type = BlockInfo.BlockTypes.StartPoint;
 					}
 
-					blockInfoMap[j, i] = new BlockInfo(new BlockAddress(j, i), type);
+					blockInfoMap[i, j] = new BlockInfo(new BlockAddress(j, i), type);
 				}
 
 				// connect 
@@ -79,22 +79,22 @@ namespace Oggy
 					{
 						if (i > 0)
 						{
-							blockInfoMap[j, i].Up = blockInfoMap[j, i - 1];
+							blockInfoMap[i, j].Up = blockInfoMap[i - 1, j];
 						}
 
 						if (i < mapBlockHeight - 1)
 						{
-							blockInfoMap[j, i].Down = blockInfoMap[j, i + 1];
+							blockInfoMap[i, j].Down = blockInfoMap[i + 1, j];
 						}
 
 						if (j > 0)
 						{
-							blockInfoMap[j, i].Left = blockInfoMap[j - 1, i];
+							blockInfoMap[i, j].Left = blockInfoMap[i, j - 1];
 						}
 
 						if (j < mapBlockWidth - 1)
 						{
-							blockInfoMap[j, i].Right = blockInfoMap[j + 1, i];
+							blockInfoMap[i, j].Right = blockInfoMap[i, j + 1];
 						}
 					}
 				}
@@ -115,7 +115,7 @@ namespace Oggy
 
 			foreach (var block in BlockInfo.ToFlatArray(blockInfoMap))
 			{
-				var basePosition = new Vector3(block.Address.X * blockSize + origin.X, origin.Y, block.Address.Y * blockSize + origin.Z);
+				var basePosition = new Vector3(block.Address.X * blockSize + origin.X, origin.Y, -block.Address.Y * blockSize + origin.Z);
 
 				switch (block.Type)
 				{
