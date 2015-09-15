@@ -18,6 +18,8 @@ namespace Oggy
 {
 	public class MapSystem
 	{
+		private const float BlockSize = 10.0f;
+
 		#region static
 
 		private static MapSystem s_singleton = null;
@@ -67,11 +69,10 @@ namespace Oggy
 			// temporary code
 			int height = m_blockInfoMap.GetLength(0);
 			int width = m_blockInfoMap.GetLength(1);
-			float blockSize = 10.0f;
-			Vector3 origin = new Vector3((float)width * -0.5f * blockSize, 0.0f, (float)height * -0.5f * blockSize);
-			Vector3 bias = new Vector3(0.5f * blockSize, 0.0f, 0.5f * blockSize);
+			Vector3 origin = new Vector3((float)width * -0.5f * BlockSize, 0.0f, (float)height * -0.5f * BlockSize);
+			Vector3 bias = new Vector3(0.5f * BlockSize, 0.0f, 0.5f * BlockSize);
 
-			var address = (v - origin + bias) / blockSize;
+			var address = (v - origin + bias) / BlockSize;
 			return new BlockAddress((int)address.X, (int)address.Z);
 		}
 
@@ -79,7 +80,6 @@ namespace Oggy
 		{
 			Vector3 startPos = Vector3.Zero;
 			Vector3 startDir = Vector3.UnitZ;
-			float blockSize = 10.0f;
 
 			int width = m_blockInfoMap.GetLength(1);
 			int height = m_blockInfoMap.GetLength(0);
@@ -88,8 +88,8 @@ namespace Oggy
 				if (blockInfo.Type == BlockInfo.BlockTypes.StartPoint)
 				{
 					// found start point!
-					Vector3 origin = new Vector3((float)width * -0.5f * blockSize, 0.0f, (float)height * -0.5f * blockSize);
-					startPos = new Vector3(blockSize * blockInfo.Address.X + origin.X, 0, blockSize * blockInfo.Address.Y + origin.Z);
+					Vector3 origin = new Vector3((float)width * -0.5f * BlockSize, 0.0f, (float)height * -0.5f * BlockSize);
+					startPos = new Vector3(BlockSize * blockInfo.Address.X + origin.X, 0, BlockSize * blockInfo.Address.Y + origin.Z);
 
 					BlockAddress nextBlockAddr = blockInfo.GetJointBlockInfos().First().Address;// we assumes that start point has only one joint
 					startDir = new Vector3(nextBlockAddr.X - blockInfo.Address.X, 0, nextBlockAddr.Y - blockInfo.Address.Y);
@@ -106,10 +106,9 @@ namespace Oggy
 			m_blockInfoMap = MapFactory.CreateBlockInfoMap(tmxPath);
 			int height = m_blockInfoMap.GetLength(0);
 			int width = m_blockInfoMap.GetLength(1);
-			float blockSize = 10.0f;
-			Vector3 origin = new Vector3((float)width * -0.5f * blockSize, 0.0f, (float)height * -0.5f * blockSize);
+			Vector3 origin = new Vector3((float)width * -0.5f * BlockSize, 0.0f, (float)height * -0.5f * BlockSize);
 
-			var layoutList = MapFactory.CreateMapLayout(m_blockInfoMap, origin, blockSize);
+			var layoutList = MapFactory.CreateMapLayout(m_blockInfoMap, origin, BlockSize);
 			foreach (var layout in layoutList)
 			{
 				var entity = new GameEntity("map");
