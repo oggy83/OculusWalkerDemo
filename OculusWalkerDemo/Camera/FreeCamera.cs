@@ -94,7 +94,6 @@ namespace Oggy
 			src.MouseDown += _OnMouseDown;
 			src.MouseUp += _OnMouseUp;
 
-			/*
 			if (oldCamera != null)
 			{
 				var data = oldCamera.GetCameraData();
@@ -106,14 +105,13 @@ namespace Oggy
 
 				gaze.Normalize();
 				var right = Vector3.Cross(data.up, gaze);
-				var position = data.eye +Zoom * gaze;
+				var position = data.eye;
 
 				m_cameraTrans.Row1 = new Vector4(right, 0);
 				m_cameraTrans.Row2 = new Vector4(data.up, 0);
 				m_cameraTrans.Row3 = new Vector4(gaze, 0);
 				m_cameraTrans.Row4 = new Vector4(position, 1);
 			}
-			*/
 		}
 
 		public void Deactivate()
