@@ -109,55 +109,49 @@ namespace Oggy
 			public Matrix Layout;
 		}
 
-		public static List<LayoutInfo> CreateMapLayout(BlockInfo[,] blockInfo, Vector3 origin, float blockSize)
+		public static List<LayoutInfo> CreateMapLayout(BlockInfo[,] blockInfoMap, Vector3 origin, float blockSize)
 		{
 			var layoutList = new List<LayoutInfo>();
-			int height = blockInfo.GetLength(0);
-			int width = blockInfo.GetLength(1);
 
-			for (int i = 0; i < height; ++i)
+			foreach (var block in BlockInfo.ToFlatArray(blockInfoMap))
 			{
-				for (int j = 0; j < width; ++j)
-				{
-					var basePosition = new Vector3(j * blockSize + origin.X, origin.Y, i * blockSize + origin.Z);
+				var basePosition = new Vector3(block.Address.X * blockSize + origin.X, origin.Y, block.Address.Y * blockSize + origin.Z);
 
-					var type = blockInfo[j, i].Type;
-					switch (type)
-					{
-						case BlockInfo.BlockTypes.Wall :
-							layoutList.Add(new LayoutInfo() 
+				switch (block.Type)
+				{
+					case BlockInfo.BlockTypes.Wall:
+						layoutList.Add(new LayoutInfo()
+						{
+							ModelId = 9000,
+							Layout = Matrix.Translation(basePosition)
+						});
+						break;
+
+					case BlockInfo.BlockTypes.ClosedGate:
+						if (block.Left.CanWalk())
+						{
+							// x-axis direction gate
+							layoutList.Add(new LayoutInfo()
 							{
-								ModelId = 9000,
+								ModelId = 9100,
+								Layout = Matrix.RotationY(MathUtil.PI * 0.5f) * Matrix.Translation(basePosition)
+							});
+						}
+						else
+						{
+							// y-axis direction gate
+							layoutList.Add(new LayoutInfo()
+							{
+								ModelId = 9100,
 								Layout = Matrix.Translation(basePosition)
 							});
-							break;
+						}
+						break;
 
-						case BlockInfo.BlockTypes.ClosedGate:
-							if (blockInfo[j, i].Left.CanWalk())
-							{
-								// x-axis direction gate
-								layoutList.Add(new LayoutInfo()
-								{
-									ModelId = 9100,
-									Layout = Matrix.RotationY(MathUtil.PI * 0.5f) * Matrix.Translation(basePosition)
-								});
-							}
-							else
-							{
-								// y-axis direction gate
-								layoutList.Add(new LayoutInfo()
-								{
-									ModelId = 9100,
-									Layout = Matrix.Translation(basePosition)
-								});
-							}
-							break;
-
-						case BlockInfo.BlockTypes.Floor:
-						case BlockInfo.BlockTypes.None:
-						default:
-							break;
-					}
+					case BlockInfo.BlockTypes.Floor:
+					case BlockInfo.BlockTypes.None:
+					default:
+						break;
 				}
 			}
 

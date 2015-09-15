@@ -70,5 +70,21 @@ namespace Oggy
 		{
 			return new BlockInfo[] { Up, Down, Left, Right }.Where(v => v.CanWalk());
 		}
+
+		public static IEnumerable<BlockInfo> ToFlatArray(BlockInfo[,] src)
+		{
+			int height = src.GetLength(0);
+			int width = src.GetLength(1);
+
+			for (int i = 0; i < height; ++i)
+			{
+				for (int j = 0; j < width; ++j)
+				{
+					yield return src[i, j];
+				}
+			}
+
+			yield break;
+		}
 	}
 }

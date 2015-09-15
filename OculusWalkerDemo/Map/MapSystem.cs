@@ -81,23 +81,19 @@ namespace Oggy
 			Vector3 startDir = Vector3.UnitZ;
 			float blockSize = 10.0f;
 
-			int height = m_blockInfoMap.GetLength(0);
 			int width = m_blockInfoMap.GetLength(1);
-			for (int i = 0; i < height; ++i)
+			int height = m_blockInfoMap.GetLength(0);
+			foreach (var blockInfo in BlockInfo.ToFlatArray(m_blockInfoMap))
 			{
-				for (int j = 0; j < width; ++j)
+				if (blockInfo.Type == BlockInfo.BlockTypes.StartPoint)
 				{
-					BlockInfo info = m_blockInfoMap[j, i];
-					if (info.Type == BlockInfo.BlockTypes.StartPoint)
-					{
-						// found start point!
-						Vector3 origin = new Vector3((float)width * -0.5f * blockSize, 0.0f, (float)height * -0.5f * blockSize);
-						startPos = new Vector3(blockSize * info.Address.X + origin.X, 0, blockSize * info.Address.Y + origin.Z);
+					// found start point!
+					Vector3 origin = new Vector3((float)width * -0.5f * blockSize, 0.0f, (float)height * -0.5f * blockSize);
+					startPos = new Vector3(blockSize * blockInfo.Address.X + origin.X, 0, blockSize * blockInfo.Address.Y + origin.Z);
 
-						BlockAddress nextBlockAddr = info.GetJointBlockInfos().First().Address;// we assumes that start point has only one joint
-						startDir = new Vector3(nextBlockAddr.X - info.Address.X, 0, nextBlockAddr.Y - info.Address.Y);
-						startDir.Normalize();
-					}
+					BlockAddress nextBlockAddr = blockInfo.GetJointBlockInfos().First().Address;// we assumes that start point has only one joint
+					startDir = new Vector3(nextBlockAddr.X - blockInfo.Address.X, 0, nextBlockAddr.Y - blockInfo.Address.Y);
+					startDir.Normalize();
 				}
 			}
 
