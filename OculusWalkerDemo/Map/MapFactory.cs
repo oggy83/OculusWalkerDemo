@@ -69,7 +69,7 @@ namespace Oggy
 						type = BlockInfo.BlockTypes.StartPoint;
 					}
 
-					blockInfoMap[i, j] = new BlockInfo(new BlockAddress(j, i), type);
+					blockInfoMap[i, j] = new BlockInfo(j, i, type);
 				}
 
 				// connect 
@@ -79,22 +79,22 @@ namespace Oggy
 					{
 						if (i > 0)
 						{
-							blockInfoMap[i, j].Up = blockInfoMap[i - 1, j];
+							blockInfoMap[i, j].North = blockInfoMap[i - 1, j];
 						}
 
 						if (i < mapBlockHeight - 1)
 						{
-							blockInfoMap[i, j].Down = blockInfoMap[i + 1, j];
+							blockInfoMap[i, j].South = blockInfoMap[i + 1, j];
 						}
 
 						if (j > 0)
 						{
-							blockInfoMap[i, j].Left = blockInfoMap[i, j - 1];
+							blockInfoMap[i, j].East = blockInfoMap[i, j - 1];
 						}
 
 						if (j < mapBlockWidth - 1)
 						{
-							blockInfoMap[i, j].Right = blockInfoMap[i, j + 1];
+							blockInfoMap[i, j].West = blockInfoMap[i, j + 1];
 						}
 					}
 				}
@@ -115,7 +115,7 @@ namespace Oggy
 
 			foreach (var block in BlockInfo.ToFlatArray(blockInfoMap))
 			{
-				var basePosition = new Vector3(block.Address.X * blockSize + origin.X, origin.Y, -block.Address.Y * blockSize + origin.Z);
+				var basePosition = new Vector3(block.BlockX * blockSize + origin.X, origin.Y, -block.BlockY * blockSize + origin.Z);
 
 				switch (block.Type)
 				{
@@ -128,7 +128,7 @@ namespace Oggy
 						break;
 
 					case BlockInfo.BlockTypes.ClosedGate:
-						if (block.Left.CanWalkThrough())
+						if (block.East.CanWalkThrough())
 						{
 							// x-axis direction gate
 							layoutList.Add(new LayoutInfo()

@@ -52,6 +52,17 @@ namespace Oggy
             m_isTurning = true;
         }
 
+		public void Warp(Matrix pose)
+		{
+			m_reqMove = Vector3.Zero;
+			m_reqMoveTo = Vector3.Zero;
+			m_reqForwardDir = Vector3.Zero;
+			m_isMoving = false;
+			m_isTurning = false;
+
+			m_layoutC.Transform = pose;
+		}
+
         /// <summary>
 		/// Update component
 		/// </summary>

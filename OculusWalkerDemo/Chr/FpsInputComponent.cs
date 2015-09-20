@@ -25,10 +25,11 @@ namespace Oggy
         private const float PadAngleFactor = 1.0f;
         private const float MinimumPadMagnitude = 0.15f;
 
-        public FpsInputComponent()
+        public FpsInputComponent(MapLocation startLocation)
             : base(GameEntityComponent.UpdateLines.Input)
         {
 			m_coroutine = new Coroutine();
+			m_currentLocation = startLocation;
         }
 
         /// <summary>
@@ -53,13 +54,12 @@ namespace Oggy
             // Calc camera 
             var viewHeadMat = cameraSys.GetCameraData().GetViewMatrix();
             viewHeadMat.Invert();
-			var position = viewHeadMat.TranslationVector;
-			position.Y = 0;
             var moveDirection = new Vector3(viewHeadMat.Backward.X, 0, viewHeadMat.Backward.Z);
             moveDirection.Normalize();
 			float angleY = (float)Math.Atan2(moveDirection.X, moveDirection.Z);
 			Matrix3x3 localToWorldMat = Matrix3x3.RotationY(angleY);
-
+			//Matrix localToWorldMat = mapSys.GetPose(m_currentAddr, m_nextAddr);
+			var position = mapSys.GetPose(m_currentLocation).TranslationVector;
 
             var gameSys = GameSystem.GetInstance();
             switch (gameSys.Config.InputDevice)
@@ -106,12 +106,14 @@ namespace Oggy
 								if (thumbDir.Y <= -0.851)
 								{
 									// go backward
+									//var nextBlockInfo = mapSys.GetBlockInfo(m_currentAddr).GetBackwardBlockInfo(m_nextAddr);
+
 									var dir = Vector3.Transform(-Vector3.UnitZ, localToWorldMat);
 									var pos = Vector3.Transform(-Vector3.UnitZ * 10, localToWorldMat) + position;
-
 									var address = mapSys.GetBlockAddress(pos);
 									if (mapSys.GetBlockInfo(address).CanWalkThrough())
 									{
+										m_currentLocation = address;
 										m_coroutine.Start(Coroutine.Join(new _TurnToTask(this, dir), new _MoveToTask(this, pos)));
 									}
 								}
@@ -122,6 +124,7 @@ namespace Oggy
 									var address = mapSys.GetBlockAddress(pos);
 									if (mapSys.GetBlockInfo(address).CanWalkThrough())
 									{
+										m_currentLocation = address;
 										m_coroutine.Start(new _MoveToTask(this, pos));
 									}
 								}
@@ -135,6 +138,7 @@ namespace Oggy
 										var address = mapSys.GetBlockAddress(pos);
 										if (mapSys.GetBlockInfo(address).CanWalkThrough())
 										{
+											m_currentLocation = address;
 											m_coroutine.Start(Coroutine.Join(new _TurnToTask(this, dir), new _MoveToTask(this, pos)));
 										}
 									}
@@ -146,6 +150,7 @@ namespace Oggy
 										var address = mapSys.GetBlockAddress(pos);
 										if (mapSys.GetBlockInfo(address).CanWalkThrough())
 										{
+											m_currentLocation = address;
 											m_coroutine.Start(Coroutine.Join(new _TurnToTask(this, dir), new _MoveToTask(this, pos)));
 										}
 									}
@@ -188,6 +193,10 @@ namespace Oggy
 
             m_behaviorC = Owner.FindComponent<ChrBehaviorComponent>();
             Debug.Assert(m_behaviorC != null, "PlayerInputCompoment depends on ChrBehaviorCompoment");
+
+			// set first pose
+			var pose = MapSystem.GetInstance().GetPose(m_currentLocation);
+			m_behaviorC.Warp(pose);
         }
 
         public override void OnRemoveFromEntity(GameEntity entity)
@@ -264,6 +273,11 @@ namespace Oggy
 		/// coroutine for character operation 
 		/// </summary>
 		private Coroutine m_coroutine;
+
+		/// <summary>
+		/// current location on map
+		/// </summary>
+		private MapLocation m_currentLocation;
 
         #endregion // private members
     }

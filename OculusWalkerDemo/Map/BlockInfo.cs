@@ -23,19 +23,28 @@ namespace Oggy
 
 		#region properties
 
-		private BlockAddress m_addres;
-		public BlockAddress Address
+		private int m_blockX;
+		public int BlockX
 		{
 			get
 			{
-				return m_addres;
+				return m_blockX;
 			}
 		}
 
-		public BlockInfo Up;
-		public BlockInfo Down;
-		public BlockInfo Left;
-		public BlockInfo Right;
+		private int m_blockY;
+		public int BlockY
+		{
+			get
+			{
+				return m_blockY;
+			}
+		}
+
+		public BlockInfo North;
+		public BlockInfo South;
+		public BlockInfo East;
+		public BlockInfo West;
 
 		private BlockTypes m_type;
 		public BlockTypes Type
@@ -49,10 +58,11 @@ namespace Oggy
 
 		#endregion // properties
 
-		public BlockInfo(BlockAddress address, BlockTypes type)
+		public BlockInfo(int blockX, int blockY, BlockTypes type)
 		{
 			m_type = type;
-			m_addres = address;
+			m_blockX = blockX;
+			m_blockY = blockY;
 		}
 
 		public bool CanWalkThrough()
@@ -71,9 +81,95 @@ namespace Oggy
 		/// <returns>
 		/// list of connected block info
 		/// </returns>
-		public IEnumerable<BlockInfo> GetJointBlockInfos()
+		public List<MapLocation.DirectionType> GetJointBlockInfos()
 		{
-			return new BlockInfo[] { Up, Down, Left, Right }.Where(v => v.CanWalkThrough());
+			var dirList = new List<MapLocation.DirectionType>();
+			if (North.CanWalkThrough())
+			{
+				dirList.Add(MapLocation.DirectionType.North);
+			}
+			if (South.CanWalkThrough())
+			{
+				dirList.Add(MapLocation.DirectionType.South);
+			}
+			if (East.CanWalkThrough())
+			{
+				dirList.Add(MapLocation.DirectionType.East);
+			}
+			if (West.CanWalkThrough())
+			{
+				dirList.Add(MapLocation.DirectionType.West);
+			}
+
+			return dirList;
+		}
+
+		public BlockInfo GetForwardBlockInfo(MapLocation.DirectionType forwardDir)
+		{
+			switch (forwardDir)
+			{
+				case MapLocation.DirectionType.North:
+					return North;
+				case MapLocation.DirectionType.South:
+					return South;
+				case MapLocation.DirectionType.East:
+					return East;
+				case MapLocation.DirectionType.West:
+					return West;
+				default:
+					return null;
+			}
+		}
+
+		public BlockInfo GetBackwardBlockInfo(MapLocation.DirectionType forwardDir)
+		{
+			switch (forwardDir)
+			{
+				case MapLocation.DirectionType.North:
+					return South;
+				case MapLocation.DirectionType.South:
+					return North;
+				case MapLocation.DirectionType.East:
+					return West;
+				case MapLocation.DirectionType.West:
+					return East;
+				default:
+					return null;
+			}
+		}
+
+		public BlockInfo GetLeftBlockInfo(MapLocation.DirectionType forwardDir)
+		{
+			switch (forwardDir)
+			{
+				case MapLocation.DirectionType.North:
+					return East;
+				case MapLocation.DirectionType.South:
+					return West;
+				case MapLocation.DirectionType.East:
+					return South;
+				case MapLocation.DirectionType.West:
+					return North;
+				default:
+					return null;
+			}
+		}
+
+		public BlockInfo GetRightBlockInfo(MapLocation.DirectionType forwardDir)
+		{
+			switch (forwardDir)
+			{
+				case MapLocation.DirectionType.North:
+					return West;
+				case MapLocation.DirectionType.South:
+					return East;
+				case MapLocation.DirectionType.East:
+					return North;
+				case MapLocation.DirectionType.West:
+					return South;
+				default:
+					return null;
+			}
 		}
 
 		public static IEnumerable<BlockInfo> ToFlatArray(BlockInfo[,] src)

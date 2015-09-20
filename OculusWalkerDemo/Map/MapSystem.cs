@@ -59,38 +59,43 @@ namespace Oggy
 
 		#endregion // properties
 
-		public BlockInfo GetBlockInfo(BlockAddress address)
+		public BlockInfo GetBlockInfo(MapLocation address)
 		{
-			return m_blockInfoMap[address.Y, address.X];
+			return m_blockInfoMap[address.BlockY, address.BlockX];
 		}
 
-		public BlockAddress GetBlockAddress(Vector3 v)
+		public MapLocation GetBlockAddress(Vector3 v)
 		{
 			Vector3 bias = new Vector3(0.5f * BlockSize, 0.0f, -0.5f * BlockSize);
 
 			var address = (v + bias) / BlockSize;
-			return new BlockAddress((int)address.X, -(int)address.Z);
+			return new MapLocation((int)address.X, -(int)address.Z);
 		}
 
-		public Matrix GetStartPose()
+		public Matrix GetPose(MapLocation loc)
 		{
-			Vector3 startPos = Vector3.Zero;
-			Vector3 startDir = Vector3.UnitZ;
+			var pos = new Vector3(loc.BlockX * BlockSize, 0, -loc.BlockY * BlockSize);
+			var dir = new Vector3[] { Vector3.UnitZ, -Vector3.UnitZ, -Vector3.UnitX, Vector3.UnitX }[(int)loc.Direction];
+			return MathUtil.GetRotationY(dir) * Matrix.Translation(pos);
+		}
+
+		public MapLocation GetStartInfo()
+		{
+			var result = new MapLocation(0, 0);
 
 			foreach (var blockInfo in BlockInfo.ToFlatArray(m_blockInfoMap))
 			{
 				if (blockInfo.Type == BlockInfo.BlockTypes.StartPoint)
 				{
 					// found start point!
-					startPos = new Vector3(BlockSize * blockInfo.Address.X, 0, -BlockSize * blockInfo.Address.Y);
-
-					BlockAddress nextBlockAddr = blockInfo.GetJointBlockInfos().First().Address;// we assumes that start point has only one joint
-					startDir = new Vector3(nextBlockAddr.X - blockInfo.Address.X, 0, -nextBlockAddr.Y + blockInfo.Address.Y);
-					startDir.Normalize();
+					result = new MapLocation(blockInfo.BlockX, blockInfo.BlockY);
+					result.Direction = blockInfo.GetJointBlockInfos().First();// we assumes that start point has only one joint
+					break;
 				}
 			}
 
-			return MathUtil.GetRotationY(startDir) * Matrix.Translation(startPos);
+			// not found
+			return result;
 		}
 
 		public void CreateMap(string tmxPath)

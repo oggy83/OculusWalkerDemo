@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using SharpDX;
+using System.Diagnostics;
 
 namespace Oggy
 {
@@ -34,7 +35,7 @@ namespace Oggy
                 }
 
 				var layoutC = new LayoutComponent();
-				layoutC.Transform = mapSys.GetStartPose();
+				layoutC.Transform = Matrix.Identity;
 				AddComponent(layoutC);
 				
 				//var markerC = new ModelMarkerComponent(scene);
@@ -46,8 +47,9 @@ namespace Oggy
                 var behaviorC = new ChrBehaviorComponent();
                 AddComponent(behaviorC);
 
+				MapLocation startLocation = mapSys.GetStartInfo();
 				//var inputC = new GodViewInputComponent();
-                var inputC = new FpsInputComponent();
+                var inputC = new FpsInputComponent(startLocation);
 				AddComponent(inputC);
 
 				var modelC = new ModelComponent();

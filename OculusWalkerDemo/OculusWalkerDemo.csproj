@@ -111,7 +111,7 @@
     <Compile Include="Draw\Effect.cs" />
     <Compile Include="Hmd\HmdMirrorTexture.cs" />
     <Compile Include="Hmd\HmdSwapTextureSet.cs" />
-    <Compile Include="Map\BlockAddress.cs" />
+    <Compile Include="Map\MapLocation.cs" />
     <Compile Include="Map\BlockInfo.cs" />
     <Compile Include="Map\MapFactory.cs" />
     <Compile Include="Map\MapSystem.cs" />
