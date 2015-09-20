@@ -50,17 +50,7 @@ namespace Oggy
 
             var cameraSys = CameraSystem.GetInstance();
             var drawSys = DrawSystem.GetInstance();
-
-            // Calc camera 
-            var viewHeadMat = cameraSys.GetCameraData().GetViewMatrix();
-            viewHeadMat.Invert();
-            var moveDirection = new Vector3(viewHeadMat.Backward.X, 0, viewHeadMat.Backward.Z);
-            moveDirection.Normalize();
-			float angleY = (float)Math.Atan2(moveDirection.X, moveDirection.Z);
-			Matrix3x3 localToWorldMat = Matrix3x3.RotationY(angleY);
-			//Matrix localToWorldMat = mapSys.GetPose(m_currentAddr, m_nextAddr);
-			var position = mapSys.GetPose(m_currentLocation).TranslationVector;
-
+          
             var gameSys = GameSystem.GetInstance();
             switch (gameSys.Config.InputDevice)
             {
@@ -106,26 +96,31 @@ namespace Oggy
 								if (thumbDir.Y <= -0.851)
 								{
 									// go backward
-									//var nextBlockInfo = mapSys.GetBlockInfo(m_currentAddr).GetBackwardBlockInfo(m_nextAddr);
+									var currentBlockInfo = mapSys.GetBlockInfo(m_currentLocation.BlockX, m_currentLocation.BlockY);
+									var nextDir = MapLocation.GetBackwardDirection(m_currentLocation.Direction);
+									var nextBlockInfo = currentBlockInfo.GetAdjacent(nextDir);
 
-									var dir = Vector3.Transform(-Vector3.UnitZ, localToWorldMat);
-									var pos = Vector3.Transform(-Vector3.UnitZ * 10, localToWorldMat) + position;
-									var address = mapSys.GetBlockAddress(pos);
-									if (mapSys.GetBlockInfo(address).CanWalkThrough())
+									if (nextBlockInfo.CanWalkThrough())
 									{
-										m_currentLocation = address;
-										m_coroutine.Start(Coroutine.Join(new _TurnToTask(this, dir), new _MoveToTask(this, pos)));
+										m_currentLocation = new MapLocation(nextBlockInfo.BlockX, nextBlockInfo.BlockY);
+										m_currentLocation.Direction = nextDir;
+										var pose = mapSys.GetPose(m_currentLocation);
+										m_coroutine.Start(Coroutine.Join(new _TurnToTask(this, pose.Forward), new _MoveToTask(this, pose.TranslationVector)));
 									}
 								}
 								else if (thumbDir.Y >= 0.851)
 								{
 									// go forward
-									var pos = Vector3.Transform(Vector3.UnitZ * 10, localToWorldMat) + position;
-									var address = mapSys.GetBlockAddress(pos);
-									if (mapSys.GetBlockInfo(address).CanWalkThrough())
+									var currentBlockInfo = mapSys.GetBlockInfo(m_currentLocation.BlockX, m_currentLocation.BlockY);
+									var nextDir = MapLocation.GetForwardDirection(m_currentLocation.Direction);
+									var nextBlockInfo = currentBlockInfo.GetAdjacent(m_currentLocation.Direction);
+
+									if (nextBlockInfo.CanWalkThrough())
 									{
-										m_currentLocation = address;
-										m_coroutine.Start(new _MoveToTask(this, pos));
+										m_currentLocation = new MapLocation(nextBlockInfo.BlockX, nextBlockInfo.BlockY);
+										m_currentLocation.Direction = nextDir;
+										var pose = mapSys.GetPose(m_currentLocation);
+										m_coroutine.Start(new _MoveToTask(this, pose.TranslationVector));// no turn
 									}
 								}
 								else
@@ -133,25 +128,31 @@ namespace Oggy
 									if (thumbDir.X < 0)
 									{
 										// go left
-										var dir = Vector3.Transform(-Vector3.UnitX, localToWorldMat);
-										var pos = Vector3.Transform(-Vector3.UnitX * 10, localToWorldMat) + position;
-										var address = mapSys.GetBlockAddress(pos);
-										if (mapSys.GetBlockInfo(address).CanWalkThrough())
+										var currentBlockInfo = mapSys.GetBlockInfo(m_currentLocation.BlockX, m_currentLocation.BlockY);
+										var nextDir = MapLocation.GetLeftDirection(m_currentLocation.Direction);
+										var nextBlockInfo = currentBlockInfo.GetAdjacent(nextDir);
+
+										if (nextBlockInfo.CanWalkThrough())
 										{
-											m_currentLocation = address;
-											m_coroutine.Start(Coroutine.Join(new _TurnToTask(this, dir), new _MoveToTask(this, pos)));
+											m_currentLocation = new MapLocation(nextBlockInfo.BlockX, nextBlockInfo.BlockY);
+											m_currentLocation.Direction = nextDir;
+											var pose = mapSys.GetPose(m_currentLocation);
+											m_coroutine.Start(Coroutine.Join(new _TurnToTask(this, pose.Forward), new _MoveToTask(this, pose.TranslationVector)));
 										}
 									}
 									else
 									{
 										// go right
-										var dir = Vector3.Transform(Vector3.UnitX, localToWorldMat);
-										var pos = Vector3.Transform(Vector3.UnitX * 10, localToWorldMat) + position;
-										var address = mapSys.GetBlockAddress(pos);
-										if (mapSys.GetBlockInfo(address).CanWalkThrough())
+										var currentBlockInfo = mapSys.GetBlockInfo(m_currentLocation.BlockX, m_currentLocation.BlockY);
+										var nextDir = MapLocation.GetRightDirection(m_currentLocation.Direction);
+										var nextBlockInfo = currentBlockInfo.GetAdjacent(nextDir);
+
+										if (nextBlockInfo.CanWalkThrough())
 										{
-											m_currentLocation = address;
-											m_coroutine.Start(Coroutine.Join(new _TurnToTask(this, dir), new _MoveToTask(this, pos)));
+											m_currentLocation = new MapLocation(nextBlockInfo.BlockX, nextBlockInfo.BlockY);
+											m_currentLocation.Direction = nextDir;
+											var pose = mapSys.GetPose(m_currentLocation);
+											m_coroutine.Start(Coroutine.Join(new _TurnToTask(this, pose.Forward), new _MoveToTask(this, pose.TranslationVector)));
 										}
 									}
 								}
@@ -166,15 +167,17 @@ namespace Oggy
                             {
                                 if (thumbDir.X > 0)
                                 {
-                                    var v = new Vector3(1, 0, 0);
-                                    v = Vector3.Transform(v, localToWorldMat);
-									m_coroutine.Start(new _TurnToTask(this, v));
+									var nextDir = MapLocation.GetRightDirection(m_currentLocation.Direction);
+									m_currentLocation.Direction = nextDir;
+									var pose = mapSys.GetPose(m_currentLocation);
+									m_coroutine.Start(new _TurnToTask(this, pose.Forward));
                                 }
                                 else if (thumbDir.X < 0)
                                 {
-                                    var v = new Vector3(-1, 0, 0);
-                                    v = Vector3.Transform(v, localToWorldMat);
-									m_coroutine.Start(new _TurnToTask(this, v));
+									var nextDir = MapLocation.GetLeftDirection(m_currentLocation.Direction);
+									m_currentLocation.Direction = nextDir;
+									var pose = mapSys.GetPose(m_currentLocation);
+									m_coroutine.Start(new _TurnToTask(this, pose.Forward));
                                 }
                             }
                         }

@@ -90,6 +90,62 @@ namespace Oggy
 		{
 			m_pos = PositionType.Center;
 		}
+
+		public static DirectionType GetForwardDirection(DirectionType forwardDir)
+		{
+			return forwardDir;
+		}
+
+		public static DirectionType GetBackwardDirection(DirectionType forwardDir)
+		{
+			switch (forwardDir)
+			{
+				case MapLocation.DirectionType.North:
+					return DirectionType.South;
+				case MapLocation.DirectionType.South:
+					return DirectionType.North;
+				case MapLocation.DirectionType.East:
+					return DirectionType.West;
+				case MapLocation.DirectionType.West:
+					return DirectionType.East;
+				default:
+					return DirectionType.North;
+			}
+		}
+
+		public static DirectionType GetLeftDirection(DirectionType forwardDir)
+		{
+			switch (forwardDir)
+			{
+				case MapLocation.DirectionType.North:
+					return DirectionType.West;
+				case MapLocation.DirectionType.South:
+					return DirectionType.East;
+				case MapLocation.DirectionType.East:
+					return DirectionType.North;
+				case MapLocation.DirectionType.West:
+					return DirectionType.South;
+				default:
+					return DirectionType.North;
+			}
+		}
+
+		public static DirectionType GetRightDirection(DirectionType forwardDir)
+		{
+			switch (forwardDir)
+			{
+				case MapLocation.DirectionType.North:
+					return DirectionType.East;
+				case MapLocation.DirectionType.South:
+					return DirectionType.West;
+				case MapLocation.DirectionType.East:
+					return DirectionType.South;
+				case MapLocation.DirectionType.West:
+					return DirectionType.North;
+				default:
+					return DirectionType.North;
+			}
+		}
 	}
 
 }

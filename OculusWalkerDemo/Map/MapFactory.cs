@@ -89,12 +89,12 @@ namespace Oggy
 
 						if (j > 0)
 						{
-							blockInfoMap[i, j].East = blockInfoMap[i, j - 1];
+							blockInfoMap[i, j].West = blockInfoMap[i, j - 1];
 						}
 
 						if (j < mapBlockWidth - 1)
 						{
-							blockInfoMap[i, j].West = blockInfoMap[i, j + 1];
+							blockInfoMap[i, j].East = blockInfoMap[i, j + 1];
 						}
 					}
 				}

@@ -59,9 +59,9 @@ namespace Oggy
 
 		#endregion // properties
 
-		public BlockInfo GetBlockInfo(MapLocation address)
+		public BlockInfo GetBlockInfo(int blockX, int blockY)
 		{
-			return m_blockInfoMap[address.BlockY, address.BlockX];
+			return m_blockInfoMap[blockY, blockX];
 		}
 
 		public MapLocation GetBlockAddress(Vector3 v)
@@ -72,10 +72,27 @@ namespace Oggy
 			return new MapLocation((int)address.X, -(int)address.Z);
 		}
 
+		public Vector3 GetDirection(MapLocation.DirectionType dir)
+		{
+			switch (dir)
+			{
+				case MapLocation.DirectionType.North:
+					return Vector3.UnitZ;
+				case MapLocation.DirectionType.South:
+					return -Vector3.UnitZ;
+				case MapLocation.DirectionType.West:
+					return -Vector3.UnitX;
+				case MapLocation.DirectionType.East:
+					return Vector3.UnitX;
+				default:
+					return Vector3.UnitZ;
+			}
+		}
+
 		public Matrix GetPose(MapLocation loc)
 		{
 			var pos = new Vector3(loc.BlockX * BlockSize, 0, -loc.BlockY * BlockSize);
-			var dir = new Vector3[] { Vector3.UnitZ, -Vector3.UnitZ, -Vector3.UnitX, Vector3.UnitX }[(int)loc.Direction];
+			var dir = GetDirection(loc.Direction);
 			return MathUtil.GetRotationY(dir) * Matrix.Translation(pos);
 		}
 

@@ -104,9 +104,9 @@ namespace Oggy
 			return dirList;
 		}
 
-		public BlockInfo GetForwardBlockInfo(MapLocation.DirectionType forwardDir)
+		public BlockInfo GetAdjacent(MapLocation.DirectionType dir)
 		{
-			switch (forwardDir)
+			switch (dir)
 			{
 				case MapLocation.DirectionType.North:
 					return North;
@@ -116,57 +116,6 @@ namespace Oggy
 					return East;
 				case MapLocation.DirectionType.West:
 					return West;
-				default:
-					return null;
-			}
-		}
-
-		public BlockInfo GetBackwardBlockInfo(MapLocation.DirectionType forwardDir)
-		{
-			switch (forwardDir)
-			{
-				case MapLocation.DirectionType.North:
-					return South;
-				case MapLocation.DirectionType.South:
-					return North;
-				case MapLocation.DirectionType.East:
-					return West;
-				case MapLocation.DirectionType.West:
-					return East;
-				default:
-					return null;
-			}
-		}
-
-		public BlockInfo GetLeftBlockInfo(MapLocation.DirectionType forwardDir)
-		{
-			switch (forwardDir)
-			{
-				case MapLocation.DirectionType.North:
-					return East;
-				case MapLocation.DirectionType.South:
-					return West;
-				case MapLocation.DirectionType.East:
-					return South;
-				case MapLocation.DirectionType.West:
-					return North;
-				default:
-					return null;
-			}
-		}
-
-		public BlockInfo GetRightBlockInfo(MapLocation.DirectionType forwardDir)
-		{
-			switch (forwardDir)
-			{
-				case MapLocation.DirectionType.North:
-					return West;
-				case MapLocation.DirectionType.South:
-					return East;
-				case MapLocation.DirectionType.East:
-					return North;
-				case MapLocation.DirectionType.West:
-					return South;
 				default:
 					return null;
 			}
