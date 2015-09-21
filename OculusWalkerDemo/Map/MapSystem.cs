@@ -92,6 +92,24 @@ namespace Oggy
 		public Matrix GetPose(MapLocation loc)
 		{
 			var pos = new Vector3(loc.BlockX * BlockSize, 0, -loc.BlockY * BlockSize);
+			switch (loc.Position)
+			{
+				case MapLocation.PositionType.North:
+					pos.Z += 0.5f * BlockSize;
+					break;
+
+				case MapLocation.PositionType.South:
+					pos.Z -= 0.5f * BlockSize;
+					break;
+
+				case MapLocation.PositionType.West:
+					pos.X -= 0.5f * BlockSize;
+					break;
+
+				case MapLocation.PositionType.East:
+					pos.X += 0.5f * BlockSize;
+					break;
+			}
 			var dir = GetDirection(loc.Direction);
 			return MathUtil.GetRotationY(dir) * Matrix.Translation(pos);
 		}

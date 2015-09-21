@@ -6,7 +6,7 @@
 
 PlayerとAvatar
 
-鉄格子に対応
+
 FPS表示を常に目の前に
 ブロックのインスタンス描画に対応
 Zソートに対応
@@ -146,3 +146,4 @@ BlockInfo, BlockAddress を追加
 MapFactoryを追加
 進めない場所に移動できないように対応
 スタート地点対応
+鉄格子に対応

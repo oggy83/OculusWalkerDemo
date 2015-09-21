@@ -100,7 +100,14 @@ namespace Oggy
 									var nextDir = MapLocation.GetBackwardDirection(m_currentLocation.Direction);
 									var nextBlockInfo = currentBlockInfo.GetAdjacent(nextDir);
 
-									if (nextBlockInfo.CanWalkThrough())
+									if (nextBlockInfo.CanWalkHalf())
+									{
+										m_currentLocation = new MapLocation(nextBlockInfo.BlockX, nextBlockInfo.BlockY);
+										m_currentLocation.SetPosition(nextDir);
+										var pose = mapSys.GetPose(m_currentLocation);
+										m_coroutine.Start(Coroutine.Join(new _TurnToTask(this, pose.Forward), new _MoveToTask(this, pose.TranslationVector)));
+									}
+									else if (nextBlockInfo.CanWalkThrough())
 									{
 										m_currentLocation = new MapLocation(nextBlockInfo.BlockX, nextBlockInfo.BlockY);
 										m_currentLocation.Direction = nextDir;
@@ -115,7 +122,14 @@ namespace Oggy
 									var nextDir = MapLocation.GetForwardDirection(m_currentLocation.Direction);
 									var nextBlockInfo = currentBlockInfo.GetAdjacent(m_currentLocation.Direction);
 
-									if (nextBlockInfo.CanWalkThrough())
+									if (nextBlockInfo.CanWalkHalf())
+									{
+										m_currentLocation = new MapLocation(nextBlockInfo.BlockX, nextBlockInfo.BlockY);
+										m_currentLocation.SetPosition(nextDir);
+										var pose = mapSys.GetPose(m_currentLocation);
+										m_coroutine.Start(new _MoveToTask(this, pose.TranslationVector));// no turn
+									}
+									else if (nextBlockInfo.CanWalkThrough())
 									{
 										m_currentLocation = new MapLocation(nextBlockInfo.BlockX, nextBlockInfo.BlockY);
 										m_currentLocation.Direction = nextDir;
@@ -132,7 +146,14 @@ namespace Oggy
 										var nextDir = MapLocation.GetLeftDirection(m_currentLocation.Direction);
 										var nextBlockInfo = currentBlockInfo.GetAdjacent(nextDir);
 
-										if (nextBlockInfo.CanWalkThrough())
+										if (nextBlockInfo.CanWalkHalf())
+										{
+											m_currentLocation = new MapLocation(nextBlockInfo.BlockX, nextBlockInfo.BlockY);
+											m_currentLocation.SetPosition(nextDir);
+											var pose = mapSys.GetPose(m_currentLocation);
+											m_coroutine.Start(Coroutine.Join(new _TurnToTask(this, pose.Forward), new _MoveToTask(this, pose.TranslationVector)));
+										}
+										else if (nextBlockInfo.CanWalkThrough())
 										{
 											m_currentLocation = new MapLocation(nextBlockInfo.BlockX, nextBlockInfo.BlockY);
 											m_currentLocation.Direction = nextDir;
@@ -147,7 +168,14 @@ namespace Oggy
 										var nextDir = MapLocation.GetRightDirection(m_currentLocation.Direction);
 										var nextBlockInfo = currentBlockInfo.GetAdjacent(nextDir);
 
-										if (nextBlockInfo.CanWalkThrough())
+										if (nextBlockInfo.CanWalkHalf())
+										{
+											m_currentLocation = new MapLocation(nextBlockInfo.BlockX, nextBlockInfo.BlockY);
+											m_currentLocation.SetPosition(nextDir);
+											var pose = mapSys.GetPose(m_currentLocation);
+											m_coroutine.Start(Coroutine.Join(new _TurnToTask(this, pose.Forward), new _MoveToTask(this, pose.TranslationVector)));
+										}
+										else if (nextBlockInfo.CanWalkThrough())
 										{
 											m_currentLocation = new MapLocation(nextBlockInfo.BlockX, nextBlockInfo.BlockY);
 											m_currentLocation.Direction = nextDir;

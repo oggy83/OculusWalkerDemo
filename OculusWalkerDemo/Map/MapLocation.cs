@@ -91,6 +91,26 @@ namespace Oggy
 			m_pos = PositionType.Center;
 		}
 
+		public void SetPosition(DirectionType forwardDir)
+		{
+			m_dir = forwardDir;
+			switch (forwardDir)
+			{
+				case MapLocation.DirectionType.North:
+					m_pos = PositionType.South;
+					break;
+				case MapLocation.DirectionType.South:
+					m_pos = PositionType.North;
+					break;
+				case MapLocation.DirectionType.East:
+					m_pos = PositionType.West;
+					break;
+				case MapLocation.DirectionType.West:
+					m_pos = PositionType.East;
+					break;
+			}
+		}
+
 		public static DirectionType GetForwardDirection(DirectionType forwardDir)
 		{
 			return forwardDir;
