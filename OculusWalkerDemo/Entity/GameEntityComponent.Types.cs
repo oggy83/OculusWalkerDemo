@@ -24,6 +24,8 @@ namespace Oggy
 			Posing,
 
 			PreDraw,
+
+			Draw,
 		}
 	}
 }

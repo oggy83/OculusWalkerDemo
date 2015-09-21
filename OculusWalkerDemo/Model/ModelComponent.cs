@@ -53,8 +53,8 @@ namespace Oggy
 				  
 		#endregion // properties
 
-		public ModelComponent()
-		: base(GameEntityComponent.UpdateLines.PreDraw)
+		public ModelComponent(GameEntityComponent.UpdateLines updateLine)
+		: base(updateLine)
 		{
             ModelContext = new Context();
 			m_layoutC = null;
@@ -81,16 +81,24 @@ namespace Oggy
 					DrawSystem.MaterialData material;
 					foreach (var node in ModelContext.DrawModel.NodeList)
 					{
-                        Matrix[] boneMatrices = null;
-                        if (m_skeletonC != null)
-                        {
-                            // has skeleton
-                            boneMatrices = m_skeletonC.Skeleton.GetAllSkinningTransforms();
-                        }
+						if (UpdateLine == GameEntityComponent.UpdateLines.PreDraw)
+						{
+							// use draw buffer
+							drawSys.GetDrawBuffer().AppendStaticModel(layout, ref node.Mesh, ref node.Material);
+						}
+						else if (UpdateLine == GameEntityComponent.UpdateLines.Draw)
+						{
+							Matrix[] boneMatrices = null;
+							if (m_skeletonC != null)
+							{
+								// has skeleton
+								boneMatrices = m_skeletonC.Skeleton.GetAllSkinningTransforms();
+							}
 
-                        material = node.Material;
-                        var tex = material.DiffuseTex0;
-                        context.DrawModel(layout, Color4.White, node.Mesh, tex, DrawSystem.RenderMode.Opaque, boneMatrices);
+							material = node.Material;
+							var tex = material.DiffuseTex0;
+							context.DrawModel(layout, Color4.White, node.Mesh, tex, DrawSystem.RenderMode.Opaque, boneMatrices);
+						}
 					}
 				}
 

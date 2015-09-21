@@ -200,7 +200,7 @@ namespace Oggy
 				layoutC.Transform = layout.Layout;
 				entity.AddComponent(layoutC);
 
-				var modelC = new ModelComponent();
+				var modelC = new ModelComponent(GameEntityComponent.UpdateLines.PreDraw);
 				modelC.ModelContext.EnableCastShadow = true;
 				modelC.ModelContext.DrawModel = m_drawModelList.Find((v) => v.ModelId == layout.ModelId).Model;
 				//modelC.ModelContext.DebugModel = debugModel;

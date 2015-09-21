@@ -52,7 +52,7 @@ namespace Oggy
                 var inputC = new FpsInputComponent(startLocation);
 				AddComponent(inputC);
 
-				var modelC = new ModelComponent();
+				var modelC = new ModelComponent(GameEntityComponent.UpdateLines.Draw);
 				modelC.ModelContext.EnableCastShadow = true;
 				modelC.ModelContext.DrawModel = drawModel;
 				//modelC.ModelContext.DebugModel = debugModel;

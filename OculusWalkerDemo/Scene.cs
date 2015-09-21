@@ -128,7 +128,9 @@ namespace Oggy
                 cameraSys.Update(dt);
                 entitySys.UpdateComponents(GameEntityComponent.UpdateLines.Posing, dt);
                 mapSys.Update(dt, context);
-                entitySys.UpdateComponents(GameEntityComponent.UpdateLines.PreDraw, dt);
+				entitySys.UpdateComponents(GameEntityComponent.UpdateLines.PreDraw, dt);
+				drawSys.GetDrawBuffer().Process(drawSys.GetDrawContext());
+                entitySys.UpdateComponents(GameEntityComponent.UpdateLines.Draw, dt);
                 
 				// start command list generation for the next frame
 				m_taskList.Clear();

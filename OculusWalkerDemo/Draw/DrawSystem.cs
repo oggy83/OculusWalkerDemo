@@ -165,6 +165,8 @@ namespace Oggy
             {
                 m_hmd.Setup(m_d3d, m_repository.GetDefaultRenderTarget());
             }
+
+			m_drawBuffer = new DrawBuffer();
 			
 		}
 
@@ -194,6 +196,11 @@ namespace Oggy
 			return m_passCtrl.GetSubThreadContext(index);
 		}
 
+		public DrawBuffer GetDrawBuffer()
+		{
+			return m_drawBuffer;
+		}
+
         [Conditional("DEBUG")]
         public void CreateDebugMenu(ToolStripMenuItem parent)
         {
@@ -215,6 +222,8 @@ namespace Oggy
 		private bool m_bStereoRendering;
 
 		private DrawPassCtrl m_passCtrl;
+
+		private DrawBuffer m_drawBuffer;
 
 		#endregion // private members
 
