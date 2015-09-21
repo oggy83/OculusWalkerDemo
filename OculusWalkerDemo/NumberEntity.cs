@@ -26,6 +26,7 @@ namespace Oggy
 			m_initParam = initParam;
 			m_plane = DrawModel.CreateFloor(0.3f, 1.0f, Vector4.Zero);
 			m_text = "".ToArray();
+			SetPose(Matrix.Identity);
 		}
 
 		public void Dispose()
@@ -37,6 +38,11 @@ namespace Oggy
 		{
 			num = MathUtil.Clamp(num, 0, 9099.9f);
 			m_text = String.Format("{0:f1}", num).ToArray();
+		}
+
+		public void SetPose(Matrix pose)
+		{
+			m_worldTrans = pose;
 		}
 
 		public void Draw(IDrawContext context)
@@ -51,20 +57,20 @@ namespace Oggy
 				{
 					case '.':
 						tex = m_initParam.Dot;
-						offset = 0.22f;
+						offset = -0.22f;
 						break;
 					default:
 						if ('0' <= c && c <= '9')
 						{
 							int num = (int)c - (int)'0';
 							tex = m_initParam.Numbers[num];
-							offset = 0.3f;
+							offset = -0.3f;
 						}
 						break;
 				}
 
 				Debug.Assert(tex.Resource != null, "invalid character");
-				context.DrawModel(layout, Color4.White, m_plane.NodeList[0].Mesh, tex, DrawSystem.RenderMode.Transparency, null);
+				context.DrawModel(layout * m_worldTrans, Color4.White, m_plane.NodeList[0].Mesh, tex, DrawSystem.RenderMode.Transparency, null);
 				layout *= Matrix.Translation(offset, 0, 0);
 			}
 
@@ -75,6 +81,7 @@ namespace Oggy
 		private InitParam m_initParam;
 		private DrawModel m_plane;
 		private char[] m_text;
+		private Matrix m_worldTrans;
 
 		#endregion // private members
 	}

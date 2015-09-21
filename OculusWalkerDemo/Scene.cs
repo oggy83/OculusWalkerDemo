@@ -68,7 +68,7 @@ namespace Oggy
                     UvScale = Vector2.One,
                 },
                 Numbers = numTextures,
-                Layout = Matrix.RotationYawPitchRoll(1.0f, -1.5f, 0.0f) * Matrix.Translation(1.5f, 2.5f, 4.5f)
+				Layout = Matrix.RotationYawPitchRoll(1.0f, -1.5f, MathUtil.PI) * Matrix.Translation(-1.5f, 2.5f, -4.5f)
             });
 
 			// create map
@@ -152,6 +152,7 @@ namespace Oggy
 					context.ExecuteCommandList(result);
 				}
 
+				m_numberEntity.SetPose(ChrSystem.GetInstance().Player.FindComponent<LayoutComponent>().Transform);
 				m_numberEntity.Draw(context);
 				drawSys.EndScene();
 			}
