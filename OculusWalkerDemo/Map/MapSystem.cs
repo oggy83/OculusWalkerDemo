@@ -114,6 +114,57 @@ namespace Oggy
 			return MathUtil.GetRotationY(dir) * Matrix.Translation(pos);
 		}
 
+		public MapLocation? Walk(MapLocation currentLocation, MapLocation.DirectionType dir)
+		{
+			var currentBlockInfo = GetBlockInfo(currentLocation.BlockX, currentLocation.BlockY);
+			var nextBlockInfo = currentBlockInfo.GetAdjacent(dir);
+
+			bool canWalk = nextBlockInfo.CanWalkThrough();
+			bool canWalkHalf = nextBlockInfo.CanWalkHalf();
+			if (!canWalk && !canWalkHalf)
+			{
+				// can't walk
+				return null;
+			}
+
+			if (currentBlockInfo.CanWalkHalf())
+			{
+				// can't walk central of current block
+				switch (currentLocation.Position)
+				{
+					case MapLocation.PositionType.North :
+						if (dir == MapLocation.DirectionType.South) return null;
+						break;
+
+					case MapLocation.PositionType.South :
+						if (dir == MapLocation.DirectionType.North) return null;
+						break;
+
+					case MapLocation.PositionType.East :
+						if (dir == MapLocation.DirectionType.West) return null;
+						break;
+
+					case MapLocation.PositionType.West:
+						if (dir == MapLocation.DirectionType.East) return null;
+						break;
+				}
+			}
+
+			if (canWalk)
+			{
+				var result = new MapLocation(nextBlockInfo.BlockX, nextBlockInfo.BlockY);
+				result.Direction = dir;
+				return result;
+			}
+			else 
+			{
+				// can half walk
+				var result = new MapLocation(nextBlockInfo.BlockX, nextBlockInfo.BlockY);
+				result.SetPosition(dir);
+				return result;
+			}
+		}
+
 		public MapLocation GetStartInfo()
 		{
 			var result = new MapLocation(0, 0);
