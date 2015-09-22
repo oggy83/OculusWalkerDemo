@@ -121,11 +121,10 @@ namespace Oggy
                 // camera setting
                 inputSys.Update(dt);
                 
-                drawSys.Camera = cameraSys.GetCameraData();
-
                 entitySys.UpdateComponents(GameEntityComponent.UpdateLines.Input, dt);
                 entitySys.UpdateComponents(GameEntityComponent.UpdateLines.Behavior, dt);
                 cameraSys.Update(dt);
+				drawSys.Camera = cameraSys.GetCameraData();
                 entitySys.UpdateComponents(GameEntityComponent.UpdateLines.Posing, dt);
                 mapSys.Update(dt, context);
 				entitySys.UpdateComponents(GameEntityComponent.UpdateLines.PreDraw, dt);

@@ -51,7 +51,7 @@ namespace Oggy
 
 		public void EndPass()
 		{
-			int syncInterval = 1;// 0 => immediately return, 1 => vsync
+			int syncInterval = 0;// 0 => immediately return, 1 => vsync
 			m_d3d.SwapChain.Present(syncInterval, PresentFlags.None);
 		}
 

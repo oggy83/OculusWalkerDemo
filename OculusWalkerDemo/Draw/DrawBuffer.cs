@@ -22,7 +22,7 @@ namespace Oggy
 		{
 		}
 
-		public void AppendStaticModel(Matrix layout, ref DrawSystem.MeshData mesh, ref DrawSystem.MaterialData material)
+		public void AppendStaticModel(Matrix layout, float z, ref DrawSystem.MeshData mesh, ref DrawSystem.MaterialData material)
 		{
 			var key = new _StaticModelData() { Mesh = mesh, Material = material };
 			List<_InstanceData> instanceList = null;
@@ -33,7 +33,7 @@ namespace Oggy
 				m_staticModelBuffer.Add(key, instanceList);
 			}
 
-			instanceList.Add(new _InstanceData() { Layout = layout });
+			instanceList.Add(new _InstanceData() { Layout = layout, Z = z });
 		}
 
 		public void Process(IDrawContext context)
@@ -41,6 +41,8 @@ namespace Oggy
 			// draw static model
 			foreach (var pair in m_staticModelBuffer)
 			{
+				pair.Value.Sort((a, b) => { return a.Z < b.Z ? -1 : 1; });// z sort (near object has priority to render)
+
 				var key = pair.Key;
 				context.BeginDrawInstance(key.Mesh, key.Material.DiffuseTex0, DrawSystem.RenderMode.Opaque);
 				foreach (var instance in pair.Value)
@@ -61,9 +63,10 @@ namespace Oggy
 			public DrawSystem.MaterialData Material;
 		}
 
-		private struct _InstanceData
+		private class _InstanceData
 		{
 			public Matrix Layout;
+			public float Z;
 		}
 
 		#endregion // private types

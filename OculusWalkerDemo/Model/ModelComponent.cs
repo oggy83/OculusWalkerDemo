@@ -70,8 +70,10 @@ namespace Oggy
 			var drawSys = DrawSystem.GetInstance();
             var context = drawSys.GetDrawContext();
 			var dbg = DrawSystem.GetInstance().DebugCtrl;
+			var viewTrans = drawSys.Camera.GetViewMatrix();
 
 			var layout = m_layoutC.Transform;
+			float z = 0.0f;//(layout * viewTrans).TranslationVector.Z;// calc z
 
             if (ModelContext.DrawModel != null)
             {
@@ -84,7 +86,7 @@ namespace Oggy
 						if (UpdateLine == GameEntityComponent.UpdateLines.PreDraw)
 						{
 							// use draw buffer
-							drawSys.GetDrawBuffer().AppendStaticModel(layout, ref node.Mesh, ref node.Material);
+							drawSys.GetDrawBuffer().AppendStaticModel(layout, z, ref node.Mesh, ref node.Material);
 						}
 						else if (UpdateLine == GameEntityComponent.UpdateLines.Draw)
 						{
