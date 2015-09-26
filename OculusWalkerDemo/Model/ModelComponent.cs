@@ -73,7 +73,7 @@ namespace Oggy
 			var viewTrans = drawSys.Camera.GetViewMatrix();
 
 			var layout = m_layoutC.Transform;
-			float z = 0.0f;//(layout * viewTrans).TranslationVector.Z;// calc z
+			float z = (layout * viewTrans).TranslationVector.Z;// calc z
 
             if (ModelContext.DrawModel != null)
             {
@@ -129,6 +129,22 @@ namespace Oggy
                 }
                 */
 
+				// draw aabb
+				if (dbg.IsEnableAabb)
+				{
+					if (m_dbgBoundingBoxModel == null)
+					{
+						// create model in first draw time
+						var model = DrawModel.CreateBox("aabb", ModelContext.DrawModel.BoundingBox, Color.Pink);
+						m_dbgBoundingBoxModel = model;
+					}
+
+					var mesh = m_dbgBoundingBoxModel.NodeList[0].Mesh;
+					var worldTransform = m_layoutC.Transform;
+					var material = m_dbgBoundingBoxModel.NodeList[0].Material;
+					context.DrawDebugModel(worldTransform, mesh, DrawSystem.RenderMode.Transparency);
+				}
+
 				// draw bones for debug
 				if (dbg.IsEnableDrawBone)
 				{
@@ -170,6 +186,11 @@ namespace Oggy
 		/// skeleton compoment (optional)
 		/// </summary>
 		private SkeletonComponent m_skeletonC;
+
+		/// <summary>
+		/// bounding box of this model
+		/// </summary>
+		private DrawModel m_dbgBoundingBoxModel = null;
 
 		#endregion // private members
 	}

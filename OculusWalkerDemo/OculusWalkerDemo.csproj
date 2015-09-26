@@ -119,6 +119,7 @@
     <Compile Include="Model\ModelComponent.cs" />
     <Compile Include="Model\Skeleton.cs" />
     <Compile Include="Model\SkeletonComponent.cs" />
+    <Compile Include="Util\Aabb.cs" />
     <Compile Include="Util\FpsCounter.cs" />
     <Compile Include="Draw\IDrawContext.cs" />
     <Compile Include="Draw\MonoralDrawContext.cs" />

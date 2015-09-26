@@ -30,6 +30,12 @@ namespace Oggy
 			set;
 		}
 
+		public bool IsEnableAabb
+		{
+			get;
+			set;
+		}
+
 		public int BoneIndexForDraw
 		{
 			get;
@@ -53,6 +59,7 @@ namespace Oggy
 			//_AddCheckButton(parent, "draw tangent frame", "IsEnableDrawTangentFrame");
 			//_AddCheckButton(parent, "draw bone weight", "IsEnableDrawBoneWeight");
 			_AddCheckButton(parent, "draw bone", "IsEnableDrawBone");
+			_AddCheckButton(parent, "draw aabb", "IsEnableAabb");
 
             /*
 			// show bone index

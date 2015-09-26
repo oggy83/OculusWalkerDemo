@@ -42,6 +42,15 @@ namespace Oggy
             }
         }
 
+		private Aabb m_bb;
+		public Aabb BoundingBox
+		{
+			get
+			{
+				return m_bb;
+			}
+		}
+
         #endregion // properties
 
         #region inner class
@@ -90,6 +99,7 @@ namespace Oggy
          
             m_nodeList = new List<Node>();
             m_boneArray = null;
+			m_bb = new Aabb(Vector3.Zero, Vector3.Zero);
         }
 
         public static DrawModel FromScene(String uid, BlenderScene scene, string searchPath)
@@ -100,7 +110,7 @@ namespace Oggy
 
             var model = new DrawModel(uid);
             bool hasBone = BlenderUtil.GetLengthOf(scene.NodeList[0].BoneArray) > 0;// boneArray is set to the first node
-
+			var aabb = Aabb.Invalid();
             foreach (var n in scene.NodeList)
             {
                 if (n.MaterialData.Type != DrawSystem.MaterialTypes.Default)
@@ -125,6 +135,12 @@ namespace Oggy
 
                 var vertices2 = n.Vertics
                     .Select(v => v.Tangent).ToArray();
+
+				// update aabb
+				foreach (var v in vertices1)
+				{
+					aabb.AddPoint(MathUtil.ToVector3(v.Position));
+				}
 
                 var node = new Node();
                 node.Material = n.MaterialData;
@@ -210,6 +226,7 @@ foreach (var buf in node.Mesh.Buffers)
                 model.m_nodeList.Add(node);
             }
 
+			model.m_bb = aabb;
             return model;
         }
 
@@ -287,15 +304,18 @@ foreach (var buf in node.Mesh.Buffers)
 				
 			};
 
+			Aabb aabb = Aabb.Invalid();
 			for (int i = 0; i < vertices.Length; ++i)
 			{
 				vertices[i].Position += offset;
 				vertices[i].Position.W = 1;
+				aabb.AddPoint(MathUtil.ToVector3(vertices[i].Position));
 			}
 
 			var model = new DrawModel("");
 			var mesh = DrawUtil.CreateMeshData<_VertexCommon>(d3d, PrimitiveTopology.TriangleList, vertices);
             model.m_nodeList.Add(new Node() { Mesh = mesh, Material = new DrawSystem.MaterialData(), IsDebug = false, HasBone = false });
+			model.m_bb = aabb;
 
 			return model;
 		}
@@ -317,15 +337,18 @@ foreach (var buf in node.Mesh.Buffers)
 				new _VertexCommon() { Position = new Vector4( -gs,  0,  -gs, 1), Texcoord = new Vector2(0, us), Normal = Vector3.UnitY },
 			};
 
+			Aabb aabb = Aabb.Invalid();
 			for (int i = 0; i < vertices.Length; ++i)
 			{
 				vertices[i].Position += offset;
 				vertices[i].Position.W = 1;
+				aabb.AddPoint(MathUtil.ToVector3(vertices[i].Position));
 			}
 
 			var model = new DrawModel("");
 			var mesh = DrawUtil.CreateMeshData<_VertexCommon>(d3d, PrimitiveTopology.TriangleList, vertices);
             model.m_nodeList.Add(new Node() { Mesh = mesh, Material = new DrawSystem.MaterialData(), IsDebug = false, HasBone = false });
+			model.m_bb = aabb;
 
 			return model;
 		}
@@ -370,11 +393,13 @@ foreach (var buf in node.Mesh.Buffers)
 				new _VertexDebug() { Position = new Vector4( w,  w,  w, 1) },
 			};
 
+			Aabb aabb = Aabb.Invalid();
             for (int i = 0; i < vertices.Length; ++i)
             {
                 vertices[i].Position += offset;
                 vertices[i].Position.W = 1;
                 vertices[i].Color = color;
+				aabb.AddPoint(MathUtil.ToVector3(vertices[i].Position));
             }
 
             var model = new DrawModel(uid);
@@ -385,8 +410,67 @@ foreach (var buf in node.Mesh.Buffers)
                 IsDebug = true,
                 HasBone = false,
             });
+			model.m_bb = aabb;
 
             return model;
         }
+
+		public static DrawModel CreateBox(String uid, Aabb box, Color4 color)
+		{
+			var drawSys = DrawSystem.GetInstance();
+			var d3d = drawSys.D3D;
+
+			Vector3 min = box.Min;
+			Vector3 max = box.Max;
+			var vertices = new _VertexDebug[]
+			{
+				new _VertexDebug() { Position = new Vector4(min.X, min.Y, min.Z, 1) },
+				new _VertexDebug() { Position = new Vector4(max.X, min.Y, min.Z, 1) },
+				new _VertexDebug() { Position = new Vector4(max.X, min.Y, min.Z, 1) },
+				new _VertexDebug() { Position = new Vector4(max.X, min.Y, max.Z, 1) },
+				new _VertexDebug() { Position = new Vector4(max.X, min.Y, max.Z, 1) },
+				new _VertexDebug() { Position = new Vector4(min.X, min.Y, max.Z, 1) },
+				new _VertexDebug() { Position = new Vector4(min.X, min.Y, max.Z, 1) },
+				new _VertexDebug() { Position = new Vector4(min.X, min.Y, min.Z, 1) },
+
+				new _VertexDebug() { Position = new Vector4(min.X, min.Y, min.Z, 1) },
+				new _VertexDebug() { Position = new Vector4(min.X, max.Y, min.Z, 1) },
+				new _VertexDebug() { Position = new Vector4(max.X, min.Y, min.Z, 1) },
+				new _VertexDebug() { Position = new Vector4(max.X, max.Y, min.Z, 1) },
+				new _VertexDebug() { Position = new Vector4(max.X, min.Y, max.Z, 1) },
+				new _VertexDebug() { Position = new Vector4(max.X, max.Y, max.Z, 1) },
+				new _VertexDebug() { Position = new Vector4(min.X, min.Y, max.Z, 1) },
+				new _VertexDebug() { Position = new Vector4(min.X, max.Y, max.Z, 1) },
+
+				new _VertexDebug() { Position = new Vector4(min.X, max.Y, min.Z, 1) },
+				new _VertexDebug() { Position = new Vector4(max.X, max.Y, min.Z, 1) },
+				new _VertexDebug() { Position = new Vector4(max.X, max.Y, min.Z, 1) },
+				new _VertexDebug() { Position = new Vector4(max.X, max.Y, max.Z, 1) },
+				new _VertexDebug() { Position = new Vector4(max.X, max.Y, max.Z, 1) },
+				new _VertexDebug() { Position = new Vector4(min.X, max.Y, max.Z, 1) },
+				new _VertexDebug() { Position = new Vector4(min.X, max.Y, max.Z, 1) },
+				new _VertexDebug() { Position = new Vector4(min.X, max.Y, min.Z, 1) },
+			};
+
+			Aabb aabb = Aabb.Invalid();
+			for (int i = 0; i < vertices.Length; ++i)
+			{
+				vertices[i].Position.W = 1;
+				vertices[i].Color = color;
+				aabb.AddPoint(MathUtil.ToVector3(vertices[i].Position));
+			}
+
+			var model = new DrawModel(uid);
+			model.m_nodeList.Add(new Node()
+			{
+				Mesh = DrawUtil.CreateMeshData<_VertexDebug>(d3d, PrimitiveTopology.LineList, vertices),
+				Material = new DrawSystem.MaterialData(),
+				IsDebug = true,
+				HasBone = false,
+			});
+			model.m_bb = aabb;
+
+			return model;
+		}
 	}
 }
