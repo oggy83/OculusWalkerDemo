@@ -188,10 +188,10 @@ namespace Oggy
             return Matrix.Identity;
         }
 
-		public Matrix GetViewProjectionMatrix()
+		public DrawSystem.EyeData GetEyeData()
 		{
-			Debug.Assert(false, "DrawContext.GetViewProjectionMatrix() is not implemented");
-			return Matrix.Identity;
+			Debug.Assert(false, "DrawContext.GetEyeData() is not implemented");
+			return new DrawSystem.EyeData();
 		}
 
 		public void SetWorldParams(RenderTarget renderTarget, DrawSystem.WorldData data)
@@ -226,17 +226,12 @@ namespace Oggy
 			// nothing
 		}
 
-		public void UpdateEyeParams(DeviceContext context, RenderTarget renderTarget, DrawSystem.CameraData eyeOffset, Matrix proj)
+		public void UpdateEyeParams(DeviceContext context, RenderTarget renderTarget, DrawSystem.EyeData eyeData)
 		{
-			var conbinedCamera = DrawSystem.CameraData.Conbine(m_worldData.Camera, eyeOffset);
-
-			// update view-projection matrix
-            var vpMatrix = conbinedCamera.GetViewMatrix() * proj;
-
 			var vdata = new _WorldVertexShaderConst()
 			{
 				// hlsl is column-major memory layout, so we must transpose matrix
-				vpMat = Matrix.Transpose(vpMatrix),
+				vpMat = Matrix.Transpose(eyeData.ViewProjectionMatrix),
 			};
 			context.UpdateSubresource(ref vdata, m_initParam.WorldVtxConst);
 
@@ -246,7 +241,7 @@ namespace Oggy
 				ambientCol = new Color4(m_worldData.AmbientColor),
 				fogCol = new Color4(m_worldData.FogColor),
 				light1Col = new Color4(m_worldData.DirectionalLight.Color),
-				cameraPos = new Vector4(conbinedCamera.eye, 1.0f),
+				cameraPos = new Vector4(eyeData.EyePosition, 1.0f),
 				light1Dir = new Vector4(m_worldData.DirectionalLight.Direction, 0.0f),
 			};
 			m_context.UpdateSubresource(ref pdata, m_initParam.WorldPixConst);

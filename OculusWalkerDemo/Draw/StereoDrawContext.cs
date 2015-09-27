@@ -73,14 +73,12 @@ namespace Oggy
 		{
             m_worldData = data;
             var renderTarget = m_repository.FindResource<RenderTarget>("Temp");
-			var eyeOffset = m_hmd.GetEyePoses();
-            var proj = _CalcProjection(1, m_worldData.NearClip, m_worldData.FarClip);
 
 			m_context.SetWorldParams(renderTarget, data);
 			m_hmd.BeginScene();
-
 			m_context.UpdateWorldParams(m_d3d.Device.ImmediateContext, data);
-            m_context.UpdateEyeParams(m_d3d.Device.ImmediateContext, renderTarget, eyeOffset[1], proj);// set right eye settings
+
+            m_context.UpdateEyeParams(m_d3d.Device.ImmediateContext, renderTarget, _GetEyeData(1));// set right eye settings
 			m_context.ClearRenderTarget(renderTarget);
 			m_isContextDirty = true;
 
@@ -112,7 +110,7 @@ namespace Oggy
             m_d3d.Device.ImmediateContext.CopyResource(tmpRenderTarget.TargetTexture, renderTargets[1].TargetTexture);
 
             // set left eye settings
-            m_context.UpdateEyeParams(m_d3d.Device.ImmediateContext, renderTargets[0], eyeOffset[0], proj);
+			m_context.UpdateEyeParams(m_d3d.Device.ImmediateContext, renderTargets[0], _GetEyeData(0));// set left eye settings
 
             // render left eye image to temp buffer
             foreach (var commandList in m_commandListTable)
@@ -193,12 +191,9 @@ namespace Oggy
 			return m_hmd.GetHeadMatrix();
         }
 
-		public Matrix GetViewProjectionMatrix()
+		public DrawSystem.EyeData GetEyeData()
 		{
-			var eyeOffset = m_hmd.GetEyePoses();
-			var proj = _CalcProjection(1, m_worldData.NearClip, m_worldData.FarClip);
-			var conbinedCamera = DrawSystem.CameraData.Conbine(m_worldData.Camera, eyeOffset[0]);
-			return conbinedCamera.GetViewMatrix() * proj;
+			return _GetEyeData(0);
 		}
 
 		#region private members
@@ -242,6 +237,19 @@ namespace Oggy
             tmp.M44 = ovrProj.M44;
             return tmp;
         }
+
+		private DrawSystem.EyeData _GetEyeData(int eyeIndex)
+		{
+			var eyeOffset = m_hmd.GetEyePoses();
+			var proj = _CalcProjection(eyeIndex, m_worldData.NearClip, m_worldData.FarClip);
+			var conbinedCamera = DrawSystem.CameraData.Conbine(m_worldData.Camera, eyeOffset[eyeIndex]);
+
+			return new DrawSystem.EyeData()
+			{
+				ViewProjectionMatrix = conbinedCamera.GetViewMatrix() * proj,
+				EyePosition = m_worldData.Camera.eye,
+			};
+		}
 
         #endregion // private methods
 	}

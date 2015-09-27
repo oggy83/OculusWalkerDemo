@@ -35,16 +35,10 @@ namespace Oggy
 			m_worldData = data;
 			var renderTarget = m_repository.GetDefaultRenderTarget();
 
-            // calc projection matrix
-            int width = renderTarget.Resolution.Width;
-            int height = renderTarget.Resolution.Height;
-            float aspect = (float)width / (float)height;
-            float fov = (float)Math.PI / 3;
-            var proj = Matrix.PerspectiveFovLH(fov, aspect, data.NearClip, data.FarClip);
-
             m_context.SetWorldParams(renderTarget, data);
             m_context.UpdateWorldParams(m_d3d.Device.ImmediateContext, data);
-			m_context.UpdateEyeParams(m_d3d.Device.ImmediateContext, renderTarget, DrawSystem.CameraData.GetIdentity(), proj);
+
+			m_context.UpdateEyeParams(m_d3d.Device.ImmediateContext, renderTarget, GetEyeData());
 			m_context.ClearRenderTarget(renderTarget);
 
 			return renderTarget;
@@ -97,7 +91,7 @@ namespace Oggy
             return Matrix.Identity;
         }
 
-		public Matrix GetViewProjectionMatrix()
+		public DrawSystem.EyeData GetEyeData()
 		{
 			var renderTarget = m_repository.GetDefaultRenderTarget();
 
@@ -107,7 +101,12 @@ namespace Oggy
 			float aspect = (float)width / (float)height;
             float fov = (float)Math.PI / 3;
 			var proj = Matrix.PerspectiveFovLH(fov, aspect, m_worldData.NearClip, m_worldData.FarClip);
-			return m_worldData.Camera.GetViewMatrix() * proj;
+
+			return new DrawSystem.EyeData()
+			{
+				ViewProjectionMatrix = m_worldData.Camera.GetViewMatrix() * proj,
+				EyePosition = m_worldData.Camera.eye,
+			};
 		}
 
 		#region private members

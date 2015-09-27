@@ -217,5 +217,18 @@ namespace Oggy
 
         }
 
+		public struct EyeData
+		{
+			/// <summary>
+			/// get/set a matrix that is the product of view matrix and projection matrix
+			/// </summary>
+			public Matrix ViewProjectionMatrix { get; set; }
+
+			/// <summary>
+			/// get/set a camera eye position
+			/// </summary>
+			public Vector3 EyePosition { get; set; }
+		}
+
 	}
 }

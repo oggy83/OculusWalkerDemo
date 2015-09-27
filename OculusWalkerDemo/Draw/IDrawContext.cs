@@ -44,6 +44,6 @@ namespace Oggy
         /// </remarks>
         Matrix GetHeadMatrix();
 
-		Matrix GetViewProjectionMatrix();
+		DrawSystem.EyeData GetEyeData();
 	}
 }

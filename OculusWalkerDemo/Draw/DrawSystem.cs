@@ -105,7 +105,7 @@ namespace Oggy
 		public void BeginScene(WorldData data)
 		{
 			m_passCtrl.StartPass(data);
-			m_viewProjTrans = m_passCtrl.Context.GetViewProjectionMatrix();
+			m_viewProjTrans = m_passCtrl.Context.GetEyeData().ViewProjectionMatrix;
 		}
 
 		public void EndScene()
