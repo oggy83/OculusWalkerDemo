@@ -67,93 +67,101 @@ namespace Oggy
 		/// <param name="dT">spend time [sec]</param>
 		public override void Update(double dT)
 		{
+			if (ModelContext.DrawModel == null)
+            {
+				return;
+			}
+
 			var drawSys = DrawSystem.GetInstance();
             var context = drawSys.GetDrawContext();
 			var dbg = DrawSystem.GetInstance().DebugCtrl;
-			var viewTrans = drawSys.GetViewProjectionTransform();
+			var vpTrans = drawSys.GetViewProjectionTransform();
 
 			var layout = m_layoutC.Transform;
-			float z = (layout * viewTrans).TranslationVector.Z;// calc z
+			var wvpTrans = layout * vpTrans;
+			float z = wvpTrans.TranslationVector.Z;// calc z
 
-            if (ModelContext.DrawModel != null)
-            {
-                // Add command for draw mdoel
-				if (ModelContext.DrawModel != null)
+			/*
+			if (!ModelContext.DrawModel.BoundingBox.IsInFrustum(wvpTrans))
+			{
+				// out of view-volume
+				return;
+			}
+			*/
+
+            // Add command for draw mdoel
+			DrawSystem.MaterialData material;
+			foreach (var node in ModelContext.DrawModel.NodeList)
+			{
+				if (UpdateLine == GameEntityComponent.UpdateLines.PreDraw)
 				{
-					DrawSystem.MaterialData material;
-					foreach (var node in ModelContext.DrawModel.NodeList)
-					{
-						if (UpdateLine == GameEntityComponent.UpdateLines.PreDraw)
-						{
-							// use draw buffer
-							drawSys.GetDrawBuffer().AppendStaticModel(layout, z, ref node.Mesh, ref node.Material);
-						}
-						else if (UpdateLine == GameEntityComponent.UpdateLines.Draw)
-						{
-							Matrix[] boneMatrices = null;
-							if (m_skeletonC != null)
-							{
-								// has skeleton
-								boneMatrices = m_skeletonC.Skeleton.GetAllSkinningTransforms();
-							}
-
-							material = node.Material;
-							var tex = material.DiffuseTex0;
-							context.DrawModel(layout, Color4.White, node.Mesh, tex, DrawSystem.RenderMode.Opaque, boneMatrices);
-						}
-					}
+					// use draw buffer
+					drawSys.GetDrawBuffer().AppendStaticModel(layout, z, ref node.Mesh, ref node.Material);
 				}
-
-                /*
-				// Add command for debug mdoel
-				if (dbg.IsEnableDrawTangentFrame && ModelContext.DebugModel != null)
+				else if (UpdateLine == GameEntityComponent.UpdateLines.Draw)
 				{
-					foreach (var node in ModelContext.DebugModel.NodeList)
-					{
-						var command = DrawCommand.CreateDrawDebugCommand(node.Material, layout, node.Mesh);
-						drawSys.AddDrawCommand(command);
-					}
-				}
-                */
-
-                /*
-                // Add command for draw shadow
-                if (ModelContext.EnableCastShadow)
-                {
-                    foreach (var node in ModelContext.DrawModel.NodeList)
-                    {
-						var command = DrawCommand.CreateDrawShadowCommand(layout, node.Mesh);
-						drawSys.AddDrawCommand(command);
-                    }
-
-                }
-                */
-
-				// draw aabb
-				if (dbg.IsEnableAabb)
-				{
-					if (m_dbgBoundingBoxModel == null)
-					{
-						// create model in first draw time
-						var model = DrawModel.CreateBox("aabb", ModelContext.DrawModel.BoundingBox, Color.Pink);
-						m_dbgBoundingBoxModel = model;
-					}
-
-					var mesh = m_dbgBoundingBoxModel.NodeList[0].Mesh;
-					var worldTransform = m_layoutC.Transform;
-					var material = m_dbgBoundingBoxModel.NodeList[0].Material;
-					context.DrawDebugModel(worldTransform, mesh, DrawSystem.RenderMode.Transparency);
-				}
-
-				// draw bones for debug
-				if (dbg.IsEnableDrawBone)
-				{
+					Matrix[] boneMatrices = null;
 					if (m_skeletonC != null)
 					{
-						m_skeletonC.Skeleton.DrawDebugModel(layout);
+						// has skeleton
+						boneMatrices = m_skeletonC.Skeleton.GetAllSkinningTransforms();
 					}
+
+					material = node.Material;
+					var tex = material.DiffuseTex0;
+					context.DrawModel(layout, Color4.White, node.Mesh, tex, DrawSystem.RenderMode.Opaque, boneMatrices);
 				}
+			}
+
+            /*
+			// Add command for debug mdoel
+			if (dbg.IsEnableDrawTangentFrame && ModelContext.DebugModel != null)
+			{
+				foreach (var node in ModelContext.DebugModel.NodeList)
+				{
+					var command = DrawCommand.CreateDrawDebugCommand(node.Material, layout, node.Mesh);
+					drawSys.AddDrawCommand(command);
+				}
+			}
+            */
+
+            /*
+            // Add command for draw shadow
+            if (ModelContext.EnableCastShadow)
+            {
+                foreach (var node in ModelContext.DrawModel.NodeList)
+                {
+					var command = DrawCommand.CreateDrawShadowCommand(layout, node.Mesh);
+					drawSys.AddDrawCommand(command);
+                }
+
             }
+            */
+
+			// draw aabb
+			if (dbg.IsEnableAabb)
+			{
+				if (m_dbgBoundingBoxModel == null)
+				{
+					// create model in first draw time
+					var model = DrawModel.CreateBox("aabb", ModelContext.DrawModel.BoundingBox, Color.Pink);
+					m_dbgBoundingBoxModel = model;
+				}
+
+				var mesh = m_dbgBoundingBoxModel.NodeList[0].Mesh;
+				var worldTransform = m_layoutC.Transform;
+				material = m_dbgBoundingBoxModel.NodeList[0].Material;
+				context.DrawDebugModel(worldTransform, mesh, DrawSystem.RenderMode.Transparency);
+			}
+
+			// draw bones for debug
+			if (dbg.IsEnableDrawBone)
+			{
+				if (m_skeletonC != null)
+				{
+					m_skeletonC.Skeleton.DrawDebugModel(layout);
+				}
+			}
 			
 		}
 

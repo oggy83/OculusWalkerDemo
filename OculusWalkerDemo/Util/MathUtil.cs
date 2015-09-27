@@ -27,7 +27,7 @@ namespace Oggy
 
 		public static Vector3 ToVector3(Vector4 v)
 		{
-			return new Vector3(v.X , v.Y, v.Z);
+			return new Vector3(v.X / v.W, v.Y / v.W, v.Z / v.W);
 		}
 
 		public static Matrix GetRotationY(Vector3 forward)

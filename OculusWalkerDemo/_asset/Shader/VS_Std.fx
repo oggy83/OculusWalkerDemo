@@ -14,10 +14,15 @@ cbuffer cbMain : register(b0)
 cbuffer cbBone : register(b1)
 {
 	matrix g_boneMatrices[MAX_BONE_MATRICES];
-	//bool g_isEnableSkinning;
 };
 
-cbuffer cbWorld : register(b2)
+cbuffer cbModel : register(b2)
+{
+	bool g_isEnableSkinning;
+	float3 _dummy;
+};
+
+cbuffer cbWorld : register(b3)
 {
 	float4x4 g_vpMat;		// view projection matrix (row major)
 };
@@ -50,7 +55,7 @@ VS_OUTPUT main(VS_INPUT In)
 	float4x4 worldMat = g_worldMat[In.InstanceId];
 	float4x4 wvpMat = mul(worldMat, g_vpMat);
 
-	if (true/*g_isEnableSkinning*/)
+	if (g_isEnableSkinning)
 	{
 		float4x4 skinningMat
 			= g_boneMatrices[In.BoneIndex.x] * In.BoneWeight.x

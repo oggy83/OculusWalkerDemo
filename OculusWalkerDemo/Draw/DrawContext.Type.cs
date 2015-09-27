@@ -37,6 +37,15 @@ namespace Oggy
 		}
 
 		[StructLayout(LayoutKind.Sequential, Pack = 16)]
+		private struct _ModelVertexShaderConst
+		{
+			public bool isEnableSkinning;	// is enable skinning
+			public float _dummy1;
+			public float _dummy2;
+			public float _dummy3;
+		}
+
+		[StructLayout(LayoutKind.Sequential, Pack = 16)]
 		private struct _WorldVertexShaderConst
 		{
 			public Matrix vpMat;			// view projection matrix

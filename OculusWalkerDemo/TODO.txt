@@ -9,11 +9,13 @@ PlayerとAvatar
 
 
 
-フラスタムカリングに対応
+フラスタムカリングに対応(何もしないとき 630fps, カリングを空実行 610fps, カリング有効 830fps)
  + AABB debug render
- perspective
- perspective z sort
- culling 
+ + culling 
+  + キャラクターを一度描画しないと何も出てこない
+  - カリング範囲がおかしい
+  - ステレオの場合は範囲を少し広めにする必要がある
+ editor camera, ingame camera
 壁のパーツ化に対応
 パーツレイアウト.blendを読み込む
 フロアのパーツ化に対応

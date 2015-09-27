@@ -31,6 +31,7 @@ namespace Oggy
 			var d3d = m_initParam.D3D;
 			m_mainVtxConst = DrawUtil.CreateConstantBuffer<_MainVertexShaderConst>(d3d, m_maxInstanceCount);
             m_boneVtxConst = DrawUtil.CreateConstantBuffer(d3d, Utilities.SizeOf<Matrix>() * MaxBoneMatrices);
+			m_modelVtxConst = DrawUtil.CreateConstantBuffer<_ModelVertexShaderConst>(d3d, 1);
 			m_mainPixConst = DrawUtil.CreateConstantBuffer<_MainPixelShaderConst>(d3d, m_maxInstanceCount);
             m_modelPixConst = DrawUtil.CreateConstantBuffer<_ModelPixelShaderConst>(d3d, 1);
 
@@ -47,6 +48,7 @@ namespace Oggy
 
             m_modelPixConst.Dispose();
 			m_mainPixConst.Dispose();
+			m_modelVtxConst.Dispose();
             m_boneVtxConst.Dispose();
 			m_mainVtxConst.Dispose();
 		}
@@ -103,31 +105,35 @@ namespace Oggy
         }
 
         virtual public void DrawDebugModel(Matrix worldTrans, DrawSystem.MeshData mesh, DrawSystem.RenderMode renderMode)
-        {
-            _SetModelParams(mesh, DrawSystem.TextureData.Null(), renderMode, false);
+		{
+			_SetModelParams(mesh, DrawSystem.TextureData.Null(), renderMode, false);
 
-            // update vertex shader resouce
-            var vdata = new _MainVertexShaderConst()
-            {
-                // hlsl is column-major memory layout, so we must transpose matrix
-                worldMat = Matrix.Transpose(worldTrans),
-            };
-            m_context.UpdateSubresource(ref vdata, m_mainVtxConst);
+			// update vertex shader resouce
+			{
+				var vdata = new _MainVertexShaderConst()
+				{
+					// hlsl is column-major memory layout, so we must transpose matrix
+					worldMat = Matrix.Transpose(worldTrans),
+				};
+				m_context.UpdateSubresource(ref vdata, m_mainVtxConst);
+			}
 
-            // update pixel shader resouce
-            var pdata = new _MainPixelShaderConst()
-            {
-                instanceColor = Color4.White,
-            };
-            m_context.UpdateSubresource(ref pdata, m_mainPixConst);
+			// update pixel shader resouce
+			{
+				var pdata = new _MainPixelShaderConst()
+				{
+					instanceColor = Color4.White,
+				};
+				m_context.UpdateSubresource(ref pdata, m_mainPixConst);
+			}
 
-            // do not use bone matrices
-            // m_context.UpdateSubresource<Matrix>(m_tmpBoneMatrices, m_boneVtxConst);
+			// do not use bone matrices
+			// m_context.UpdateSubresource<Matrix>(m_tmpBoneMatrices, m_boneVtxConst);
 
-            // draw
-            m_context.Draw(mesh.VertexCount, 0);
-            m_drawCallCount++;
-        }
+			// draw
+			m_context.Draw(mesh.VertexCount, 0);
+			m_drawCallCount++;
+		}
 
         virtual public void BeginDrawInstance(DrawSystem.MeshData mesh, DrawSystem.TextureData tex, DrawSystem.RenderMode renderMode)
 		{
@@ -149,6 +155,13 @@ namespace Oggy
 				// update pixel shader resouce
 				m_context.UpdateSubresource<_MainPixelShaderConst>(m_instanceMainPixConst, m_mainPixConst);
 
+				// low performance @todo
+				for (int i = 0; i < m_tmpBoneMatrices.Length; ++i)
+				{
+					m_tmpBoneMatrices[i] = Matrix.Identity;
+				}
+				m_context.UpdateSubresource<Matrix>(m_tmpBoneMatrices, m_boneVtxConst);
+
 				// draw
 				m_context.DrawInstanced(m_lastVertexCount, m_nextInstanceIndex, 0, 0);
 				m_drawCallCount++;
@@ -163,6 +176,16 @@ namespace Oggy
 			{
 				// update vertex shader resouce
 				m_context.UpdateSubresource<_MainVertexShaderConst>(m_instanceMainVtxConst, m_mainVtxConst);
+
+				// update pixel shader resouce
+				m_context.UpdateSubresource<_MainPixelShaderConst>(m_instanceMainPixConst, m_mainPixConst);
+
+				// low performance @todo
+				for (int i = 0; i < m_tmpBoneMatrices.Length; ++i)
+				{
+					m_tmpBoneMatrices[i] = Matrix.Identity;
+				}
+				m_context.UpdateSubresource<Matrix>(m_tmpBoneMatrices, m_boneVtxConst);
 
 				// draw
 				m_context.DrawInstanced(m_lastVertexCount, m_nextInstanceIndex, 0, 0);
@@ -212,7 +235,8 @@ namespace Oggy
 			// bind shader 
 			m_context.VertexShader.SetConstantBuffer(0, m_mainVtxConst);
             m_context.VertexShader.SetConstantBuffer(1, m_boneVtxConst);
-			m_context.VertexShader.SetConstantBuffer(2, m_initParam.WorldVtxConst);
+			m_context.VertexShader.SetConstantBuffer(2, m_modelVtxConst);
+			m_context.VertexShader.SetConstantBuffer(3, m_initParam.WorldVtxConst);
 			m_context.PixelShader.SetConstantBuffer(0, m_mainPixConst);
             m_context.PixelShader.SetConstantBuffer(1, m_modelPixConst);
 			m_context.PixelShader.SetConstantBuffer(2, m_initParam.WorldPixConst);
@@ -263,6 +287,7 @@ namespace Oggy
 		// draw param 
 		private Buffer m_mainVtxConst = null;
         private Buffer m_boneVtxConst = null;
+		private Buffer m_modelVtxConst = null;
 		private Buffer m_mainPixConst = null;
         private Buffer m_modelPixConst = null;
         private Matrix[] m_tmpBoneMatrices = new Matrix[MaxBoneMatrices];
@@ -271,6 +296,7 @@ namespace Oggy
 		private DrawSystem.RenderMode? m_lastRenderMode = null;
         private TextureView m_lastTextureRes = null;
         private Vector2? m_lastTextureUvScale = null;
+		private bool? m_lastEnableSkinning = null;
 		private PrimitiveTopology? m_lastTopology = null;
 		private VertexBufferBinding[] m_lastVertexBuffers = null;
 		private int m_lastVertexCount = 0;
@@ -312,17 +338,32 @@ namespace Oggy
             // update texture uv scale
             if (m_lastTextureUvScale == null || !m_lastTextureUvScale.Value.Equals(tex.UvScale))
             {
+				
                 var modelPixConst = new _ModelPixelShaderConst()
                 {
                     uvScale1 = tex.UvScale,
                     uvScale2 = new Vector2(1, 1),   // @todo
                 };
                 m_context.UpdateSubresource(ref modelPixConst, m_modelPixConst);
-
+				
                 m_lastTextureUvScale = tex.UvScale;
-            }
+			}
 
-            // update material
+			// update model vertex shader param
+			bool isEnableSkinning = mesh.Buffers.Count() == 3;
+			if (m_lastEnableSkinning == null || !m_lastEnableSkinning.Value.Equals(isEnableSkinning))
+			{
+				var modelVtxConst = new _ModelVertexShaderConst()
+				{
+					isEnableSkinning  = isEnableSkinning,
+				};
+				m_context.UpdateSubresource(ref modelVtxConst, m_modelVtxConst);
+
+				m_lastEnableSkinning = isEnableSkinning;
+			}
+
+
+			// update material
             if (m_useMaterial == null || m_useMaterial != useMaterial)
             {
                 if (useMaterial)
