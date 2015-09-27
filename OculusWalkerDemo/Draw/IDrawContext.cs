@@ -43,5 +43,7 @@ namespace Oggy
         /// you can use this matrix instead of camera matrix to get the true view direction.
         /// </remarks>
         Matrix GetHeadMatrix();
+
+		Matrix GetViewProjectionMatrix();
 	}
 }

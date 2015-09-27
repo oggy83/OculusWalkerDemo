@@ -32,6 +32,7 @@ namespace Oggy
 
 		public RenderTarget StartPass(DrawSystem.WorldData data)
 		{
+			m_worldData = data;
 			var renderTarget = m_repository.GetDefaultRenderTarget();
 
             // calc projection matrix
@@ -96,11 +97,25 @@ namespace Oggy
             return Matrix.Identity;
         }
 
+		public Matrix GetViewProjectionMatrix()
+		{
+			var renderTarget = m_repository.GetDefaultRenderTarget();
+
+            // calc projection matrix
+            int width = renderTarget.Resolution.Width;
+            int height = renderTarget.Resolution.Height;
+			float aspect = (float)width / (float)height;
+            float fov = (float)Math.PI / 3;
+			var proj = Matrix.PerspectiveFovLH(fov, aspect, m_worldData.NearClip, m_worldData.FarClip);
+			return m_worldData.Camera.GetViewMatrix() * proj;
+		}
+
 		#region private members
 
 		private DrawSystem.D3DData m_d3d;
 		private DrawResourceRepository m_repository = null;
 		private DrawContext m_context = null;
+		private DrawSystem.WorldData m_worldData;
 
 		#endregion // private members
 	}

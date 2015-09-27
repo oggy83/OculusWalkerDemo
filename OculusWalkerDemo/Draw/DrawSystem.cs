@@ -49,69 +49,6 @@ namespace Oggy
 
 		#region properties
 
-		/// <summary>
-		/// get/set a camera which makes Transform for World => View
-		/// </summary>
-		public CameraData Camera
-		{
-			get
-			{
-				return m_world.Camera;
-			}
-			set
-			{
-				m_world.Camera = value;
-			}
-		}
-
-		public Color3 AmbientColor
-		{
-			get
-			{
-				return m_world.AmbientCol;
-			}
-			set
-			{
-				m_world.AmbientCol = value;
-			}
-		}
-
-		public Color3 FogColor
-		{
-			get
-			{
-				return m_world.FogCol;
-			}
-			set
-			{
-				m_world.FogCol = value;
-			}
-		}
-
-        public float NearClip
-        {
-            get
-            {
-                return m_world.NearClip;
-            }
-            set
-            {
-                m_world.NearClip = value;
-            }
-        }
-
-        public float FarClip
-        {
-            get
-            {
-                return m_world.FarClip;
-            }
-            set
-            {
-                m_world.FarClip = value;
-            }
-        }
-
 		private D3DData m_d3d;
 		public D3DData D3D
 		{
@@ -151,11 +88,6 @@ namespace Oggy
 			};
 
             m_debug = new DrawDebugCtrl();
-			
-			AmbientColor = new Color3(0, 0, 0);
-			m_world.DirLight.Direction = new Vector3(0, 1, 0);
-			m_world.DirLight.Color = new Color3(1, 1, 1);
-
 			m_repository = new DrawResourceRepository(m_d3d);
 			m_passCtrl = new DrawPassCtrl(m_d3d, m_repository, hmd, bStereoRendering, multiThreadCount);
 
@@ -170,26 +102,22 @@ namespace Oggy
 			
 		}
 
-		public void SetDirectionalLight(DirectionalLightData light)
+		public void BeginScene(WorldData data)
 		{
-			m_world.DirLight = light;
+			m_passCtrl.StartPass(data);
+			m_viewProjTrans = m_passCtrl.Context.GetViewProjectionMatrix();
 		}
 
-		public void BeginScene()
+		public void EndScene()
 		{
-			DrawSystem.WorldData data = m_world;
-			m_passCtrl.StartPass(data);
+			m_viewProjTrans = Matrix.Identity;
+			m_passCtrl.EndPass();
 		}
 
         public IDrawContext GetDrawContext()
         {
             return m_passCtrl.Context;
         }
-
-		public void EndScene()
-		{
-			m_passCtrl.EndPass();
-		}
 
 		public IDrawContext GetSubThreadContext(int index)
 		{
@@ -199,6 +127,17 @@ namespace Oggy
 		public DrawBuffer GetDrawBuffer()
 		{
 			return m_drawBuffer;
+		}
+
+		/// <summary>
+		/// get a matrix that is the product of view matrix and projection matrix
+		/// </summary>
+		/// <remarks>
+		/// we can use this method between BeginScene() and EndScene() 
+		/// </remarks>
+		public Matrix GetViewProjectionTransform()
+		{
+			return m_viewProjTrans;
 		}
 
         [Conditional("DEBUG")]
@@ -212,11 +151,6 @@ namespace Oggy
 
 		#region private members
 
-		/// <summary>
-		/// current world data
-		/// </summary>
-		private WorldData m_world;
-
 		private HmdDevice m_hmd = null;
 
 		private bool m_bStereoRendering;
@@ -224,6 +158,8 @@ namespace Oggy
 		private DrawPassCtrl m_passCtrl;
 
 		private DrawBuffer m_drawBuffer;
+
+		private Matrix m_viewProjTrans = Matrix.Identity;
 
 		#endregion // private members
 

@@ -122,7 +122,7 @@ namespace Oggy
             m_context.UpdateSubresource(ref pdata, m_mainPixConst);
 
             // do not use bone matrices
-            //m_context.UpdateSubresource<Matrix>(m_tmpBoneMatrices, m_boneVtxConst);
+            // m_context.UpdateSubresource<Matrix>(m_tmpBoneMatrices, m_boneVtxConst);
 
             // draw
             m_context.Draw(mesh.VertexCount, 0);
@@ -188,6 +188,12 @@ namespace Oggy
             return Matrix.Identity;
         }
 
+		public Matrix GetViewProjectionMatrix()
+		{
+			Debug.Assert(false, "DrawContext.GetViewProjectionMatrix() is not implemented");
+			return Matrix.Identity;
+		}
+
 		public void SetWorldParams(RenderTarget renderTarget, DrawSystem.WorldData data)
 		{
 			m_worldData = data;
@@ -237,11 +243,11 @@ namespace Oggy
 			// init pixel shader resource
 			var pdata = new _WorldPixelShaderConst()
 			{
-				ambientCol = new Color4(m_worldData.AmbientCol),
-				fogCol = new Color4(m_worldData.FogCol),
-				light1Col = new Color4(m_worldData.DirLight.Color),
+				ambientCol = new Color4(m_worldData.AmbientColor),
+				fogCol = new Color4(m_worldData.FogColor),
+				light1Col = new Color4(m_worldData.DirectionalLight.Color),
 				cameraPos = new Vector4(conbinedCamera.eye, 1.0f),
-				light1Dir = new Vector4(m_worldData.DirLight.Direction, 0.0f),
+				light1Dir = new Vector4(m_worldData.DirectionalLight.Direction, 0.0f),
 			};
 			m_context.UpdateSubresource(ref pdata, m_initParam.WorldPixConst);
 		}
@@ -249,7 +255,7 @@ namespace Oggy
 		public void ClearRenderTarget(RenderTarget renderTarget)
 		{
 			m_context.ClearDepthStencilView(renderTarget.DepthStencilView, DepthStencilClearFlags.Depth, 1.0f, 0);
-			m_context.ClearRenderTargetView(renderTarget.TargetView, new Color4(m_worldData.FogCol));
+			m_context.ClearRenderTargetView(renderTarget.TargetView, new Color4(m_worldData.FogColor));
 		}
 
 		#region private members

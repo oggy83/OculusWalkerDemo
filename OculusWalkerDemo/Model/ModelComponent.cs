@@ -70,7 +70,7 @@ namespace Oggy
 			var drawSys = DrawSystem.GetInstance();
             var context = drawSys.GetDrawContext();
 			var dbg = DrawSystem.GetInstance().DebugCtrl;
-			var viewTrans = drawSys.Camera.GetViewMatrix();
+			var viewTrans = drawSys.GetViewProjectionTransform();
 
 			var layout = m_layoutC.Transform;
 			float z = (layout * viewTrans).TranslationVector.Z;// calc z

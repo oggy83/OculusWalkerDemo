@@ -50,5 +50,6 @@ namespace Oggy
 		{
 			return new Aabb(Vector3.Zero, Vector3.Zero);
 		}
+
 	}
 }

@@ -190,8 +190,16 @@ namespace Oggy
 
         public Matrix GetHeadMatrix()
         {
-          return m_hmd.GetHeadMatrix();
+			return m_hmd.GetHeadMatrix();
         }
+
+		public Matrix GetViewProjectionMatrix()
+		{
+			var eyeOffset = m_hmd.GetEyePoses();
+			var proj = _CalcProjection(1, m_worldData.NearClip, m_worldData.FarClip);
+			var conbinedCamera = DrawSystem.CameraData.Conbine(m_worldData.Camera, eyeOffset[0]);
+			return conbinedCamera.GetViewMatrix() * proj;
+		}
 
 		#region private members
 

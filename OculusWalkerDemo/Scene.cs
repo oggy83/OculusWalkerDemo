@@ -47,17 +47,6 @@ namespace Oggy
                 drawSys.ResourceRepository.AddResource(tex);
             }
 
-            // light setting
-            drawSys.SetDirectionalLight(new DrawSystem.DirectionalLightData()
-            {
-				Direction = new Vector3(0.3f, -0.2f, 0.4f),
-                Color = new Color3(0.6f, 0.6f, 0.5f),
-            });
-            drawSys.AmbientColor = new Color3(0.4f, 0.45f, 0.55f);
-			drawSys.FogColor = new Color3(0.3f, 0.5f, 0.8f);
-            drawSys.NearClip = 0.01f;
-            drawSys.FarClip = 10000.0f;
-
             // create number entity
             m_fps = new FpsCounter();
             m_numberEntity = new NumberEntity(new NumberEntity.InitParam()
@@ -110,21 +99,35 @@ namespace Oggy
 				m_numberEntity.SetNumber(1.0f / (float)avgDT);
 			}
 
+			
+
 			if (m_multiThreadCount > 1)
 			{
 				Task.WaitAll(m_taskList.ToArray());
 				var tmpTaskResult = new List<CommandList>(m_taskResultList);
 
-				drawSys.BeginScene();
+				inputSys.Update(dt);
+				entitySys.UpdateComponents(GameEntityComponent.UpdateLines.Input, dt);
+				entitySys.UpdateComponents(GameEntityComponent.UpdateLines.Behavior, dt);
+				cameraSys.Update(dt);
+
+
+				DrawSystem.WorldData worldData;
+				worldData.AmbientColor = new Color3(0.4f, 0.45f, 0.55f);
+				worldData.FogColor = new Color3(0.3f, 0.5f, 0.8f);
+				worldData.NearClip = 0.01f;
+				worldData.FarClip = 10000.0f;
+				worldData.DirectionalLight = new DrawSystem.DirectionalLightData()
+				{
+					Direction = new Vector3(0.3f, -0.2f, 0.4f),
+					Color = new Color3(0.6f, 0.6f, 0.5f),
+				};
+				worldData.Camera = cameraSys.GetCameraData();
+
+				drawSys.BeginScene(worldData);
                 var context = drawSys.GetDrawContext();
 
-                // camera setting
-                inputSys.Update(dt);
                 
-                entitySys.UpdateComponents(GameEntityComponent.UpdateLines.Input, dt);
-                entitySys.UpdateComponents(GameEntityComponent.UpdateLines.Behavior, dt);
-                cameraSys.Update(dt);
-				drawSys.Camera = cameraSys.GetCameraData();
                 entitySys.UpdateComponents(GameEntityComponent.UpdateLines.Posing, dt);
                 mapSys.Update(dt, context);
 				entitySys.UpdateComponents(GameEntityComponent.UpdateLines.PreDraw, dt);

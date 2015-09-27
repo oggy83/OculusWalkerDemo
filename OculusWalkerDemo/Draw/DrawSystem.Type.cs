@@ -89,9 +89,9 @@ namespace Oggy
 		public struct WorldData
 		{
 			public CameraData Camera;
-			public Color3 AmbientCol;
-			public Color3 FogCol;
-			public DrawSystem.DirectionalLightData DirLight;
+			public Color3 AmbientColor;
+			public Color3 FogColor;
+			public DrawSystem.DirectionalLightData DirectionalLight;
             public float NearClip;
             public float FarClip;
 		}
