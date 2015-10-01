@@ -106,6 +106,7 @@ namespace Oggy
 			MapSystem.Initialize();
             ChrSystem.Initialize();
             CameraSystem.Initialize();
+			CullingSystem.Initialize();
             GameSystem.Initialize();
 
            
@@ -115,6 +116,7 @@ namespace Oggy
 
 			// Release
             GameSystem.Dispose();
+			CullingSystem.Dispose();
             CameraSystem.Dispose();
             ChrSystem.Dispose();
 			MapSystem.Dispose();

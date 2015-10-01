@@ -246,7 +246,8 @@ namespace Oggy
 
 			return new DrawSystem.EyeData()
 			{
-				ViewProjectionMatrix = conbinedCamera.GetViewMatrix() * proj,
+				ViewMatrix = conbinedCamera.GetViewMatrix(),
+				ProjectionMatrix = proj,
 				EyePosition = m_worldData.Camera.eye,
 			};
 		}

@@ -220,9 +220,14 @@ namespace Oggy
 		public struct EyeData
 		{
 			/// <summary>
-			/// get/set a matrix that is the product of view matrix and projection matrix
+			/// get/set a view matrix 
 			/// </summary>
-			public Matrix ViewProjectionMatrix { get; set; }
+			public Matrix ViewMatrix { get; set; }
+
+			/// <summary>
+			/// get/set a projection matrix 
+			/// </summary>
+			public Matrix ProjectionMatrix { get; set; }
 
 			/// <summary>
 			/// get/set a camera eye position

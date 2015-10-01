@@ -255,7 +255,7 @@ namespace Oggy
 			var vdata = new _WorldVertexShaderConst()
 			{
 				// hlsl is column-major memory layout, so we must transpose matrix
-				vpMat = Matrix.Transpose(eyeData.ViewProjectionMatrix),
+				vpMat = Matrix.Transpose(eyeData.ViewMatrix * eyeData.ProjectionMatrix),
 			};
 			context.UpdateSubresource(ref vdata, m_initParam.WorldVtxConst);
 

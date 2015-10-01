@@ -28,7 +28,7 @@ namespace Oggy
 		/// update aabb so that aabb contains the given point
 		/// </summary>
 		/// <param name="point"></param>
-		public void AddPoint(Vector3 point)
+		public void ExtendByPoint(Vector3 point)
 		{
 			if (IsInvalid())
 			{
@@ -39,24 +39,24 @@ namespace Oggy
 
 			if (Min.X > point.X) Min.X = point.X;
 			if (Min.Y > point.Y) Min.Y = point.Y;
-			if (Min.X > point.Z) Min.Z = point.Z;
+			if (Min.Z > point.Z) Min.Z = point.Z;
 
 			if (Max.X < point.X) Max.X = point.X;
 			if (Max.Y < point.Y) Max.Y = point.Y;
-			if (Max.X < point.Z) Max.Z = point.Z;
+			if (Max.Z < point.Z) Max.Z = point.Z;
 		}
 
 		public bool IsInFrustum(Matrix wvpMatrix)
 		{
 			var vertices = new Vector3[8];
-			vertices[0] = new Vector3(Min.X, Min.X, Min.Y);
-			vertices[1] = new Vector3(Max.X, Min.X, Min.Y);
-			vertices[2] = new Vector3(Max.X, Min.X, Max.Y);
-			vertices[3] = new Vector3(Min.X, Min.X, Max.Y);
-			vertices[4] = new Vector3(Min.X, Max.X, Min.Y);
-			vertices[5] = new Vector3(Max.X, Max.X, Min.Y);
-			vertices[6] = new Vector3(Max.X, Max.X, Max.Y);
-			vertices[7] = new Vector3(Min.X, Max.X, Max.Y);
+			vertices[0] = new Vector3(Min.X, Min.Y, Min.Z);
+			vertices[1] = new Vector3(Max.X, Min.Y, Min.Z);
+			vertices[2] = new Vector3(Max.X, Min.Y, Max.Z);
+			vertices[3] = new Vector3(Min.X, Min.Y, Max.Z);
+			vertices[4] = new Vector3(Min.X, Max.Y, Min.Z);
+			vertices[5] = new Vector3(Max.X, Max.Y, Min.Z);
+			vertices[6] = new Vector3(Max.X, Max.Y, Max.Z);
+			vertices[7] = new Vector3(Min.X, Max.Y, Max.Z);
 
 			foreach (var vertex in vertices)
 			{

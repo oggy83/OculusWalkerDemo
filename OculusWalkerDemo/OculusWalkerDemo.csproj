@@ -69,11 +69,13 @@
     <Compile Include="Coroutine\Coroutine.WaitDelegate.cs" />
     <Compile Include="Coroutine\Coroutine.WaitTime.cs" />
     <Compile Include="Coroutine\CoroutineTask.cs" />
+    <Compile Include="Culling\CullingSystem.cs" />
     <Compile Include="Draw\Debug\DrawDebugCtrl.cs" />
     <Compile Include="Draw\DrawBuffer.cs" />
     <Compile Include="Draw\DrawSystem.Config.cs" />
     <Compile Include="Entity\Detail\GameEntityComponentLine.cs" />
     <Compile Include="Entity\EntitySystem.cs" />
+    <Compile Include="Entity\EasyDrawComponent.cs" />
     <Compile Include="Entity\GameEntity.cs" />
     <Compile Include="Entity\GameEntityComponent.cs" />
     <Compile Include="Entity\GameEntityComponent.Types.cs" />

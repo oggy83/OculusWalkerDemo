@@ -91,6 +91,7 @@ namespace Oggy
             var inputSys = InputSystem.GetInstance();
             var entitySys = EntitySystem.GetInstance();
 			var mapSys = MapSystem.GetInstance();
+			var cullingSys = CullingSystem.GetInstance();
 
 			// update fps
 			{
@@ -128,6 +129,7 @@ namespace Oggy
                 
                 entitySys.UpdateComponents(GameEntityComponent.UpdateLines.Posing, dt);
                 mapSys.Update(dt, context);
+				cullingSys.UpdateFrustum();
 				entitySys.UpdateComponents(GameEntityComponent.UpdateLines.PreDraw, dt);
 				drawSys.GetDrawBuffer().Process(drawSys.GetDrawContext());
                 entitySys.UpdateComponents(GameEntityComponent.UpdateLines.Draw, dt);

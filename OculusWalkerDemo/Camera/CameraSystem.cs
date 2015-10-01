@@ -137,9 +137,9 @@ namespace Oggy
 
 		public void Update(double dT)
 		{
-			if (m_camera != null)
+			foreach (var v in m_cameraTable)
 			{
-				m_camera.Update(dT);
+				v.Value.Update(dT);
 			}
 		}
 

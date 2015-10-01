@@ -22,6 +22,11 @@ namespace Oggy
 
 		public void Update(double dt)
 		{
+			if (m_player == null)
+			{
+				return;
+			}
+
 			var layoutC = m_player.FindComponent<LayoutComponent>();
 			Debug.Assert(layoutC!= null, "");
 
@@ -51,7 +56,7 @@ namespace Oggy
 
 		public void Deactivate()
 		{
-			m_player = null;
+			// nothing
 		}
 
 		#region private members

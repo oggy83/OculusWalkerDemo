@@ -73,43 +73,40 @@ namespace Oggy
 			}
 
 			var drawSys = DrawSystem.GetInstance();
+			var cullingSys = CullingSystem.GetInstance();
             var context = drawSys.GetDrawContext();
 			var dbg = DrawSystem.GetInstance().DebugCtrl;
-			var vpTrans = drawSys.GetViewProjectionTransform();
-
 			var layout = m_layoutC.Transform;
-			var wvpTrans = layout * vpTrans;
-			float z = wvpTrans.TranslationVector.Z;// calc z
 
-			/*
-			if (!ModelContext.DrawModel.BoundingBox.IsInFrustum(wvpTrans))
+			CullingSystem.FrustumCullingResult result = cullingSys.CheckFrustumCulling(ModelContext.DrawModel.BoundingBox, layout);
+			if (!result.IsVisible)
 			{
 				// out of view-volume
-				return;
 			}
-			*/
-
-            // Add command for draw mdoel
-			DrawSystem.MaterialData material;
-			foreach (var node in ModelContext.DrawModel.NodeList)
+			else
 			{
-				if (UpdateLine == GameEntityComponent.UpdateLines.PreDraw)
+				// Add command for draw mdoel
+				DrawSystem.MaterialData material;
+				foreach (var node in ModelContext.DrawModel.NodeList)
 				{
-					// use draw buffer
-					drawSys.GetDrawBuffer().AppendStaticModel(layout, z, ref node.Mesh, ref node.Material);
-				}
-				else if (UpdateLine == GameEntityComponent.UpdateLines.Draw)
-				{
-					Matrix[] boneMatrices = null;
-					if (m_skeletonC != null)
+					if (UpdateLine == GameEntityComponent.UpdateLines.PreDraw)
 					{
-						// has skeleton
-						boneMatrices = m_skeletonC.Skeleton.GetAllSkinningTransforms();
+						// use draw buffer
+						drawSys.GetDrawBuffer().AppendStaticModel(layout, result.Z, ref node.Mesh, ref node.Material);
 					}
+					else if (UpdateLine == GameEntityComponent.UpdateLines.Draw)
+					{
+						Matrix[] boneMatrices = null;
+						if (m_skeletonC != null)
+						{
+							// has skeleton
+							boneMatrices = m_skeletonC.Skeleton.GetAllSkinningTransforms();
+						}
 
-					material = node.Material;
-					var tex = material.DiffuseTex0;
-					context.DrawModel(layout, Color4.White, node.Mesh, tex, DrawSystem.RenderMode.Opaque, boneMatrices);
+						material = node.Material;
+						var tex = material.DiffuseTex0;
+						context.DrawModel(layout, Color4.White, node.Mesh, tex, DrawSystem.RenderMode.Opaque, boneMatrices);
+					}
 				}
 			}
 
@@ -149,9 +146,8 @@ namespace Oggy
 				}
 
 				var mesh = m_dbgBoundingBoxModel.NodeList[0].Mesh;
-				var worldTransform = m_layoutC.Transform;
-				material = m_dbgBoundingBoxModel.NodeList[0].Material;
-				context.DrawDebugModel(worldTransform, mesh, DrawSystem.RenderMode.Transparency);
+				DrawSystem.MaterialData material = m_dbgBoundingBoxModel.NodeList[0].Material;
+				context.DrawDebugModel(layout, mesh, DrawSystem.RenderMode.Transparency);
 			}
 
 			// draw bones for debug

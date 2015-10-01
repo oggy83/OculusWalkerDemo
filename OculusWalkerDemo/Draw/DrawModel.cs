@@ -139,7 +139,7 @@ namespace Oggy
 				// update aabb
 				foreach (var v in vertices1)
 				{
-					aabb.AddPoint(MathUtil.ToVector3(v.Position));
+					aabb.ExtendByPoint(MathUtil.ToVector3(v.Position));
 				}
 
                 var node = new Node();
@@ -309,7 +309,7 @@ foreach (var buf in node.Mesh.Buffers)
 			{
 				vertices[i].Position += offset;
 				vertices[i].Position.W = 1;
-				aabb.AddPoint(MathUtil.ToVector3(vertices[i].Position));
+				aabb.ExtendByPoint(MathUtil.ToVector3(vertices[i].Position));
 			}
 
 			var model = new DrawModel("");
@@ -342,7 +342,7 @@ foreach (var buf in node.Mesh.Buffers)
 			{
 				vertices[i].Position += offset;
 				vertices[i].Position.W = 1;
-				aabb.AddPoint(MathUtil.ToVector3(vertices[i].Position));
+				aabb.ExtendByPoint(MathUtil.ToVector3(vertices[i].Position));
 			}
 
 			var model = new DrawModel("");
@@ -399,7 +399,7 @@ foreach (var buf in node.Mesh.Buffers)
                 vertices[i].Position += offset;
                 vertices[i].Position.W = 1;
                 vertices[i].Color = color;
-				aabb.AddPoint(MathUtil.ToVector3(vertices[i].Position));
+				aabb.ExtendByPoint(MathUtil.ToVector3(vertices[i].Position));
             }
 
             var model = new DrawModel(uid);
@@ -457,7 +457,77 @@ foreach (var buf in node.Mesh.Buffers)
 			{
 				vertices[i].Position.W = 1;
 				vertices[i].Color = color;
-				aabb.AddPoint(MathUtil.ToVector3(vertices[i].Position));
+				aabb.ExtendByPoint(MathUtil.ToVector3(vertices[i].Position));
+			}
+
+			var model = new DrawModel(uid);
+			model.m_nodeList.Add(new Node()
+			{
+				Mesh = DrawUtil.CreateMeshData<_VertexDebug>(d3d, PrimitiveTopology.LineList, vertices),
+				Material = new DrawSystem.MaterialData(),
+				IsDebug = true,
+				HasBone = false,
+			});
+			model.m_bb = aabb;
+
+			return model;
+		}
+
+		public static DrawModel CreateFrustum(String uid, Matrix viewProjectionMatrix, Color4 color)
+		{
+			var drawSys = DrawSystem.GetInstance();
+			var d3d = drawSys.D3D;
+			viewProjectionMatrix.Invert();
+
+			var points = new Vector4[8];
+			points[0] = Vector3.Transform(new Vector3(-1, -1, 0), viewProjectionMatrix);
+			points[1] = Vector3.Transform(new Vector3(1, -1, 0), viewProjectionMatrix);
+			points[2] = Vector3.Transform(new Vector3(-1, 1, 0), viewProjectionMatrix);
+			points[3] = Vector3.Transform(new Vector3(1, 1, 0), viewProjectionMatrix);
+			points[4] = Vector3.Transform(new Vector3(-1, -1, 1), viewProjectionMatrix);
+			points[5] = Vector3.Transform(new Vector3(1, -1, 1), viewProjectionMatrix);
+			points[6] = Vector3.Transform(new Vector3(-1, 1, 1), viewProjectionMatrix);
+			points[7] = Vector3.Transform(new Vector3(1, 1, 1), viewProjectionMatrix);
+
+			var vertices = new _VertexDebug[]
+			{
+				new _VertexDebug() { Position = points[0] },
+				new _VertexDebug() { Position = points[1] },
+				new _VertexDebug() { Position = points[1] },
+				new _VertexDebug() { Position = points[3] },
+				new _VertexDebug() { Position = points[3] },
+				new _VertexDebug() { Position = points[2] },
+				new _VertexDebug() { Position = points[2] },
+				new _VertexDebug() { Position = points[0] },
+
+				new _VertexDebug() { Position = points[4] },
+				new _VertexDebug() { Position = points[5] },
+				new _VertexDebug() { Position = points[5] },
+				new _VertexDebug() { Position = points[7] },
+				new _VertexDebug() { Position = points[7] },
+				new _VertexDebug() { Position = points[6] },
+				new _VertexDebug() { Position = points[6] },
+				new _VertexDebug() { Position = points[4] },
+
+				new _VertexDebug() { Position = points[0] },
+				new _VertexDebug() { Position = points[4] },
+				new _VertexDebug() { Position = points[1] },
+				new _VertexDebug() { Position = points[5] },
+				new _VertexDebug() { Position = points[2] },
+				new _VertexDebug() { Position = points[6] },
+				new _VertexDebug() { Position = points[3] },
+				new _VertexDebug() { Position = points[7] },
+			};
+
+			Aabb aabb = Aabb.Invalid();
+			for (int i = 0; i < vertices.Length; ++i)
+			{
+				vertices[i].Position.X /= vertices[i].Position.W;
+				vertices[i].Position.Y /= vertices[i].Position.W;
+				vertices[i].Position.Z /= vertices[i].Position.W;
+				vertices[i].Position.W = 1;
+				vertices[i].Color = color;
+				aabb.ExtendByPoint(MathUtil.ToVector3(vertices[i].Position));
 			}
 
 			var model = new DrawModel(uid);
@@ -473,4 +543,6 @@ foreach (var buf in node.Mesh.Buffers)
 			return model;
 		}
 	}
+
+
 }

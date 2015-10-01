@@ -186,7 +186,6 @@ namespace Oggy
 
 		public void CreateMap(string tmxPath)
 		{
-			
 			m_blockInfoMap = MapFactory.CreateBlockInfoMap(tmxPath);
 			int height = m_blockInfoMap.GetLength(0);
 			int width = m_blockInfoMap.GetLength(1);

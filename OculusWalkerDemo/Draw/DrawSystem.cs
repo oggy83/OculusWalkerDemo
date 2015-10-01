@@ -105,12 +105,10 @@ namespace Oggy
 		public void BeginScene(WorldData data)
 		{
 			m_passCtrl.StartPass(data);
-			m_viewProjTrans = m_passCtrl.Context.GetEyeData().ViewProjectionMatrix;
 		}
 
 		public void EndScene()
 		{
-			m_viewProjTrans = Matrix.Identity;
 			m_passCtrl.EndPass();
 		}
 
@@ -130,14 +128,14 @@ namespace Oggy
 		}
 
 		/// <summary>
-		/// get a matrix that is the product of view matrix and projection matrix
+		/// get a projection matrix
 		/// </summary>
 		/// <remarks>
 		/// we can use this method between BeginScene() and EndScene() 
 		/// </remarks>
-		public Matrix GetViewProjectionTransform()
+		public Matrix ComputeProjectionTransform()
 		{
-			return m_viewProjTrans;
+			return m_passCtrl.Context.GetEyeData().ProjectionMatrix;
 		}
 
         [Conditional("DEBUG")]
@@ -158,8 +156,6 @@ namespace Oggy
 		private DrawPassCtrl m_passCtrl;
 
 		private DrawBuffer m_drawBuffer;
-
-		private Matrix m_viewProjTrans = Matrix.Identity;
 
 		#endregion // private members
 
