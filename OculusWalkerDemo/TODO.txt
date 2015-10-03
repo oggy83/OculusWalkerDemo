@@ -6,8 +6,6 @@
 PlayerとAvatar
 
 
-最適化(ref渡し)
-ソース整理（Detail）
 壁のパーツ化に対応
 パーツレイアウト.blendを読み込む
 フロアのパーツ化に対応
@@ -156,3 +154,4 @@ Zソートに対応(FPS 640 => 640?)
   + ステレオの場合は範囲を少し広めにする必要がある
     →必要なさげ？
 + editor camera, ingame camera
++ ソース整理（Detail）

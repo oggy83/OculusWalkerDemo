@@ -102,16 +102,16 @@
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="Hmd\CRef.cs" />
-    <Compile Include="Draw\DrawContext.cs" />
-    <Compile Include="Draw\DrawContext.Factory.cs" />
-    <Compile Include="Draw\DrawContext.Type.cs" />
+    <Compile Include="Draw\Detail\DrawContext.cs" />
+    <Compile Include="Draw\Detail\DrawContext.Factory.cs" />
+    <Compile Include="Draw\Detail\DrawContext.Type.cs" />
     <Compile Include="Draw\DrawModel.cs" />
-    <Compile Include="Draw\DrawPassCtrl.cs" />
+    <Compile Include="Draw\Detail\DrawPassCtrl.cs" />
     <Compile Include="Draw\DrawResourceRepository.cs" />
     <Compile Include="Draw\DrawSystem.cs" />
     <Compile Include="Draw\DrawSystem.Type.cs" />
     <Compile Include="Draw\DrawUtil.cs" />
-    <Compile Include="Draw\Effect.cs" />
+    <Compile Include="Draw\Detail\Effect.cs" />
     <Compile Include="Hmd\HmdMirrorTexture.cs" />
     <Compile Include="Hmd\HmdSwapTextureSet.cs" />
     <Compile Include="Map\MapLocation.cs" />
@@ -124,12 +124,12 @@
     <Compile Include="Util\Aabb.cs" />
     <Compile Include="Util\FpsCounter.cs" />
     <Compile Include="Draw\IDrawContext.cs" />
-    <Compile Include="Draw\MonoralDrawContext.cs" />
+    <Compile Include="Draw\Detail\MonoralDrawContext.cs" />
     <Compile Include="Draw\RenderTarget.cs" />
     <Compile Include="Draw\ResourceBase.cs" />
     <Compile Include="Draw\ResourceMap.cs" />
     <Compile Include="Draw\ResourceRepository.cs" />
-    <Compile Include="Draw\StereoDrawContext.cs" />
+    <Compile Include="Draw\Detail\StereoDrawContext.cs" />
     <Compile Include="Draw\TextureView.cs" />
     <Compile Include="Game\GameConfig.cs" />
     <Compile Include="Game\GameSystem.cs" />
@@ -187,9 +187,7 @@
     <Reference Include="System.XML" />
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Draw\Detail\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <EmbeddedResource Include="Forms\ConfigForm.resx">
       <DependentUpon>ConfigForm.cs</DependentUpon>
