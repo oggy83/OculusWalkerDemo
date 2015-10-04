@@ -231,24 +231,10 @@ namespace Oggy
 		public void LoadResource()
 		{
 			// load wall
-			{
-				var path = "Map/m9200/m9200.blend";
-				var searchPath = "Map/m9200";
-				var scene = BlenderScene.FromFile(path);
-				m_wallModel = DrawModel.FromScene(path + "/draw", scene, searchPath);
-
-				m_drawModelList.Add(new _ModelInfo() { Model = m_wallModel, ModelId = 9200 });
-			}
+			_LoadParts(9200);
 			
 			// load closed gate
-			{
-				var path = "Map/m9100/m9100.blend";
-				var searchPath = "Map/m9100";
-				var scene = BlenderScene.FromFile(path);
-				m_wallModel = DrawModel.FromScene(path + "/draw", scene, searchPath);
-
-				m_drawModelList.Add(new _ModelInfo() { Model = m_wallModel, ModelId = 9100 });
-			}
+			_LoadParts(9100);
 		}
 
 		public void UnloadResource()
@@ -258,7 +244,6 @@ namespace Oggy
 				model.Model.Dispose();
 			}
 			m_drawModelList.Clear();
-			m_wallModel = null;
 		}
 
 		public void Update(double dt, IDrawContext context)
@@ -282,13 +267,22 @@ namespace Oggy
 		{
 			// @todo
 		}
+
+		private DrawModel _LoadParts(int modelId)
+		{
+			var pathFormat = "Parts/p{0}/p{0}.blend";
+			var scene = BlenderScene.FromFile(String.Format(pathFormat, modelId));
+
+			var searchPathFormat = "Parts/p{0}";
+			var drawModel = DrawModel.FromScene("p" + modelId + "/draw", scene, String.Format(searchPathFormat, modelId));
+
+			m_drawModelList.Add(new _ModelInfo() { Model = drawModel, ModelId = modelId });
+			return drawModel;
+		}
 				
 		#endregion // private methods
 
 		#region private members
-
-		private DrawModel m_wallModel = null;
-		//private DrawModel m_floorModel = null;
 
 		private ModelEntity m_floor = null;
 		private List<GameEntity> m_mapEntities = new List<GameEntity>();
