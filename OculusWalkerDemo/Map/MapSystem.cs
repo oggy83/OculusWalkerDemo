@@ -232,12 +232,12 @@ namespace Oggy
 		{
 			// load wall
 			{
-				var path = "Map/m9000/m9000.blend";
-				var searchPath = "Map/m9000";
+				var path = "Map/m9200/m9200.blend";
+				var searchPath = "Map/m9200";
 				var scene = BlenderScene.FromFile(path);
 				m_wallModel = DrawModel.FromScene(path + "/draw", scene, searchPath);
 
-				m_drawModelList.Add(new _ModelInfo() { Model = m_wallModel, ModelId = 9000 });
+				m_drawModelList.Add(new _ModelInfo() { Model = m_wallModel, ModelId = 9200 });
 			}
 			
 			// load closed gate

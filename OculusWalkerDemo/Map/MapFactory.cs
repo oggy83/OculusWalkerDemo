@@ -111,6 +111,7 @@ namespace Oggy
 
 		public static List<LayoutInfo> CreateMapLayout(BlockInfo[,] blockInfoMap, Vector3 origin, float blockSize)
 		{
+			float halfBlockSize = blockSize * 0.5f;
 			var layoutList = new List<LayoutInfo>();
 
 			foreach (var block in BlockInfo.ToFlatArray(blockInfoMap))
@@ -119,12 +120,111 @@ namespace Oggy
 
 				switch (block.Type)
 				{
-					case BlockInfo.BlockTypes.Wall:
-						layoutList.Add(new LayoutInfo()
+					case BlockInfo.BlockTypes.Floor:
+					case BlockInfo.BlockTypes.StartPoint:
 						{
-							ModelId = 9000,
-							Layout = Matrix.Translation(basePosition)
-						});
+							bool bNorth = block.North.CanWalkThrough() || block.North.CanWalkHalf();
+							bool bSouth = block.South.CanWalkThrough() || block.South.CanWalkHalf();
+							bool bEast = block.East.CanWalkThrough() || block.East.CanWalkHalf();
+							bool bWest = block.West.CanWalkThrough() || block.West.CanWalkHalf();
+
+							var northBlock = new LayoutInfo()
+							{
+								ModelId = 9200,
+								Layout = Matrix.Translation(basePosition + new Vector3(0, 0, halfBlockSize))
+							};
+							var southBlock = new LayoutInfo()
+							{
+								ModelId = 9200,
+								Layout = Matrix.RotationY(MathUtil.PI) * Matrix.Translation(basePosition + new Vector3(0, 0, -halfBlockSize))
+							};
+							var eastBlock = new LayoutInfo()
+							{
+								ModelId = 9200,
+								Layout = Matrix.RotationY(MathUtil.PI / 2) * Matrix.Translation(basePosition + new Vector3(halfBlockSize, 0, 0))
+							};
+							var westBlock = new LayoutInfo()
+							{
+								ModelId = 9200,
+								Layout = Matrix.RotationY(-MathUtil.PI / 2) * Matrix.Translation(basePosition + new Vector3(-halfBlockSize, 0, 0))
+							};
+
+							// wall 1-direction 
+							if (!bNorth && bSouth && bEast && bWest)
+							{
+								layoutList.Add(northBlock);
+							}
+							else if (bNorth && !bSouth && bEast && bWest)
+							{
+								layoutList.Add(southBlock);
+							}
+							else if (bNorth && bSouth && !bEast && bWest)
+							{
+								layoutList.Add(eastBlock);
+							}
+							else if (bNorth && bSouth && bEast && !bWest)
+							{
+								layoutList.Add(westBlock);
+							}
+
+							// wall 2-direction 
+							if (!bNorth && !bSouth && bEast && bWest)
+							{
+								layoutList.Add(northBlock);
+								layoutList.Add(southBlock);
+							}
+							else if (!bNorth && bSouth && !bEast && bWest)
+							{
+								layoutList.Add(northBlock);
+								layoutList.Add(eastBlock);
+							}
+							else if (!bNorth && bSouth && bEast && !bWest)
+							{
+								layoutList.Add(northBlock);
+								layoutList.Add(westBlock);
+							}
+							else if (bNorth && !bSouth && !bEast && bWest)
+							{
+								layoutList.Add(southBlock);
+								layoutList.Add(eastBlock);
+							}
+							else if (bNorth && !bSouth && bEast && !bWest)
+							{
+								layoutList.Add(southBlock);
+								layoutList.Add(westBlock);
+							}
+							else if (bNorth && bSouth && !bEast && !bWest)
+							{
+								layoutList.Add(eastBlock);
+								layoutList.Add(westBlock);
+							}
+
+							// wall 3-direction 
+							if (bNorth && !bSouth && !bEast && !bWest)
+							{
+								layoutList.Add(southBlock);
+								layoutList.Add(eastBlock);
+								layoutList.Add(westBlock);
+							}
+							else if (!bNorth && bSouth && !bEast && !bWest)
+							{
+								layoutList.Add(northBlock);
+								layoutList.Add(eastBlock);
+								layoutList.Add(westBlock);
+							}
+							else if (!bNorth && !bSouth && bEast && !bWest)
+							{
+								layoutList.Add(northBlock);
+								layoutList.Add(southBlock);
+								layoutList.Add(westBlock);
+							}
+							else if (!bNorth && !bSouth && !bEast && bWest)
+							{
+								layoutList.Add(northBlock);
+								layoutList.Add(southBlock);
+								layoutList.Add(eastBlock);
+							}
+						}
 						break;
 
 					case BlockInfo.BlockTypes.ClosedGate:
@@ -136,6 +236,18 @@ namespace Oggy
 								ModelId = 9100,
 								Layout = Matrix.RotationY(MathUtil.PI * 0.5f) * Matrix.Translation(basePosition)
 							});
+
+							layoutList.Add(new LayoutInfo()
+							{
+								ModelId = 9200,
+								Layout = Matrix.Translation(basePosition + new Vector3(0, 0, halfBlockSize))
+							});
+
+							layoutList.Add(new LayoutInfo()
+							{
+								ModelId = 9200,
+								Layout = Matrix.RotationY(MathUtil.PI) * Matrix.Translation(basePosition + new Vector3(0, 0, -halfBlockSize))
+							});
 						}
 						else
 						{
@@ -145,10 +257,22 @@ namespace Oggy
 								ModelId = 9100,
 								Layout = Matrix.Translation(basePosition)
 							});
+
+							layoutList.Add(new LayoutInfo()
+							{
+								ModelId = 9200,
+								Layout = Matrix.RotationY(MathUtil.PI / 2) * Matrix.Translation(basePosition + new Vector3(halfBlockSize, 0, 0))
+							});
+
+							layoutList.Add(new LayoutInfo()
+							{
+								ModelId = 9200,
+								Layout = Matrix.RotationY(-MathUtil.PI / 2) * Matrix.Translation(basePosition + new Vector3(-halfBlockSize, 0, 0))
+							});
 						}
 						break;
 
-					case BlockInfo.BlockTypes.Floor:
+					case BlockInfo.BlockTypes.Wall:
 					case BlockInfo.BlockTypes.None:
 					default:
 						break;
