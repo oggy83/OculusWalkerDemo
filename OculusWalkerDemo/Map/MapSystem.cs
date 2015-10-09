@@ -279,7 +279,7 @@ namespace Oggy
 			m_drawModelList.Add(new _ModelInfo() { Model = drawModel, ModelId = modelId });
 			return drawModel;
 		}
-				
+
 		#endregion // private methods
 
 		#region private members

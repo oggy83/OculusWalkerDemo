@@ -39,7 +39,8 @@ namespace Oggy
 		/// <returns>sharpDX vector</returns>
 		public static Quaternion ChangeCoordsSystem(Quaternion q)
 		{
-            return q;
+            //return q;
+			return new Quaternion(q.X, q.Z, q.Y, -q.W);
 		}
 
 		/// <summary>
@@ -55,14 +56,14 @@ namespace Oggy
 				M12 = m.M13,
 				M13 = m.M12,
 				M14 = m.M14,
-				M21 = m.M21,
-				M22 = m.M23,
-				M23 = m.M22,
-				M24 = m.M24,
-				M31 = m.M31,
-				M32 = m.M33,
-				M33 = m.M32,
-				M34 = m.M34,
+				M21 = m.M31,
+				M22 = m.M33,
+				M23 = m.M32,
+				M24 = m.M34,
+				M31 = m.M21,
+				M32 = m.M23,
+				M33 = m.M22,
+				M34 = m.M24,
 				M41 = m.M41,
 				M42 = m.M43,
 				M43 = m.M42,

@@ -49,6 +49,15 @@ namespace Oggy
 			public AnimType.AnimationData? Animation { get; set; }
 		}
 
+		public struct LinkNode
+		{
+			public string Name { get; set; }
+
+			public Matrix Layout { get; set; }
+
+			public string TargetFileName { get; set; }
+		}
+
 		public class CustomProperty
 		{
 			public string Name;

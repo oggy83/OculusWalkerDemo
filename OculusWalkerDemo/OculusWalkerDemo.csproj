@@ -114,9 +114,10 @@
     <Compile Include="Draw\Detail\Effect.cs" />
     <Compile Include="Hmd\HmdMirrorTexture.cs" />
     <Compile Include="Hmd\HmdSwapTextureSet.cs" />
+    <Compile Include="Map\MapLayoutResource.cs" />
     <Compile Include="Map\MapLocation.cs" />
     <Compile Include="Map\BlockInfo.cs" />
-    <Compile Include="Map\MapFactory.cs" />
+    <Compile Include="Map\Detail\MapFactory.cs" />
     <Compile Include="Map\MapSystem.cs" />
     <Compile Include="Model\ModelComponent.cs" />
     <Compile Include="Model\Skeleton.cs" />

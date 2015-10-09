@@ -6,7 +6,6 @@
 PlayerとAvatar
 
 
-パーツレイアウト.blendを読み込む
 フロアのパーツ化に対応
 地図システムを対応
 BulletEngine対応
@@ -154,4 +153,5 @@ Zソートに対応(FPS 640 => 640?)
     →必要なさげ？
 + editor camera, ingame camera
 + ソース整理（Detail）
-+ 壁のパーツ化に対応
++ 壁のパーツ化に対応(FPS 520)
++ パーツレイアウト.blendを読み込む

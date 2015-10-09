@@ -364,33 +364,33 @@ foreach (var buf in node.Mesh.Buffers)
 			{
 				// bottom pyramid
 				new _VertexDebug() { Position = new Vector4( 0,  0,  0, 1) },
-				new _VertexDebug() { Position = new Vector4( -w, w, -w, 1) },
+				new _VertexDebug() { Position = new Vector4( -w, -w, w, 1) },
 				new _VertexDebug() { Position = new Vector4( 0,  0,  0, 1) },
 				new _VertexDebug() { Position = new Vector4( -w, w,  w, 1) },
 				new _VertexDebug() { Position = new Vector4( 0,  0,  0, 1) },
-				new _VertexDebug() { Position = new Vector4( w,  w, -w, 1) },
+				new _VertexDebug() { Position = new Vector4( w, -w,  w, 1) },
 				new _VertexDebug() { Position = new Vector4( 0,  0,  0, 1) },
 				new _VertexDebug() { Position = new Vector4( w,  w,  w, 1) },
 
 				// middle plane
-				new _VertexDebug() { Position = new Vector4( w,  w,  w, 1) },
-				new _VertexDebug() { Position = new Vector4( -w, w,  w, 1) },
-				new _VertexDebug() { Position = new Vector4( -w, w,  w, 1) },
-				new _VertexDebug() { Position = new Vector4( -w, w, -w, 1) },
-				new _VertexDebug() { Position = new Vector4( -w, w, -w, 1) },
-				new _VertexDebug() { Position = new Vector4( w,  w, -w, 1) },
-				new _VertexDebug() { Position = new Vector4( w,  w, -w, 1) },
-				new _VertexDebug() { Position = new Vector4( w,  w,  w, 1) },
+				new _VertexDebug() { Position = new Vector4( w,   w,  w, 1) },
+				new _VertexDebug() { Position = new Vector4( -w,  w,  w, 1) },
+				new _VertexDebug() { Position = new Vector4( -w,  w,  w, 1) },
+				new _VertexDebug() { Position = new Vector4( -w, -w,  w, 1) },
+				new _VertexDebug() { Position = new Vector4( -w, -w,  w, 1) },
+				new _VertexDebug() { Position = new Vector4( w,  -w,  w, 1) },
+				new _VertexDebug() { Position = new Vector4( w,  -w,  w, 1) },
+				new _VertexDebug() { Position = new Vector4( w,   w,  w, 1) },
 
 				// top pyramid
-				new _VertexDebug() { Position = new Vector4( 0,  L,  0, 1) },
-				new _VertexDebug() { Position = new Vector4( -w, w, -w, 1) },
-				new _VertexDebug() { Position = new Vector4( 0,  L,  0, 1) },
-				new _VertexDebug() { Position = new Vector4( w,  w, -w, 1) },
-				new _VertexDebug() { Position = new Vector4( 0,  L,  0, 1) },
-				new _VertexDebug() { Position = new Vector4( -w, w,  w, 1) },
-				new _VertexDebug() { Position = new Vector4( 0,  L,  0, 1) },
-				new _VertexDebug() { Position = new Vector4( w,  w,  w, 1) },
+				new _VertexDebug() { Position = new Vector4( 0,   0,  L, 1) },
+				new _VertexDebug() { Position = new Vector4( -w, -w,  w, 1) },
+				new _VertexDebug() { Position = new Vector4( 0,   0,  L, 1) },
+				new _VertexDebug() { Position = new Vector4( w,  -w,  w, 1) },
+				new _VertexDebug() { Position = new Vector4( 0,   0,  L, 1) },
+				new _VertexDebug() { Position = new Vector4( -w,  w,  w, 1) },
+				new _VertexDebug() { Position = new Vector4( 0,   0,  L, 1) },
+				new _VertexDebug() { Position = new Vector4( w,   w,  w, 1) },
 			};
 
 			Aabb aabb = Aabb.Invalid();

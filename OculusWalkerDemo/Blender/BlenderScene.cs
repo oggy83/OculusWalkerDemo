@@ -31,11 +31,21 @@ namespace Oggy
 			}
 		}
 
+		private List<LinkNode> m_linkList;
+		public ReadOnlyCollection<LinkNode> LinkList
+		{
+			get
+			{
+				return m_linkList.AsReadOnly();
+			}
+		}
+
 		#endregion // properties
 
 		public BlenderScene()
 		{
 			m_nodeList = new List<SceneNode>();
+			m_linkList = new List<LinkNode>();
 		}
 
 		public static BlenderScene FromFile(string path)
@@ -78,24 +88,53 @@ namespace Oggy
 				var obj = nextBase.GetMember("object").GetRawValue<BlendAddress>().DereferenceOne();
 				if (obj != null)
 				{
-					var data = obj.GetMember("data").GetRawValue<BlendAddress>().DereferenceOne();
-					if (data.Type.Name == "Mesh")
+					string name = obj.GetMember("id").GetMember("name").GetAllValueAsString();
+					int restrictFlag = obj.GetMember("restrictflag").GetRawValue<char>();
+					if ((restrictFlag & 1) != 0)
 					{
-						// mesh object
-						string name = obj.GetMember("id").GetMember("name").GetAllValueAsString();
-						int restrictFlag = obj.GetMember("restrictflag").GetRawValue<char>();
-						if ((restrictFlag & 1) == 0)
-						{
-							// enable view object
-							Console.WriteLine("found mesh : " + name);
-							if (!_LoadMesh(repository, obj))
-							{
-								return false;
-							}
-						}
-
+						// invisible object
 					}
 
+					var data = obj.GetMember("data").GetRawValue<BlendAddress>().DereferenceOne();
+					if (data != null && data.Type.Name == "Mesh")
+					{
+						// mesh object
+						Console.WriteLine("found mesh : " + name);
+						if (!_LoadMesh(repository, obj))
+						{
+							return false;
+						}
+					}
+
+					var groupId = obj.GetMember("dup_group").GetRawValue<BlendAddress>().DereferenceOne();
+					if (groupId != null)
+					{
+						// link object
+						Console.WriteLine("found link obj: " + name);
+
+						var lib = groupId.GetMember("lib").GetRawValue<BlendAddress>().DereferenceOne();
+						var path = lib.GetMember("filepath").GetAllValueAsString();
+
+						// make layout matrix
+						var elements = new float[16];
+						for (int i = 0; i < 4; ++i)
+						{
+							for (int j = 0; j < 4; ++j)
+							{
+								elements[i * 4 + j] = obj.GetMember("obmat").GetAt(i, j).GetRawValue<float>();
+							}
+						}
+						var layoutTrans = new Matrix(elements);
+						layoutTrans = BlenderUtil.ChangeCoordsSystem(layoutTrans);
+
+						var node = new LinkNode()
+						{
+							Name = name,
+							Layout = layoutTrans,
+							TargetFileName = Path.GetFileName(path),
+						};
+						m_linkList.Add(node);
+					}
 				}
 
 				nextBase = nextBase.GetMember("next").GetRawValue<BlendAddress>().DereferenceOne();

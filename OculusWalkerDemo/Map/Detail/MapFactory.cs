@@ -111,6 +111,13 @@ namespace Oggy
 
 		public static List<LayoutInfo> CreateMapLayout(BlockInfo[,] blockInfoMap, Vector3 origin, float blockSize)
 		{
+			var closedGateLayout = _LoadLayout(9000);
+			var floorLayout1 = _LoadLayout(9010);// 1 way
+			var floorLayout2s = _LoadLayout(9020);// 2 way (straight)
+			var floorLayout2b = _LoadLayout(9030);// 2 way (bent)
+			var floorLayout3 = _LoadLayout(9040);// 3 way
+
+
 			float halfBlockSize = blockSize * 0.5f;
 			var layoutList = new List<LayoutInfo>();
 
@@ -128,102 +135,83 @@ namespace Oggy
 							bool bEast = block.East.CanWalkThrough() || block.East.CanWalkHalf();
 							bool bWest = block.West.CanWalkThrough() || block.West.CanWalkHalf();
 
-							var northBlock = new LayoutInfo()
-							{
-								ModelId = 9200,
-								Layout = Matrix.Translation(basePosition + new Vector3(0, 0, halfBlockSize))
-							};
-							var southBlock = new LayoutInfo()
-							{
-								ModelId = 9200,
-								Layout = Matrix.RotationY(MathUtil.PI) * Matrix.Translation(basePosition + new Vector3(0, 0, -halfBlockSize))
-							};
-							var eastBlock = new LayoutInfo()
-							{
-								ModelId = 9200,
-								Layout = Matrix.RotationY(MathUtil.PI / 2) * Matrix.Translation(basePosition + new Vector3(halfBlockSize, 0, 0))
-							};
-							var westBlock = new LayoutInfo()
-							{
-								ModelId = 9200,
-								Layout = Matrix.RotationY(-MathUtil.PI / 2) * Matrix.Translation(basePosition + new Vector3(-halfBlockSize, 0, 0))
-							};
 
-							// wall 1-direction 
-							if (!bNorth && bSouth && bEast && bWest)
+							// 1 way floor
+							if (!bNorth && bSouth && !bEast && !bWest)
 							{
-								layoutList.Add(northBlock);
+								var offset = Matrix.Translation(basePosition);
+								_AppendParts(floorLayout1, offset, layoutList);
 							}
-							else if (bNorth && !bSouth && bEast && bWest)
+							else if (bNorth && !bSouth && !bEast && !bWest)
 							{
-								layoutList.Add(southBlock);
-							}
-							else if (bNorth && bSouth && !bEast && bWest)
-							{
-								layoutList.Add(eastBlock);
-							}
-							else if (bNorth && bSouth && bEast && !bWest)
-							{
-								layoutList.Add(westBlock);
-							}
-
-							// wall 2-direction 
-							if (!bNorth && !bSouth && bEast && bWest)
-							{
-								layoutList.Add(northBlock);
-								layoutList.Add(southBlock);
-							}
-							else if (!bNorth && bSouth && !bEast && bWest)
-							{
-								layoutList.Add(northBlock);
-								layoutList.Add(eastBlock);
-							}
-							else if (!bNorth && bSouth && bEast && !bWest)
-							{
-								layoutList.Add(northBlock);
-								layoutList.Add(westBlock);
-							}
-							else if (bNorth && !bSouth && !bEast && bWest)
-							{
-								layoutList.Add(southBlock);
-								layoutList.Add(eastBlock);
-							}
-							else if (bNorth && !bSouth && bEast && !bWest)
-							{
-								layoutList.Add(southBlock);
-								layoutList.Add(westBlock);
-							}
-							else if (bNorth && bSouth && !bEast && !bWest)
-							{
-								layoutList.Add(eastBlock);
-								layoutList.Add(westBlock);
-							}
-
-							// wall 3-direction 
-							if (bNorth && !bSouth && !bEast && !bWest)
-							{
-								layoutList.Add(southBlock);
-								layoutList.Add(eastBlock);
-								layoutList.Add(westBlock);
-							}
-							else if (!bNorth && bSouth && !bEast && !bWest)
-							{
-								layoutList.Add(northBlock);
-								layoutList.Add(eastBlock);
-								layoutList.Add(westBlock);
+								var offset = Matrix.RotationY(MathUtil.PI) * Matrix.Translation(basePosition);
+								_AppendParts(floorLayout1, offset, layoutList);
 							}
 							else if (!bNorth && !bSouth && bEast && !bWest)
 							{
-								layoutList.Add(northBlock);
-								layoutList.Add(southBlock);
-								layoutList.Add(westBlock);
+								var offset = Matrix.RotationY(MathUtil.PI / 2) * Matrix.Translation(basePosition);
+								_AppendParts(floorLayout1, offset, layoutList);
 							}
 							else if (!bNorth && !bSouth && !bEast && bWest)
 							{
-								layoutList.Add(northBlock);
-								layoutList.Add(southBlock);
-								layoutList.Add(eastBlock);
+								var offset = Matrix.RotationY(-MathUtil.PI / 2) * Matrix.Translation(basePosition);
+								_AppendParts(floorLayout1, offset, layoutList);
 							}
+
+							// 2 way floor
+							if (!bNorth && !bSouth && bEast && bWest)
+							{
+								var offset = Matrix.RotationY(MathUtil.PI / 2) * Matrix.Translation(basePosition);
+								_AppendParts(floorLayout2s, offset, layoutList);
+							}
+							else if (!bNorth && bSouth && !bEast && bWest)
+							{
+								var offset = Matrix.Translation(basePosition);
+								_AppendParts(floorLayout2b, offset, layoutList);
+							}
+							else if (!bNorth && bSouth && bEast && !bWest)
+							{
+								var offset = Matrix.RotationY(-MathUtil.PI / 2) * Matrix.Translation(basePosition);
+								_AppendParts(floorLayout2b, offset, layoutList);
+							}
+							else if (bNorth && !bSouth && !bEast && bWest)
+							{
+								var offset = Matrix.RotationY(MathUtil.PI / 2) * Matrix.Translation(basePosition);
+								_AppendParts(floorLayout2b, offset, layoutList);
+							}
+							else if (bNorth && !bSouth && bEast && !bWest)
+							{
+								var offset = Matrix.RotationY(MathUtil.PI) * Matrix.Translation(basePosition);
+								_AppendParts(floorLayout2b, offset, layoutList);
+							}
+							else if (bNorth && bSouth && !bEast && !bWest)
+							{
+								var offset = Matrix.Translation(basePosition);
+								_AppendParts(floorLayout2s, offset, layoutList);
+							}
+
+							// 3 way floor
+							if (!bNorth && bSouth && bEast && bWest)
+							{
+								var offset = Matrix.Translation(basePosition);
+								_AppendParts(floorLayout3, offset, layoutList);
+							}
+							else if (bNorth && !bSouth && bEast && bWest)
+							{
+								var offset = Matrix.RotationY(MathUtil.PI) * Matrix.Translation(basePosition);
+								_AppendParts(floorLayout3, offset, layoutList);
+							}
+							else if (bNorth && bSouth && !bEast && bWest)
+							{
+								var offset = Matrix.RotationY(MathUtil.PI / 2) * Matrix.Translation(basePosition);
+								_AppendParts(floorLayout3, offset, layoutList);
+							}
+							else if (bNorth && bSouth && bEast && !bWest)
+							{
+								var offset = Matrix.RotationY(-MathUtil.PI / 2) * Matrix.Translation(basePosition);
+								_AppendParts(floorLayout3, offset, layoutList);
+							}
+							
 						}
 						break;
 
@@ -231,44 +219,14 @@ namespace Oggy
 						if (block.East.CanWalkThrough())
 						{
 							// x-axis direction gate
-							layoutList.Add(new LayoutInfo()
-							{
-								ModelId = 9100,
-								Layout = Matrix.RotationY(MathUtil.PI * 0.5f) * Matrix.Translation(basePosition)
-							});
-
-							layoutList.Add(new LayoutInfo()
-							{
-								ModelId = 9200,
-								Layout = Matrix.Translation(basePosition + new Vector3(0, 0, halfBlockSize))
-							});
-
-							layoutList.Add(new LayoutInfo()
-							{
-								ModelId = 9200,
-								Layout = Matrix.RotationY(MathUtil.PI) * Matrix.Translation(basePosition + new Vector3(0, 0, -halfBlockSize))
-							});
+							var offset = Matrix.RotationY(MathUtil.PI * 0.5f) * Matrix.Translation(basePosition);
+							_AppendParts(closedGateLayout, offset, layoutList);
 						}
 						else
 						{
 							// y-axis direction gate
-							layoutList.Add(new LayoutInfo()
-							{
-								ModelId = 9100,
-								Layout = Matrix.Translation(basePosition)
-							});
-
-							layoutList.Add(new LayoutInfo()
-							{
-								ModelId = 9200,
-								Layout = Matrix.RotationY(MathUtil.PI / 2) * Matrix.Translation(basePosition + new Vector3(halfBlockSize, 0, 0))
-							});
-
-							layoutList.Add(new LayoutInfo()
-							{
-								ModelId = 9200,
-								Layout = Matrix.RotationY(-MathUtil.PI / 2) * Matrix.Translation(basePosition + new Vector3(-halfBlockSize, 0, 0))
-							});
+							var offset = Matrix.Translation(basePosition);
+							_AppendParts(closedGateLayout, offset, layoutList);
 						}
 						break;
 
@@ -280,6 +238,31 @@ namespace Oggy
 			}
 
 			return layoutList;
+		}
+
+		private static MapLayoutResource _LoadLayout(int id)
+		{
+			var pathFormat = "Map/m{0}/m{0}.blend";
+			var scene = BlenderScene.FromFile(String.Format(pathFormat, id));
+			return MapLayoutResource.FromScene("parts", scene);
+		}
+
+		/// <summary>
+		/// append map parts to layout list
+		/// </summary>
+		/// <param name="res"></param>
+		/// <param name="offset"></param>
+		/// <param name="targetList"></param>
+		private static void _AppendParts(MapLayoutResource res, Matrix offset, List<LayoutInfo> targetList)
+		{
+			foreach (var entry in res.Entries)
+			{
+				targetList.Add(new LayoutInfo()
+				{
+					ModelId = entry.ModelId,
+					Layout = entry.Layout * offset
+				});
+			}
 		}
 	}
 }
