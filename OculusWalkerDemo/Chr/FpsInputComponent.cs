@@ -217,9 +217,6 @@ namespace Oggy
 					// wait for end of behavior
 					return m_parent.m_behaviorC.IsIdling();
 				});
-
-				yield return new Coroutine.WaitTime(0.01);
-				yield break;
 			}
 
 			private FpsInputComponent m_parent;
