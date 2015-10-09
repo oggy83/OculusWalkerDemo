@@ -273,8 +273,7 @@ namespace Oggy
 			var pathFormat = "Parts/p{0}/p{0}.blend";
 			var scene = BlenderScene.FromFile(String.Format(pathFormat, modelId));
 
-			var searchPathFormat = "Parts/p{0}";
-			var drawModel = DrawModel.FromScene("p" + modelId + "/draw", scene, String.Format(searchPathFormat, modelId));
+			var drawModel = DrawModel.FromScene("p" + modelId + "/draw", scene);
 
 			m_drawModelList.Add(new _ModelInfo() { Model = drawModel, ModelId = modelId });
 			return drawModel;

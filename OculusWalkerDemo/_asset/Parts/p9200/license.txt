@@ -1,4 +1,0 @@
-Name:wall.png
-Author:Spiney
-License:CC0
-URL:http://opengameart.org/node/8122

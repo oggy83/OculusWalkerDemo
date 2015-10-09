@@ -1,9 +1,4 @@
-Name:block.png
+Name:wall.png
 Author:Spiney
 License:CC0
 URL:http://opengameart.org/node/8122
-
-Name:floor.jpg
-Author:Dim
-License:CC-BY 3.0
-URL:http://opengameart.org/node/8136

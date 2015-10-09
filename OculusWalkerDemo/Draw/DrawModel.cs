@@ -102,7 +102,12 @@ namespace Oggy
 			m_bb = new Aabb(Vector3.Zero, Vector3.Zero);
         }
 
-        public static DrawModel FromScene(String uid, BlenderScene scene, string searchPath)
+		public static DrawModel FromScene(String uid, BlenderScene scene)
+        {
+			return FromScene(uid, scene, "Image/");
+		}
+
+		public static DrawModel FromScene(String uid, BlenderScene scene, string fileSearchPath)
         {
             var drawSys = DrawSystem.GetInstance();
             var drawRepository = drawSys.ResourceRepository;
@@ -200,7 +205,7 @@ foreach (var buf in node.Mesh.Buffers)
                 {
                     if (!drawRepository.Contains(texInfo.Name))
                     {
-                        var tex = TextureView.FromFile(texInfo.Name, drawSys.D3D, Path.Combine(searchPath, texInfo.Name));
+                        var tex = TextureView.FromFile(texInfo.Name, drawSys.D3D, Path.Combine(fileSearchPath, texInfo.Name));
                         drawRepository.AddResource(tex);
                     }
                 }
