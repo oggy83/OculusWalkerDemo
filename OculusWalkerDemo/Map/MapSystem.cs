@@ -41,7 +41,6 @@ namespace Oggy
 				entity.Dispose();
 			}
 
-			//s_singleton.m_floor.Dispose();
 			s_singleton.UnloadResource();
 			
 
@@ -207,27 +206,6 @@ namespace Oggy
 
 				m_mapEntities.Add(entity);
 			}
-
-			/*
-			// create floor entity
-			var drawSys = DrawSystem.GetInstance();
-			var floorModel = DrawModel.CreateFloor(height * BlockSize * 0.5f, 60.0f, Vector4.Zero);
-			m_floor = new ModelEntity(new ModelEntity.InitParam()
-			{
-				Model = floorModel,
-				Texture = new DrawSystem.TextureData
-				{
-					Resource = drawSys.ResourceRepository.FindResource<TextureView>("floor"),
-					UvScale = Vector2.One
-				},
-				Layout = Matrix.Translation(BlockSize * 0.5f * width, 0, BlockSize * -0.5f * height),
-				Delay = 0.0f,
-				Forward = Vector3.Zero,
-				Color = Color4.White,
-				Speed = 1,
-			});
-			m_drawModelList.Add(new _ModelInfo() { Model = floorModel, ModelId = -1 });
-			*/
 		}
 
 		public void LoadResource()
@@ -248,7 +226,6 @@ namespace Oggy
 
 		public void Update(double dt, IDrawContext context)
 		{
-			//m_floor.Draw(context);
 		}
 
 		#region private types
@@ -283,7 +260,6 @@ namespace Oggy
 
 		#region private members
 
-		private ModelEntity m_floor = null;
 		private List<GameEntity> m_mapEntities = new List<GameEntity>();
 		private List<_ModelInfo> m_drawModelList = new List<_ModelInfo>();
 		private BlockInfo[,] m_blockInfoMap = null;
