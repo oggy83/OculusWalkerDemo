@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Diagnostics;
 using SharpDX;
 
 namespace Oggy
@@ -48,27 +49,11 @@ namespace Oggy
 
 		public bool IsInFrustum(Matrix wvpMatrix)
 		{
-			var vertices = new Vector3[8];
-			vertices[0] = new Vector3(Min.X, Min.Y, Min.Z);
-			vertices[1] = new Vector3(Max.X, Min.Y, Min.Z);
-			vertices[2] = new Vector3(Max.X, Min.Y, Max.Z);
-			vertices[3] = new Vector3(Min.X, Min.Y, Max.Z);
-			vertices[4] = new Vector3(Min.X, Max.Y, Min.Z);
-			vertices[5] = new Vector3(Max.X, Max.Y, Min.Z);
-			vertices[6] = new Vector3(Max.X, Max.Y, Max.Z);
-			vertices[7] = new Vector3(Min.X, Max.Y, Max.Z);
-
-			foreach (var vertex in vertices)
-			{
-				var v = MathUtil.Transform3(vertex, wvpMatrix);
-				if (-1.0 <= v.X && v.X <= 1.0 && -1.0 <= v.Y && v.Y <= 1.0 && 0.0 <= v.Z && v.Z <= 1.0)
-				{
-					// visible
-					return true;
-				}
-			}
-
-			return false;
+			// note! if you cull for AABB, update frustum instance just every camera changes
+			// but we want to use OBB
+			var frustum = new BoundingFrustum(wvpMatrix);
+			var bb = new BoundingBox(Min, Max);
+			return frustum.Contains(bb) != ContainmentType.Disjoint;
 		}
 
 		public static Aabb Invalid()

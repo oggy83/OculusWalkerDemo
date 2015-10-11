@@ -14,17 +14,6 @@ namespace Oggy
 		public const float E = 2.71828f;
 		public const float PI = 3.14159f;
 
-		public static Vector3 Transform3(Vector3 v, Matrix M)
-		{
-			Vector4 tmp = Vector3.Transform(v, M);
-			return ToVector3(tmp);
-		}
-
-		public static Vector3 Transform3(Vector3 v, Matrix3x3 M)
-		{
-			return Vector3.Transform(v, M);
-		}
-
 		public static Vector3 ToVector3(Vector4 v)
 		{
 			return new Vector3(v.X / v.W, v.Y / v.W, v.Z / v.W);

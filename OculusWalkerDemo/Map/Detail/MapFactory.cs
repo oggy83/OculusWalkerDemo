@@ -116,6 +116,7 @@ namespace Oggy
 			var floorLayout2s = _LoadLayout(9020);// 2 way (straight)
 			var floorLayout2b = _LoadLayout(9030);// 2 way (bent)
 			var floorLayout3 = _LoadLayout(9040);// 3 way
+			var floorLayout = _LoadLayout(9050);// floor
 
 
 			float halfBlockSize = blockSize * 0.5f;
@@ -211,7 +212,12 @@ namespace Oggy
 								var offset = Matrix.RotationY(-MathUtil.PI / 2) * Matrix.Translation(basePosition);
 								_AppendParts(floorLayout3, offset, layoutList);
 							}
-							
+
+							if (bNorth && bSouth && bEast && bWest)
+							{
+								var offset = Matrix.Translation(basePosition);
+								_AppendParts(floorLayout, offset, layoutList);
+							}
 						}
 						break;
 

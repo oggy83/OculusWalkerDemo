@@ -41,7 +41,7 @@ namespace Oggy
 				entity.Dispose();
 			}
 
-			s_singleton.m_floor.Dispose();
+			//s_singleton.m_floor.Dispose();
 			s_singleton.UnloadResource();
 			
 
@@ -208,6 +208,7 @@ namespace Oggy
 				m_mapEntities.Add(entity);
 			}
 
+			/*
 			// create floor entity
 			var drawSys = DrawSystem.GetInstance();
 			var floorModel = DrawModel.CreateFloor(height * BlockSize * 0.5f, 60.0f, Vector4.Zero);
@@ -226,15 +227,14 @@ namespace Oggy
 				Speed = 1,
 			});
 			m_drawModelList.Add(new _ModelInfo() { Model = floorModel, ModelId = -1 });
+			*/
 		}
 
 		public void LoadResource()
 		{
-			// load wall
-			_LoadParts(9200);
-			
-			// load closed gate
-			_LoadParts(9100);
+			_LoadParts(9000);// floor
+			_LoadParts(9100);// closed gate
+			_LoadParts(9200);// wall
 		}
 
 		public void UnloadResource()
@@ -248,7 +248,7 @@ namespace Oggy
 
 		public void Update(double dt, IDrawContext context)
 		{
-			m_floor.Draw(context);
+			//m_floor.Draw(context);
 		}
 
 		#region private types

@@ -73,9 +73,9 @@ namespace Oggy
 				var trans = new Matrix3x3(x.X, x.Y, x.Z, y.X, y.Y, y.Z, z.X, z.Y, z.Z);
 
 				var result = new CameraData(
-					MathUtil.Transform3(b.eye, trans),
-					MathUtil.Transform3(b.lookAt, trans), 
-					MathUtil.Transform3(b.up, trans));
+					Vector3.Transform(b.eye, trans),
+					Vector3.Transform(b.lookAt, trans),
+					Vector3.Transform(b.up, trans));
 				result.eye += a.eye;
 				result.lookAt += a.eye;
 				result.up.Normalize();
