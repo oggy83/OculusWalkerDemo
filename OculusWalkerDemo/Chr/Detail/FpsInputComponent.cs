@@ -25,12 +25,11 @@ namespace Oggy
         private const float PadAngleFactor = 1.0f;
         private const float MinimumPadMagnitude = 0.15f;
 
-        public FpsInputComponent(MapLocation startLocation, bool isEnableRightStick)
+        public FpsInputComponent(MapLocation startLocation)
             : base(GameEntityComponent.UpdateLines.Input)
         {
 			m_coroutine = new Coroutine();
 			m_currentLocation = startLocation;
-			m_isEnableRightStick = isEnableRightStick;
         }
 
         /// <summary>
@@ -239,33 +238,6 @@ namespace Oggy
 							}
 #endif
                         }
-
-                        // update angle
-						if (m_isEnableRightStick)
-						{
-							if (m_coroutine.HasCompleted())
-							{
-								var thumbDir = src.RightThumbInput.Direction;
-								float magnitude = src.RightThumbInput.NormalizedMagnitude;
-								if (magnitude >= MinimumPadMagnitude)
-								{
-									if (thumbDir.X > 0)
-									{
-										var nextDir = MapLocation.GetRightDirection(m_currentLocation.Direction);
-										m_currentLocation.Direction = nextDir;
-										var pose = mapSys.GetPose(m_currentLocation);
-										m_coroutine.Start(new _TurnToTask(this, pose.Forward));
-									}
-									else if (thumbDir.X < 0)
-									{
-										var nextDir = MapLocation.GetLeftDirection(m_currentLocation.Direction);
-										m_currentLocation.Direction = nextDir;
-										var pose = mapSys.GetPose(m_currentLocation);
-										m_coroutine.Start(new _TurnToTask(this, pose.Forward));
-									}
-								}
-							}
-						}
                     }
                     break;
 
@@ -372,9 +344,7 @@ namespace Oggy
 		/// current location on map
 		/// </summary>
 		private MapLocation m_currentLocation;
-
-		private bool m_isEnableRightStick;
-
+		
         #endregion // private members
     }
 }

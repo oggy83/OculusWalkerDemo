@@ -51,8 +51,7 @@ namespace Oggy
 
 				MapLocation startLocation = mapSys.GetStartInfo();
 				//var inputC = new GodViewInputComponent();
-				bool isEnableRightStick = !GameSystem.GetInstance().Config.IsUseHmd;
-                var inputC = new FpsInputComponent(startLocation, isEnableRightStick);
+                var inputC = new FpsInputComponent(startLocation);
 				AddComponent(inputC);
 
 				var modelC = new ModelComponent(GameEntityComponent.UpdateLines.Draw);
