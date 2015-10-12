@@ -53,6 +53,13 @@ namespace Oggy
 			public float NormalizedMagnitude;
 		}
 
-		
+		public enum PadButtons
+		{
+			Up = 0,
+			Down,
+			Left,
+			Right
+		}
+
 	}
 }

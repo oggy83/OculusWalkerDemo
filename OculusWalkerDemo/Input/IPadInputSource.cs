@@ -13,6 +13,8 @@ namespace Oggy
 	/// </summary>
 	public interface IPadInputSource : IDisposable
 	{
+		#region properties
+
 		/// <summary>
 		/// left game pad stick input data
 		/// </summary>
@@ -33,6 +35,16 @@ namespace Oggy
 		/// </summary>
 		InputSystem.ThumbSpec RightThumbSpec { get; set; }
 
+		#endregion // properties
 		
+		/// <summary>
+		/// check button state
+		/// </summary>
+		/// <param name="button">button</param>
+		/// <returns>
+		/// true : button is down
+		/// false : button is up
+		/// </returns>
+		bool TestButtonState(InputSystem.PadButtons button);
 	}
 }

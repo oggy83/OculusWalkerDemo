@@ -67,7 +67,20 @@ namespace Oggy
 			RightThumbSpec = InputSystem.ThumbSpec.Default();
 		}
 
-		void SelectPad()
+		public bool TestButtonState(InputSystem.PadButtons button)
+		{
+			bool value = false;
+			if (m_buttonStateTable.TryGetValue(button, out value))
+			{
+				return value;
+			}
+			else
+			{
+				return false;
+			}
+		}
+
+		public void SelectPad()
 		{
 			var ctrlerList = new[] { new Controller(UserIndex.One), new Controller(UserIndex.Two), new Controller(UserIndex.Three), new Controller(UserIndex.Four) };
 
@@ -93,11 +106,33 @@ namespace Oggy
 
 			//Trace.WriteLine("LeftThumbInput(Raw=" + m_leftThumbInput.RawMagnitude + ", Magnitude =" + m_leftThumbInput.Magnitude + ", Normalized=" + m_leftThumbInput.NormalizedMagnitude + ")");
 			//Trace.WriteLine("RightThumbInput(Raw=" + m_rightThumbInput.RawMagnitude + ", Magnitude =" + m_rightThumbInput.Magnitude + ", Normalized=" + m_rightThumbInput.NormalizedMagnitude + ")");
+
+			// process pad button input
+			var s_buttonTable = new Tuple<InputSystem.PadButtons, GamepadButtonFlags>[]
+			{
+				Tuple.Create(InputSystem.PadButtons.Down, GamepadButtonFlags.DPadDown),
+				Tuple.Create(InputSystem.PadButtons.Up, GamepadButtonFlags.DPadUp),
+				Tuple.Create(InputSystem.PadButtons.Left, GamepadButtonFlags.DPadLeft),
+				Tuple.Create(InputSystem.PadButtons.Right, GamepadButtonFlags.DPadRight),
+			};
+			foreach (var button in s_buttonTable)
+			{
+				bool flag = ((int)pad.Buttons & (int)button.Item2) != 0;
+				if (m_buttonStateTable.ContainsKey(button.Item1))
+				{
+					m_buttonStateTable[button.Item1] = flag;
+				}
+				else
+				{
+					m_buttonStateTable.Add(button.Item1, flag);
+				}
+			}
 		}
 
 		#region private members
 
 		private Controller m_selectCtrler = null;
+		private Dictionary<InputSystem.PadButtons, bool> m_buttonStateTable = new Dictionary<InputSystem.PadButtons, bool>();
 		
 		#endregion // private members
 
