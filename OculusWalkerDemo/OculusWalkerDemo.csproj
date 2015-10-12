@@ -59,10 +59,10 @@
     <Compile Include="Camera\FreeCamera.cs" />
     <Compile Include="Camera\ICamera.cs" />
     <Compile Include="Camera\FollowEntityCamera.cs" />
-    <Compile Include="Chr\FpsInputComponent.cs" />
+    <Compile Include="Chr\Detail\FpsInputComponent.cs" />
     <Compile Include="Chr\ChrSystem.cs" />
-    <Compile Include="Chr\ChrBehaviorComponent.cs" />
-    <Compile Include="Chr\GodViewInputComponent.cs" />
+    <Compile Include="Chr\Detail\ChrBehaviorComponent.cs" />
+    <Compile Include="Chr\Detail\GodViewInputComponent.cs" />
     <Compile Include="Chr\PlayerEntity.cs" />
     <Compile Include="Coroutine\Coroutine.cs" />
     <Compile Include="Coroutine\Coroutine.Join.cs" />
