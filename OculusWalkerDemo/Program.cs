@@ -109,7 +109,7 @@ namespace Oggy
 			CullingSystem.Initialize();
             GameSystem.Initialize();
 
-           
+			GameSystem.GetInstance().Config.IsUseHmd = bStereoRendering;
 			var scene = new Scene(device, swapChain, form.GetRenderTarget(), hmd, bStereoRendering, multiThreadCount);
 			RenderLoop.Run(form, () => { scene.RenderFrame(); });
             scene.Dispose();

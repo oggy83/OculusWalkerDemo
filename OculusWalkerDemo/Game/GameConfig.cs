@@ -27,11 +27,18 @@ namespace Oggy
 			set;
 		}
 
+		public bool IsUseHmd
+		{
+			get;
+			set;
+		}
+
 		#endregion // properties
 
 		public GameConfig()
 		{
 			InputDevice = UserInputDevices.Pad;
+			IsUseHmd = false;
 		}
 
 		[Conditional("DEBUG")]
