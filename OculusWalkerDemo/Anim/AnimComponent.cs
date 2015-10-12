@@ -69,13 +69,13 @@ namespace Oggy
 			if (m_skeletonC == null)
 			{
 				// no skeleton
-				return null;
+				return AnimHandle.Invalid();
 			}
 
 			if (m_resource == null)
 			{
 				// no resource
-				return null;
+				return AnimHandle.Invalid();
 			}
 
 			foreach (var action in m_resource.Data.Value.Actions)
@@ -88,7 +88,7 @@ namespace Oggy
 
 			// not found
 			Debug.Fail("anim action not found : " + animId);
-			return null;
+			return AnimHandle.Invalid();
 		}
 
 		public override void OnAddToEntity(GameEntity entity)

@@ -77,12 +77,7 @@ namespace Oggy
 			}
 			m_lastFrame = lastFrame;
 
-			return new AnimHandle()
-			{
-				Name = action.Name,
-				Weight = 1.0f,
-                Speed = 1.0f,
-			};
+			return new AnimHandle(action.Name, 1.0f, 1.0f);
 		}
 
 		public void Stop()
