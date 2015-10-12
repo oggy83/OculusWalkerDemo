@@ -99,21 +99,21 @@ namespace Oggy
 								// use pad stick
 								if (thumbDir.Y <= -0.851)
 								{
-									inputType = _InputType.Backward;// go backward
+									inputType = _InputType.Backward;
 								}
 								else if (thumbDir.Y >= 0.851)
 								{
-									inputType = _InputType.Forward;// go forward
+									inputType = _InputType.Forward;
 								}
 								else
 								{
 									if (thumbDir.X < 0)
 									{
-										inputType = _InputType.Left;// go left
+										inputType = _InputType.Left;
 									}
 									else
 									{
-										inputType = _InputType.Right;// go right
+										inputType = _InputType.Right;
 									}
 								}
 							}
@@ -122,23 +122,67 @@ namespace Oggy
 								// use pad cross key
 								if (src.TestButtonState(InputSystem.PadButtons.Down))
 								{
-									inputType = _InputType.Backward;// go backward
+									inputType = _InputType.Backward;
 								}
 								else if (src.TestButtonState(InputSystem.PadButtons.Up))
 								{
-									inputType = _InputType.Forward;// go forward
+									inputType = _InputType.Forward;
 								}
 								else if (src.TestButtonState(InputSystem.PadButtons.Left))
 								{
-									inputType = _InputType.Left;// go left
+									inputType = _InputType.Left;
 								}
 								else if (src.TestButtonState(InputSystem.PadButtons.Right))
 								{
-									inputType = _InputType.Right;// go right
+									inputType = _InputType.Right;
 								}
 
 							}
 
+#if true
+							switch (inputType)
+							{
+								case _InputType.Forward:
+									{
+										var nextDir = MapLocation.GetForwardDirection(m_currentLocation.Direction);
+										MapLocation? nextLocation = mapSys.Walk(m_currentLocation, nextDir);
+										if (nextLocation.HasValue)
+										{
+											m_currentLocation = nextLocation.Value;
+											var pose = mapSys.GetPose(m_currentLocation);
+											m_coroutine.Start(new _MoveToTask(this, pose.TranslationVector));// no turn
+										}
+									}
+									break;
+
+								case _InputType.Backward:
+									{
+										var nextDir = MapLocation.GetBackwardDirection(m_currentLocation.Direction);
+										m_currentLocation.Direction = nextDir;
+										var pose = mapSys.GetPose(m_currentLocation);
+										m_coroutine.Start(new _TurnToTask(this, pose.Forward));
+									}
+									break;
+
+								case _InputType.Left:
+									{
+										var nextDir = MapLocation.GetLeftDirection(m_currentLocation.Direction);
+										m_currentLocation.Direction = nextDir;
+										var pose = mapSys.GetPose(m_currentLocation);
+										m_coroutine.Start(new _TurnToTask(this, pose.Forward));
+									}
+									break;
+
+								case _InputType.Right:
+									{
+										var nextDir = MapLocation.GetRightDirection(m_currentLocation.Direction);
+										m_currentLocation.Direction = nextDir;
+										var pose = mapSys.GetPose(m_currentLocation);
+										m_coroutine.Start(new _TurnToTask(this, pose.Forward));
+									}
+									break;
+							}
+#else
 							switch (inputType)
 							{
 								case _InputType.Forward:
@@ -193,6 +237,7 @@ namespace Oggy
 									}
 									break;
 							}
+#endif
                         }
 
                         // update angle
