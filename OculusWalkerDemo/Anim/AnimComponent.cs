@@ -35,6 +35,12 @@ namespace Oggy
 		/// <param name="dT">spend time [sec]</param>
 		public override void Update(double dT)
 		{
+			if (m_skeletonC == null)
+			{
+				// no skeleton
+				return;
+			}
+
 			var skeleton = m_skeletonC.Skeleton;
 			bool isChanged = false;
 
@@ -60,6 +66,12 @@ namespace Oggy
 
 		public AnimHandle Play(string animId)
 		{
+			if (m_skeletonC == null)
+			{
+				// no skeleton
+				return null;
+			}
+
 			if (m_resource == null)
 			{
 				// no resource
@@ -84,9 +96,9 @@ namespace Oggy
 			base.OnAddToEntity(entity);
 
 			m_skeletonC = Owner.FindComponent<SkeletonComponent>();
-			Debug.Assert(m_skeletonC != null, "SkeletonCompoment depends on LayoutCompoment");
+			//Debug.Assert(m_skeletonC != null, "AnimCompoment depends on SkeletonCompoment");
 
-			if (m_resource.Data != null)
+			if (m_skeletonC != null && m_resource.Data != null)
 			{
 				m_player = new LayeredAnimPlayer(m_skeletonC.Skeleton);
 			}

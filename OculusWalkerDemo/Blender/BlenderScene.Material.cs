@@ -26,6 +26,7 @@ namespace Oggy
 			{
 				case "":
 				case ".std":
+case ".map":
 					{
 						var mtexs = bMaterial.GetMember("mtex");
 						var mtexsType = mtexs.Type as BlendArrayType;

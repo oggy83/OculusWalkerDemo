@@ -105,19 +105,19 @@ namespace Oggy
 				float jogWeight = movePower > 0.4f ? (movePower - 0.4f) : 0.0f;
 				float walkWeight = 1 - movePower;
 
-				m_walkHandle.Weight = (float)Math.Min(walkWeight, m_walkHandle.Weight + dT * 3);
-				m_jogHandle.Weight = (float)Math.Min(jogWeight, m_jogHandle.Weight + dT * 3);
-				m_pauseHandle.Weight = (float)Math.Max(0.0, m_pauseHandle.Weight - dT * 3);
+				//m_walkHandle.Weight = (float)Math.Min(walkWeight, m_walkHandle.Weight + dT * 3);
+				//m_jogHandle.Weight = (float)Math.Min(jogWeight, m_jogHandle.Weight + dT * 3);
+				//m_pauseHandle.Weight = (float)Math.Max(0.0, m_pauseHandle.Weight - dT * 3);
 
-				m_walkHandle.Speed = movePower * WalkAnimPlaySpeed;
-				m_jogHandle.Speed = movePower * JogAnimPlaySpeed;
+				//m_walkHandle.Speed = movePower * WalkAnimPlaySpeed;
+				//m_jogHandle.Speed = movePower * JogAnimPlaySpeed;
 			}
 			else
 			{
 				// stop motion
-				m_walkHandle.Weight = (float)Math.Max(0.0, m_walkHandle.Weight - dT * 10);
-				m_jogHandle.Weight = (float)Math.Max(0.0, m_jogHandle.Weight - dT * 10);
-				m_pauseHandle.Weight = (float)Math.Min(1.0, m_pauseHandle.Weight + dT * 10);
+				//m_walkHandle.Weight = (float)Math.Max(0.0, m_walkHandle.Weight - dT * 10);
+				//m_jogHandle.Weight = (float)Math.Max(0.0, m_jogHandle.Weight - dT * 10);
+				//m_pauseHandle.Weight = (float)Math.Min(1.0, m_pauseHandle.Weight + dT * 10);
 				m_movingTime = 0;
 			}
 
@@ -146,10 +146,10 @@ namespace Oggy
             base.OnAddToEntity(entity);
 
             m_layoutC = Owner.FindComponent<LayoutComponent>();
-            Debug.Assert(m_layoutC != null, "PlayerInputCompoment depends on LayoutCompoment");
+			Debug.Assert(m_layoutC != null, "ChrBahaviorCompoment depends on LayoutCompoment");
 
             m_animC = Owner.FindComponent<AnimComponent>();
-            Debug.Assert(m_animC != null, "PlayerInputCompoment depends on AnimCompoment");
+            Debug.Assert(m_animC != null, "ChrBahaviorCompoment depends on AnimCompoment");
 
             m_walkHandle = m_animC.Play("Walk");
             m_jogHandle = m_animC.Play("Jog");

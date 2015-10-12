@@ -19,8 +19,10 @@ namespace Oggy
 			var entitySys = EntitySystem.GetInstance();
 			var mapSys = MapSystem.GetInstance();
 
-			var path = "Chr/c9000/test.blend";
-            var searchPath = "Chr/c9000";
+			//var path = "Chr/c9000/test.blend";
+            //var searchPath = "Chr/c9000";
+			var path = "Chr/c9100/c9100.blend";
+			var searchPath = "Chr/c9100";
 			var scene = BlenderScene.FromFile(path);
 			if (scene != null)
 			{
