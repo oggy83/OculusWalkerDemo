@@ -144,7 +144,6 @@
     <Compile Include="Input\InputSystem.Types.cs" />
     <Compile Include="Input\IPadInputSource.cs" />
     <Compile Include="Hmd\LibOVR.cs" />
-    <Compile Include="ModelEntity.cs" />
     <Compile Include="NumberEntity.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Scene.cs" />
