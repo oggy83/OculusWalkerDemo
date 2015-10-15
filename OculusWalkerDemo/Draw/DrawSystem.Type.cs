@@ -115,13 +115,7 @@ namespace Oggy
             Bump0,
         }
 
-        public enum MaterialTypes
-        {
-            Default = 0,
-            DbgBoneWeight,
-            Marker,
-        }
-
+       
         public struct TextureData
         {
             public TextureView Resource { get; set; }
@@ -136,31 +130,6 @@ namespace Oggy
                     UvScale = Vector2.One,
                 };
             }
-        }
-
-        public struct MaterialData
-        {
-            public MaterialTypes Type { get; set; }
-
-            /// <summary>
-            /// first diffuse texture for Default
-            /// </summary>
-            public TextureData DiffuseTex0 { get; set; }
-
-            /// <summary>
-            /// first bump texture for Default
-            /// </summary>
-            public TextureData BumpTex0 { get; set; }
-
-            /// <summary>
-            /// index of showing bone weight for DbgBoneWeight
-            /// </summary>
-            public int DbgBoneIndex;
-
-            /// <summary>
-            /// marker id for Marker
-            /// </summary>
-            public int MarkerId;
         }
 
         public struct MeshData

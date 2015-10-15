@@ -58,7 +58,7 @@ namespace Oggy
         public class Node
         {
             public DrawSystem.MeshData Mesh;
-            public DrawSystem.MaterialData Material;
+            public MaterialBase Material;
             public bool IsDebug;
             public bool HasBone;
         }
@@ -118,7 +118,7 @@ namespace Oggy
 			var aabb = Aabb.Invalid();
             foreach (var n in scene.NodeList)
             {
-                if (n.MaterialData.Type != DrawSystem.MaterialTypes.Default)
+                if (n.MaterialData.Type != MaterialBase.MaterialTypes.Default)
                 {
                     continue;
                 }
@@ -319,7 +319,7 @@ foreach (var buf in node.Mesh.Buffers)
 
 			var model = new DrawModel("");
 			var mesh = DrawUtil.CreateMeshData<_VertexCommon>(d3d, PrimitiveTopology.TriangleList, vertices);
-            model.m_nodeList.Add(new Node() { Mesh = mesh, Material = new DrawSystem.MaterialData(), IsDebug = false, HasBone = false });
+            model.m_nodeList.Add(new Node() { Mesh = mesh, Material = new MaterialBase(), IsDebug = false, HasBone = false });
 			model.m_bb = aabb;
 
 			return model;
@@ -352,7 +352,7 @@ foreach (var buf in node.Mesh.Buffers)
 
 			var model = new DrawModel("");
 			var mesh = DrawUtil.CreateMeshData<_VertexCommon>(d3d, PrimitiveTopology.TriangleList, vertices);
-            model.m_nodeList.Add(new Node() { Mesh = mesh, Material = new DrawSystem.MaterialData(), IsDebug = false, HasBone = false });
+            model.m_nodeList.Add(new Node() { Mesh = mesh, Material = new MaterialBase(), IsDebug = false, HasBone = false });
 			model.m_bb = aabb;
 
 			return model;
@@ -411,7 +411,7 @@ foreach (var buf in node.Mesh.Buffers)
             model.m_nodeList.Add(new Node()
             {
                 Mesh = DrawUtil.CreateMeshData<_VertexDebug>(d3d, PrimitiveTopology.LineList, vertices),
-                Material = new DrawSystem.MaterialData(),
+				Material = new MaterialBase(),
                 IsDebug = true,
                 HasBone = false,
             });
@@ -469,7 +469,7 @@ foreach (var buf in node.Mesh.Buffers)
 			model.m_nodeList.Add(new Node()
 			{
 				Mesh = DrawUtil.CreateMeshData<_VertexDebug>(d3d, PrimitiveTopology.LineList, vertices),
-				Material = new DrawSystem.MaterialData(),
+				Material = new MaterialBase(),
 				IsDebug = true,
 				HasBone = false,
 			});
@@ -539,7 +539,7 @@ foreach (var buf in node.Mesh.Buffers)
 			model.m_nodeList.Add(new Node()
 			{
 				Mesh = DrawUtil.CreateMeshData<_VertexDebug>(d3d, PrimitiveTopology.LineList, vertices),
-				Material = new DrawSystem.MaterialData(),
+				Material = new MaterialBase(),
 				IsDebug = true,
 				HasBone = false,
 			});

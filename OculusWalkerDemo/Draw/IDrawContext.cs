@@ -17,11 +17,11 @@ namespace Oggy
 {
 	public interface IDrawContext
 	{
-		void DrawModel(Matrix worldTrans, Color4 color, DrawSystem.MeshData mesh, DrawSystem.TextureData tex, DrawSystem.RenderMode renderMode, Matrix[] boneMatrices);
+		void DrawModel(Matrix worldTrans, Color4 color, DrawSystem.MeshData mesh, MaterialBase material, DrawSystem.RenderMode renderMode, Matrix[] boneMatrices);
 
         void DrawDebugModel(Matrix worldTrans, DrawSystem.MeshData mesh, DrawSystem.RenderMode renderMode);
 
-        void BeginDrawInstance(DrawSystem.MeshData mesh, DrawSystem.TextureData tex, DrawSystem.RenderMode renderMode);
+        void BeginDrawInstance(DrawSystem.MeshData mesh, MaterialBase material, DrawSystem.RenderMode renderMode);
 
 		void AddInstance(Matrix worldTrans, Color4 color);
 

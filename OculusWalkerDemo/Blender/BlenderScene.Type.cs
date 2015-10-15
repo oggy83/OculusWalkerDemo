@@ -34,7 +34,7 @@ namespace Oggy
 
 			public VertexOriginal[] Vertics { get; set; }
 
-			public DrawSystem.MaterialData MaterialData { get; set; }
+			public MaterialBase MaterialData { get; set; }
 
 			public Dictionary<DrawSystem.TextureTypes, TextureInfo> TextureInfos { get; set; }
 

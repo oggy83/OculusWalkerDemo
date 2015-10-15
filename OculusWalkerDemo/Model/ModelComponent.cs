@@ -86,13 +86,12 @@ namespace Oggy
 			else
 			{
 				// Add command for draw mdoel
-				DrawSystem.MaterialData material;
 				foreach (var node in ModelContext.DrawModel.NodeList)
 				{
 					if (UpdateLine == GameEntityComponent.UpdateLines.PreDraw)
 					{
 						// use draw buffer
-						drawSys.GetDrawBuffer().AppendStaticModel(layout, result.Z, ref node.Mesh, ref node.Material);
+						drawSys.GetDrawBuffer().AppendStaticModel(layout, result.Z, ref node.Mesh, node.Material);
 					}
 					else if (UpdateLine == GameEntityComponent.UpdateLines.Draw)
 					{
@@ -103,9 +102,8 @@ namespace Oggy
 							boneMatrices = m_skeletonC.Skeleton.GetAllSkinningTransforms();
 						}
 
-						material = node.Material;
-						var tex = material.DiffuseTex0;
-						context.DrawModel(layout, Color4.White, node.Mesh, tex, DrawSystem.RenderMode.Opaque, boneMatrices);
+						MaterialBase material = node.Material;
+						context.DrawModel(layout, Color4.White, node.Mesh, material, DrawSystem.RenderMode.Opaque, boneMatrices);
 					}
 				}
 			}
@@ -146,7 +144,7 @@ namespace Oggy
 				}
 
 				var mesh = m_dbgBoundingBoxModel.NodeList[0].Mesh;
-				DrawSystem.MaterialData material = m_dbgBoundingBoxModel.NodeList[0].Material;
+				MaterialBase material = m_dbgBoundingBoxModel.NodeList[0].Material;
 				context.DrawDebugModel(layout, mesh, DrawSystem.RenderMode.Transparency);
 			}
 

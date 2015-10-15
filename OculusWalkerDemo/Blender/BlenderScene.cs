@@ -178,7 +178,7 @@ namespace Oggy
 				if (bMaterial != null)
 				{
 					Dictionary<DrawSystem.TextureTypes, TextureInfo> textureInfos = null;
-					DrawSystem.MaterialData material;
+					MaterialBase material;
 					if (!_LoadMaterial(repository, bMaterial, out textureInfos, out material))
 					{
 						continue;

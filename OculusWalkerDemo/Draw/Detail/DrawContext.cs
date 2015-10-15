@@ -53,9 +53,9 @@ namespace Oggy
 			m_mainVtxConst.Dispose();
 		}
 
-        virtual public void DrawModel(Matrix worldTrans, Color4 color, DrawSystem.MeshData mesh, DrawSystem.TextureData tex, DrawSystem.RenderMode renderMode, Matrix[] boneMatrices)
+        virtual public void DrawModel(Matrix worldTrans, Color4 color, DrawSystem.MeshData mesh, MaterialBase material, DrawSystem.RenderMode renderMode, Matrix[] boneMatrices)
         {
-            _SetModelParams(mesh, tex, renderMode, true);
+            _SetModelParams(mesh, material, renderMode);
 
             // update vertex shader resouce
             var vdata = new _MainVertexShaderConst()
@@ -106,7 +106,7 @@ namespace Oggy
 
         virtual public void DrawDebugModel(Matrix worldTrans, DrawSystem.MeshData mesh, DrawSystem.RenderMode renderMode)
 		{
-			_SetModelParams(mesh, DrawSystem.TextureData.Null(), renderMode, false);
+			_SetModelParams(mesh, null, renderMode);
 
 			// update vertex shader resouce
 			{
@@ -135,9 +135,9 @@ namespace Oggy
 			m_drawCallCount++;
 		}
 
-        virtual public void BeginDrawInstance(DrawSystem.MeshData mesh, DrawSystem.TextureData tex, DrawSystem.RenderMode renderMode)
+        virtual public void BeginDrawInstance(DrawSystem.MeshData mesh, MaterialBase material, DrawSystem.RenderMode renderMode)
 		{
-			_SetModelParams(mesh, tex, renderMode, true);
+			_SetModelParams(mesh, material, renderMode);
 		}
 
 		virtual public void AddInstance(Matrix worldTrans, Color4 color)
@@ -300,7 +300,7 @@ namespace Oggy
 		private PrimitiveTopology? m_lastTopology = null;
 		private VertexBufferBinding[] m_lastVertexBuffers = null;
 		private int m_lastVertexCount = 0;
-        private bool? m_useMaterial = null;
+        private MaterialBase.MaterialTypes? m_materialType = null;
 
 		// DrawInstancedModel context
 		private int m_nextInstanceIndex = 0;
@@ -313,9 +313,10 @@ namespace Oggy
 
 		#region private methods
 
-        private void _SetModelParams(DrawSystem.MeshData mesh, DrawSystem.TextureData tex, DrawSystem.RenderMode renderMode, bool useMaterial)
+        private void _SetModelParams(DrawSystem.MeshData mesh, MaterialBase material, DrawSystem.RenderMode renderMode)
 		{
 			// update texture resouce
+			var tex = material == null ? DrawSystem.TextureData.Null() : material.DiffuseTex0;
 			if (m_lastTextureRes == null || m_lastTextureRes.IsDisposed() || m_lastTextureRes != tex.Resource)
 			{
                 // update resource
@@ -338,7 +339,6 @@ namespace Oggy
             // update texture uv scale
             if (m_lastTextureUvScale == null || !m_lastTextureUvScale.Value.Equals(tex.UvScale))
             {
-				
                 var modelPixConst = new _ModelPixelShaderConst()
                 {
                     uvScale1 = tex.UvScale,
@@ -364,26 +364,35 @@ namespace Oggy
 
 
 			// update material
-            if (m_useMaterial == null || m_useMaterial != useMaterial)
+			MaterialBase.MaterialTypes materialType = material == null ? MaterialBase.MaterialTypes.Debug : material.Type;
+            if (m_materialType == null || m_materialType != materialType)
             {
-                if (useMaterial)
-                {
-                    Effect effect = null;
-                    effect = m_initParam.Repository.FindResource<Effect>("Std");
-                    m_context.InputAssembler.InputLayout = effect.Layout;
-                    m_context.VertexShader.Set(effect.VertexShader);
-                    m_context.PixelShader.Set(effect.PixelShader);
-                }
-                else
-                {
-                    Effect effect = null;
-                    effect = m_initParam.Repository.FindResource<Effect>("Debug");
-                    m_context.InputAssembler.InputLayout = effect.Layout;
-                    m_context.VertexShader.Set(effect.VertexShader);
-                    m_context.PixelShader.Set(effect.PixelShader);
-                }
+				switch (materialType)
+				{
+					case MaterialBase.MaterialTypes.Default:
+					case MaterialBase.MaterialTypes.DbgBoneWeight:
+					case MaterialBase.MaterialTypes.Marker:
+						{
+							Effect effect = null;
+							effect = m_initParam.Repository.FindResource<Effect>("Std");
+							m_context.InputAssembler.InputLayout = effect.Layout;
+							m_context.VertexShader.Set(effect.VertexShader);
+							m_context.PixelShader.Set(effect.PixelShader);
+						}
+						break;
 
-                m_useMaterial = useMaterial;
+					case MaterialBase.MaterialTypes.Debug:
+						{
+							Effect effect = null;
+							effect = m_initParam.Repository.FindResource<Effect>("Debug");
+							m_context.InputAssembler.InputLayout = effect.Layout;
+							m_context.VertexShader.Set(effect.VertexShader);
+							m_context.PixelShader.Set(effect.PixelShader);
+						}
+						break;
+				}
+
+				m_materialType = materialType;
             }
 
 			// update render mode

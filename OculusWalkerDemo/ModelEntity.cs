@@ -60,6 +60,7 @@ namespace Oggy
 		{
 			m_initParam = initParam;
 			m_worldTrans = m_initParam.Layout;
+			m_material = MaterialBase.Create(m_initParam.Texture);
 		}
 
 		public void Dispose()
@@ -76,12 +77,12 @@ namespace Oggy
 
 		public void Draw(IDrawContext context)
 		{
-			context.DrawModel(m_worldTrans, m_initParam.Color, m_initParam.Model.NodeList[0].Mesh, m_initParam.Texture, DrawSystem.RenderMode.Opaque, null);
+			context.DrawModel(m_worldTrans, m_initParam.Color, m_initParam.Model.NodeList[0].Mesh, m_material, DrawSystem.RenderMode.Opaque, null);
 		}
 
 		public void BeginDrawInstance(IDrawContext context)
 		{
-			context.BeginDrawInstance(m_initParam.Model.NodeList[0].Mesh, m_initParam.Texture, DrawSystem.RenderMode.Opaque);
+			context.BeginDrawInstance(m_initParam.Model.NodeList[0].Mesh, m_material, DrawSystem.RenderMode.Opaque);
 		}
 
 		public void AddInstance(IDrawContext context)
@@ -91,6 +92,7 @@ namespace Oggy
 
 		#region private members
 
+		private MaterialBase m_material;
 		private InitParam m_initParam;
 		private Matrix m_worldTrans;
 

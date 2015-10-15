@@ -15,7 +15,7 @@ namespace Oggy
 	public partial class BlenderScene
 	{
 
-		private bool _LoadMaterial(BlendTypeRepository repository, BlendValueCapsule bMaterial, out Dictionary<DrawSystem.TextureTypes, TextureInfo> outTextureInfos, out DrawSystem.MaterialData outMaterial)
+		private bool _LoadMaterial(BlendTypeRepository repository, BlendValueCapsule bMaterial, out Dictionary<DrawSystem.TextureTypes, TextureInfo> outTextureInfos, out MaterialBase outMaterial)
 		{
 			string mtlName = bMaterial.GetMember("id").GetMember("name").GetAllValueAsString();
 			Console.WriteLine("    found material : " + mtlName);
@@ -72,7 +72,7 @@ case ".map":
 							}
 						}
 
-						outMaterial = new DrawSystem.MaterialData();
+						outMaterial = new MaterialBase();
 						outTextureInfos = texInfos;
 					}
 					return true;
@@ -86,9 +86,9 @@ case ".map":
 							break;
 						}
 
-						outMaterial = new DrawSystem.MaterialData()
+						outMaterial = new MaterialBase()
 						{
-							Type = DrawSystem.MaterialTypes.Marker,
+							Type = MaterialBase.MaterialTypes.Marker,
 							MarkerId = prop.Value,
 						};
 						outTextureInfos = texInfos;
@@ -100,7 +100,7 @@ case ".map":
 					break;
 			}
 
-			outMaterial = new DrawSystem.MaterialData();
+			outMaterial = new MaterialBase();
 			outTextureInfos = texInfos;
 			return false;
 		}

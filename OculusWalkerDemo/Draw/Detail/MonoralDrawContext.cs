@@ -46,13 +46,13 @@ namespace Oggy
 
 		public void EndPass()
 		{
-			int syncInterval = 1;// 0 => immediately return, 1 => vsync
+			int syncInterval = 0;// 0 => immediately return, 1 => vsync
 			m_d3d.SwapChain.Present(syncInterval, PresentFlags.None);
 		}
 
-        public void DrawModel(Matrix worldTrans, Color4 color, DrawSystem.MeshData mesh, DrawSystem.TextureData tex, DrawSystem.RenderMode renderMode, Matrix[] boneMatrices)
+        public void DrawModel(Matrix worldTrans, Color4 color, DrawSystem.MeshData mesh, MaterialBase material, DrawSystem.RenderMode renderMode, Matrix[] boneMatrices)
 		{
-			m_context.DrawModel(worldTrans, color, mesh, tex, renderMode, boneMatrices);
+			m_context.DrawModel(worldTrans, color, mesh, material, renderMode, boneMatrices);
 		}
 
         public void DrawDebugModel(Matrix worldTrans, DrawSystem.MeshData mesh, DrawSystem.RenderMode renderMode)
@@ -60,9 +60,9 @@ namespace Oggy
             m_context.DrawDebugModel(worldTrans, mesh, renderMode);
         }
 
-        public void BeginDrawInstance(DrawSystem.MeshData mesh, DrawSystem.TextureData tex, DrawSystem.RenderMode renderMode)
+        public void BeginDrawInstance(DrawSystem.MeshData mesh, MaterialBase material, DrawSystem.RenderMode renderMode)
 		{
-			m_context.BeginDrawInstance(mesh, tex, renderMode);
+			m_context.BeginDrawInstance(mesh, material, renderMode);
 		}
 
 		public void AddInstance(Matrix worldTrans, Color4 color)

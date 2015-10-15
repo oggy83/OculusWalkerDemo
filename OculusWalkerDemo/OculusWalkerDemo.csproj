@@ -73,6 +73,7 @@
     <Compile Include="Draw\Debug\DrawDebugCtrl.cs" />
     <Compile Include="Draw\DrawBuffer.cs" />
     <Compile Include="Draw\DrawSystem.Config.cs" />
+    <Compile Include="Draw\Material.cs" />
     <Compile Include="Entity\Detail\GameEntityComponentLine.cs" />
     <Compile Include="Entity\EntitySystem.cs" />
     <Compile Include="Entity\EasyDrawComponent.cs" />
