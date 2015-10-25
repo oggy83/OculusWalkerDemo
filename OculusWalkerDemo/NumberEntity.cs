@@ -70,7 +70,7 @@ namespace Oggy
 				}
 
 				Debug.Assert(tex.Resource != null, "invalid character");
-				context.DrawModel(layout * m_worldTrans, Color4.White, m_plane.NodeList[0].Mesh, MaterialBase.Create(tex), DrawSystem.RenderMode.Transparency, null);
+				context.DrawModel(layout * m_worldTrans, Color4.White, m_plane.NodeList[0].Mesh, StandardMaterial.Create(tex), DrawSystem.RenderMode.Transparency, null);
 				layout *= Matrix.Translation(offset, 0, 0);
 			}
 

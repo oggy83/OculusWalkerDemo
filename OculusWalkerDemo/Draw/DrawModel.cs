@@ -118,7 +118,7 @@ namespace Oggy
 			var aabb = Aabb.Invalid();
             foreach (var n in scene.NodeList)
             {
-                if (n.MaterialData.Type != MaterialBase.MaterialTypes.Default)
+                if (n.MaterialData.Type != MaterialBase.MaterialTypes.Standard)
                 {
                     continue;
                 }
@@ -213,19 +213,23 @@ foreach (var buf in node.Mesh.Buffers)
                 // copy textures from cache
                 if (n.TextureInfos.ContainsKey(DrawSystem.TextureTypes.Diffuse0))
                 {
-                    node.Material.DiffuseTex0 = new DrawSystem.TextureData
-                    {
-                        Resource = drawRepository.FindResource<TextureView>(n.TextureInfos[DrawSystem.TextureTypes.Diffuse0].Name),
-                        UvScale = n.TextureInfos[DrawSystem.TextureTypes.Diffuse0].UvScale,
-                    };
+                    node.Material.SetTextureData(
+						DrawSystem.TextureTypes.Diffuse0, 
+						new DrawSystem.TextureData
+						{
+							Resource = drawRepository.FindResource<TextureView>(n.TextureInfos[DrawSystem.TextureTypes.Diffuse0].Name),
+							UvScale = n.TextureInfos[DrawSystem.TextureTypes.Diffuse0].UvScale,
+						});
                 }
                 if (n.TextureInfos.ContainsKey(DrawSystem.TextureTypes.Bump0))
                 {
-                    node.Material.BumpTex0 = new DrawSystem.TextureData
-                    {
-                        Resource = drawRepository.FindResource<TextureView>(n.TextureInfos[DrawSystem.TextureTypes.Bump0].Name),
-                        UvScale = n.TextureInfos[DrawSystem.TextureTypes.Bump0].UvScale,
-                    };
+                    node.Material.SetTextureData(
+						DrawSystem.TextureTypes.Bump0,
+						new DrawSystem.TextureData
+						{
+							Resource = drawRepository.FindResource<TextureView>(n.TextureInfos[DrawSystem.TextureTypes.Bump0].Name),
+							UvScale = n.TextureInfos[DrawSystem.TextureTypes.Bump0].UvScale,
+						});
                 }
 
                 model.m_nodeList.Add(node);
@@ -319,7 +323,7 @@ foreach (var buf in node.Mesh.Buffers)
 
 			var model = new DrawModel("");
 			var mesh = DrawUtil.CreateMeshData<_VertexCommon>(d3d, PrimitiveTopology.TriangleList, vertices);
-            model.m_nodeList.Add(new Node() { Mesh = mesh, Material = new MaterialBase(), IsDebug = false, HasBone = false });
+            model.m_nodeList.Add(new Node() { Mesh = mesh, Material = DebugMaterial.Create(), IsDebug = false, HasBone = false });
 			model.m_bb = aabb;
 
 			return model;
@@ -352,7 +356,7 @@ foreach (var buf in node.Mesh.Buffers)
 
 			var model = new DrawModel("");
 			var mesh = DrawUtil.CreateMeshData<_VertexCommon>(d3d, PrimitiveTopology.TriangleList, vertices);
-            model.m_nodeList.Add(new Node() { Mesh = mesh, Material = new MaterialBase(), IsDebug = false, HasBone = false });
+			model.m_nodeList.Add(new Node() { Mesh = mesh, Material = DebugMaterial.Create(), IsDebug = false, HasBone = false });
 			model.m_bb = aabb;
 
 			return model;
@@ -411,7 +415,7 @@ foreach (var buf in node.Mesh.Buffers)
             model.m_nodeList.Add(new Node()
             {
                 Mesh = DrawUtil.CreateMeshData<_VertexDebug>(d3d, PrimitiveTopology.LineList, vertices),
-				Material = new MaterialBase(),
+				Material = DebugMaterial.Create(),
                 IsDebug = true,
                 HasBone = false,
             });
@@ -469,7 +473,7 @@ foreach (var buf in node.Mesh.Buffers)
 			model.m_nodeList.Add(new Node()
 			{
 				Mesh = DrawUtil.CreateMeshData<_VertexDebug>(d3d, PrimitiveTopology.LineList, vertices),
-				Material = new MaterialBase(),
+				Material = DebugMaterial.Create(),
 				IsDebug = true,
 				HasBone = false,
 			});
@@ -539,7 +543,7 @@ foreach (var buf in node.Mesh.Buffers)
 			model.m_nodeList.Add(new Node()
 			{
 				Mesh = DrawUtil.CreateMeshData<_VertexDebug>(d3d, PrimitiveTopology.LineList, vertices),
-				Material = new MaterialBase(),
+				Material = DebugMaterial.Create(),
 				IsDebug = true,
 				HasBone = false,
 			});

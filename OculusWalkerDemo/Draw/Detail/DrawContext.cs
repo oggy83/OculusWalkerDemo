@@ -316,7 +316,16 @@ namespace Oggy
         private void _SetModelParams(DrawSystem.MeshData mesh, MaterialBase material, DrawSystem.RenderMode renderMode)
 		{
 			// update texture resouce
-			var tex = material == null ? DrawSystem.TextureData.Null() : material.DiffuseTex0;
+			DrawSystem.TextureData tex;
+			if (material == null)
+			{
+				tex = DrawSystem.TextureData.Null();
+			}
+			else
+			{
+				material.GetTextureData(DrawSystem.TextureTypes.Diffuse0, out tex);
+			}
+
 			if (m_lastTextureRes == null || m_lastTextureRes.IsDisposed() || m_lastTextureRes != tex.Resource)
 			{
                 // update resource
@@ -369,9 +378,7 @@ namespace Oggy
             {
 				switch (materialType)
 				{
-					case MaterialBase.MaterialTypes.Default:
-					case MaterialBase.MaterialTypes.DbgBoneWeight:
-					case MaterialBase.MaterialTypes.Marker:
+					case MaterialBase.MaterialTypes.Standard:
 						{
 							Effect effect = null;
 							effect = m_initParam.Repository.FindResource<Effect>("Std");
@@ -389,6 +396,10 @@ namespace Oggy
 							m_context.VertexShader.Set(effect.VertexShader);
 							m_context.PixelShader.Set(effect.PixelShader);
 						}
+						break;
+
+					case MaterialBase.MaterialTypes.Marker:
+						Debug.Assert(false, "unsupported material");
 						break;
 				}
 
