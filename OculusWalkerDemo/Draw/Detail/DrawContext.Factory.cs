@@ -69,6 +69,25 @@ namespace Oggy
 					repository.AddResource(shader);
 				}
 
+				{
+					var shader = new Effect(
+					"Minimap",
+					d3d,
+					new InputElement[]
+					{
+						new InputElement("POSITION", 0, Format.R32G32B32A32_Float, 0, 0),
+                        new InputElement("NORMAL", 0, Format.R32G32B32_Float, 16, 0),
+						new InputElement("TEXCOORD", 0, Format.R32G32_Float, 28, 0),
+                        new InputElement("TANGENT", 0, Format.R32G32B32_Float, 0, 1),
+                        new InputElement("BONEINDEX", 0, Format.R32G32B32A32_UInt, 0, 2),
+					    new InputElement("BONEWEIGHT", 0, Format.R32G32B32A32_Float, 16, 2),
+					},
+					"Shader/VS_Std.fx",
+					"Shader/PS_Minimap.fx");
+
+					repository.AddResource(shader);
+				}
+
                 {
                     var shader = new Effect(
                     "Debug",

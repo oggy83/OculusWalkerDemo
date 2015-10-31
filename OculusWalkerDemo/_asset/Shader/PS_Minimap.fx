@@ -1,5 +1,5 @@
 /**
- * @file  PS_Test.fx
+ * @file  PS_Minimap.fx
  * @brief pixel shader for test
 */
 
@@ -11,7 +11,6 @@ struct PS_INPUT
 	float4 WorldPosition : POSITION;	// position in world space
 	float2 UV1 : TEXCOORD0;				// texture uv
 	float3 Normal : NORMAL;				// normal in world space
-	uint InstanceId : ID;	  
 };
 
 struct PS_OUTPUT
@@ -41,12 +40,14 @@ PS_OUTPUT main(PS_INPUT In)
 	Out.Color.rgb = diffCol.rgb + specCol;
 	Out.Color.a = diffCol.a;
 
-	// Fog
-	float startFogDistance = 10.0f;
-	float endFogDistance = 50;
-	float3 fogColor = g_fogCol.rgb;
-	float fogFactor = clamp((In.Position.w - startFogDistance) / (endFogDistance - startFogDistance), 0, 1);
-	Out.Color.rgb = lerp(Out.Color.rgb, fogColor, fogFactor);
+	float2 min = float2(0.2, 0.3);
+	float2 max = float2(0.8, 0.9);
+	float width = max - min;
+	
+	if (min.x < In.UV1.x && In.UV1.x < max.x && min.y < In.UV1.y && In.UV1.y < max.y)
+	{
+		Out.Color.b *= 2;
+	}
 
 	return Out;
 }

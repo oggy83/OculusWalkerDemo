@@ -137,6 +137,7 @@ namespace Oggy
 
         virtual public void BeginDrawInstance(DrawSystem.MeshData mesh, MaterialBase material, DrawSystem.RenderMode renderMode)
 		{
+			Debug.Assert(material.IsEnableInstanceRendering(), "this material does not support instance rendering");
 			_SetModelParams(mesh, material, renderMode);
 		}
 
@@ -382,6 +383,16 @@ namespace Oggy
 						{
 							Effect effect = null;
 							effect = m_initParam.Repository.FindResource<Effect>("Std");
+							m_context.InputAssembler.InputLayout = effect.Layout;
+							m_context.VertexShader.Set(effect.VertexShader);
+							m_context.PixelShader.Set(effect.PixelShader);
+						}
+						break;
+
+					case MaterialBase.MaterialTypes.Minimap:
+						{
+							Effect effect = null;
+							effect = m_initParam.Repository.FindResource<Effect>("Minimap");
 							m_context.InputAssembler.InputLayout = effect.Layout;
 							m_context.VertexShader.Set(effect.VertexShader);
 							m_context.PixelShader.Set(effect.PixelShader);

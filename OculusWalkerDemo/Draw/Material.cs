@@ -12,6 +12,7 @@ namespace Oggy
 		public enum MaterialTypes
 		{
 			Standard = 0,
+			Minimap,
 			Marker,
 			Debug,
 		}
@@ -33,6 +34,11 @@ namespace Oggy
 		public virtual bool GetTextureData(DrawSystem.TextureTypes type, out DrawSystem.TextureData outTexture)
 		{
 			outTexture = DrawSystem.TextureData.Null();
+			return false;
+		}
+
+		public virtual bool IsEnableInstanceRendering()
+		{
 			return false;
 		}
 
@@ -99,6 +105,11 @@ namespace Oggy
 					outTexture = DrawSystem.TextureData.Null();
 					return false;
 			}
+		}
+
+		public override bool IsEnableInstanceRendering()
+		{
+			return true;
 		}
 	}
 

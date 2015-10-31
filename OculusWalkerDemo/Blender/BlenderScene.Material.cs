@@ -35,7 +35,7 @@ namespace Oggy
 				case ".map":
 					_LoadTextures(repository, bMaterial, ref texInfos,
 						new DrawSystem.TextureTypes[] { DrawSystem.TextureTypes.Diffuse0 });
-					outMaterial = new StandardMaterial();
+					outMaterial = new MinimapMaterial();
 					outTextureInfos = texInfos;
 					return true;
 

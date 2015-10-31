@@ -3,20 +3,8 @@
  * @brief vertex shader for debug (using vertex color only)
 */
 
-#define MAX_INSTANCE_COUNT 32
+#include "VS_Common.h"
 
-cbuffer cbMain : register(b0)
-{
-	float4x4 g_worldMat[MAX_INSTANCE_COUNT];	// word matrix (row major)
-};
-
-//cbuffer cbBone : register(b1)
-//cbuffer cbModel : register(b2)
-
-cbuffer cbWorld : register(b3)
-{
-	float4x4 g_vpMat;		// view projection matrix (row major)
-};
 
 struct VS_INPUT
 {

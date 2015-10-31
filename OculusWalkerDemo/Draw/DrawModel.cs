@@ -118,8 +118,9 @@ namespace Oggy
 			var aabb = Aabb.Invalid();
             foreach (var n in scene.NodeList)
             {
-                if (n.MaterialData.Type != MaterialBase.MaterialTypes.Standard)
+                if (n.MaterialData.Type == MaterialBase.MaterialTypes.Marker)
                 {
+					// marker material is used as 'Marker'
                     continue;
                 }
 
