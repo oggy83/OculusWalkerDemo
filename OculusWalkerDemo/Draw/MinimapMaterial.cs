@@ -52,5 +52,35 @@ namespace Oggy
 					return false;
 			}
 		}
+
+		public void SetMap(int width, int height, int[] mapTable)
+		{
+			m_mapTable = (int[])mapTable.Clone();
+			m_mapWidth = width;
+			m_mapHeight = height;
+		}
+
+		public int[] GetMapTable()
+		{
+			return m_mapTable;
+		}
+
+		public int GetMapWidth()
+		{
+			return m_mapWidth;
+		}
+
+		public int GetMapHeight()
+		{
+			return m_mapHeight;
+		}
+
+		#region private members
+
+		private int[] m_mapTable = new int[1];
+		private int m_mapWidth = 0;
+		private int m_mapHeight = 0;
+
+		#endregion // private members
 	}
 }

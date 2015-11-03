@@ -67,7 +67,7 @@ namespace Oggy
 
 		public bool CanWalkThrough()
 		{
-			return m_type != BlockTypes.Wall && m_type != BlockTypes.ClosedGate;
+			return m_type != BlockTypes.Wall && m_type != BlockTypes.ClosedGate && m_type != BlockTypes.None;
 		}
 
 		public bool CanWalkHalf()

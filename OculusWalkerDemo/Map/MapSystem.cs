@@ -58,6 +58,11 @@ namespace Oggy
 
 		#endregion // properties
 
+		public Size GetBlockSize()
+		{
+			return new Size(m_blockInfoMap.GetLength(0), m_blockInfoMap.GetLength(1));
+		}
+
 		public BlockInfo GetBlockInfo(int blockX, int blockY)
 		{
 			return m_blockInfoMap[blockY, blockX];

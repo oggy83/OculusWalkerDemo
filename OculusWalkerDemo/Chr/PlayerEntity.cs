@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Drawing;
 using System.Threading.Tasks;
 using SharpDX;
 using System.Diagnostics;
@@ -29,6 +30,25 @@ namespace Oggy
 				var drawModel = DrawModel.FromScene(path + "/draw", scene, searchPath);
                 var animRes = AnimResource.FromBlenderScene(path + "/anim", scene);
 				//var debugModel = DrawModel.CreateTangentFrame(path + "/debug", scene);
+
+				// set minimap material param
+				var minimapMtl = drawModel.NodeList[0].Material as MinimapMaterial;
+				Size blockSize = mapSys.GetBlockSize();
+				var mapTable = new int[blockSize.Width * blockSize.Height];
+				for (int h = 0; h < blockSize.Height; ++h)
+				{
+					for (int w = 0; w < blockSize.Width; ++w)
+					{
+						var blockInfo = mapSys.GetBlockInfo(w, h);
+						int data = blockInfo.CanWalkHalf()
+							? 2
+							: blockInfo.CanWalkThrough() 
+								? 1 
+								: 0;
+						mapTable[h * blockSize.Width + w] = data;
+					}
+				}
+				minimapMtl.SetMap(blockSize.Width, blockSize.Height, mapTable);
 
                 if (drawModel.BoneArray.Length != 0)
                 {

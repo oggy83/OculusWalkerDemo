@@ -5,6 +5,16 @@
 
 #include "PS_Common.h"
 
+#define MAX_MAP_LENGTH 1024	// 32x32
+
+cbuffer cbModel_Minimap : register(b3)
+{
+	int minimap_width;	// map width
+	int minimap_height;	// map height
+	float2 _dummy;
+	int4 minimap_map[MAX_MAP_LENGTH / 4];	// map table (unfortunately, int array is not packed)
+};
+
 struct PS_INPUT
 {
 	float4 Position : SV_POSITION;		// position in screen space
@@ -42,11 +52,23 @@ PS_OUTPUT main(PS_INPUT In)
 
 	float2 min = float2(0.2, 0.3);
 	float2 max = float2(0.8, 0.9);
-	float width = max - min;
+	float2 width = max - min;
 	
 	if (min.x < In.UV1.x && In.UV1.x < max.x && min.y < In.UV1.y && In.UV1.y < max.y)
 	{
-		Out.Color.b *= 2;
+		int x = ((In.UV1.x - min.x) / width.x * minimap_width);
+		int y = ((In.UV1.y - min.y) / width.y * minimap_height);
+		int index = y * minimap_width + x;
+		int mapId = ((int[4])(minimap_map[index / 4]))[index % 4];
+		if (mapId == 1)
+		{
+			Out.Color.b = 1.0f;
+		}
+		else if (mapId == 2)
+		{
+			Out.Color.b = 0.8f;
+		}
+		
 	}
 
 	return Out;

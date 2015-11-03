@@ -24,8 +24,8 @@ namespace Oggy
 				m_initParam.D3D = d3d;
 				m_initParam.Repository = repository;
 
-				m_initParam.WorldVtxConst = DrawUtil.CreateConstantBuffer<_WorldVertexShaderConst>(d3d, 1);
-				m_initParam.WorldPixConst = DrawUtil.CreateConstantBuffer<_WorldPixelShaderConst>(d3d, 1);
+				m_initParam.WorldVtxConst = DrawUtil.CreateConstantBuffer<_VertexShaderConst_World>(d3d, 1);
+				m_initParam.WorldPixConst = DrawUtil.CreateConstantBuffer<_PixelShaderConst_World>(d3d, 1);
 
 				m_initParam.RasterizerState = new RasterizerState(d3d.Device, new RasterizerStateDescription()
 				{

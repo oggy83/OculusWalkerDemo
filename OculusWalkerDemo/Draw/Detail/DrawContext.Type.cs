@@ -31,13 +31,13 @@ namespace Oggy
 		#region private types
 
 		[StructLayout(LayoutKind.Sequential, Pack = 16)]
-		private struct _MainVertexShaderConst
+		private struct _VertexShaderConst_Main
 		{
 			public Matrix worldMat;			// word matrix
 		}
 
 		[StructLayout(LayoutKind.Sequential, Pack = 16)]
-		private struct _ModelVertexShaderConst
+		private struct _VertexShaderConst_Model
 		{
 			public bool isEnableSkinning;	// is enable skinning
 			public float _dummy1;
@@ -46,26 +46,36 @@ namespace Oggy
 		}
 
 		[StructLayout(LayoutKind.Sequential, Pack = 16)]
-		private struct _WorldVertexShaderConst
+		private struct _VertexShaderConst_World
 		{
 			public Matrix vpMat;			// view projection matrix
 		}
 
 		[StructLayout(LayoutKind.Sequential, Pack = 16)]
-		private struct _MainPixelShaderConst
+		private struct _PixelShaderConst_Main
 		{
 			public Color4 instanceColor;
 		}
 
         [StructLayout(LayoutKind.Sequential, Pack = 16)]
-        private struct _ModelPixelShaderConst
+        private struct _PixelShaderConst_Model
         {
             public Vector2 uvScale1;
             public Vector2 uvScale2;
         }
 
 		[StructLayout(LayoutKind.Sequential, Pack = 16)]
-		private struct _WorldPixelShaderConst
+		private struct _PixelShaderConst_ModelMinimap
+		{
+			public int width;
+			public int height;
+			private float _dummy1;
+			private float _dummy2;
+			public unsafe fixed int map[1024];	// 32x32
+		}
+
+		[StructLayout(LayoutKind.Sequential, Pack = 16)]
+		private struct _PixelShaderConst_World
 		{
 			public Color4 ambientCol;	// ambient color
 			public Color4 fogCol;		// fog color

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Drawing;
+using System.Runtime.InteropServices;
 using SharpDX;
 using SharpDX.Windows;
 using SharpDX.DXGI;
@@ -29,14 +30,15 @@ namespace Oggy
 			m_context = context;
 
 			var d3d = m_initParam.D3D;
-			m_mainVtxConst = DrawUtil.CreateConstantBuffer<_MainVertexShaderConst>(d3d, m_maxInstanceCount);
+			m_mainVtxConst = DrawUtil.CreateConstantBuffer<_VertexShaderConst_Main>(d3d, m_maxInstanceCount);
             m_boneVtxConst = DrawUtil.CreateConstantBuffer(d3d, Utilities.SizeOf<Matrix>() * MaxBoneMatrices);
-			m_modelVtxConst = DrawUtil.CreateConstantBuffer<_ModelVertexShaderConst>(d3d, 1);
-			m_mainPixConst = DrawUtil.CreateConstantBuffer<_MainPixelShaderConst>(d3d, m_maxInstanceCount);
-            m_modelPixConst = DrawUtil.CreateConstantBuffer<_ModelPixelShaderConst>(d3d, 1);
+			m_modelVtxConst = DrawUtil.CreateConstantBuffer<_VertexShaderConst_Model>(d3d, 1);
+			m_mainPixConst = DrawUtil.CreateConstantBuffer<_PixelShaderConst_Main>(d3d, m_maxInstanceCount);
+            m_modelPixConst = DrawUtil.CreateConstantBuffer<_PixelShaderConst_Model>(d3d, 1);
+			m_modelMinimapPixConst = DrawUtil.CreateConstantBuffer<_PixelShaderConst_ModelMinimap>(d3d, 1);
 
-			m_instanceMainVtxConst = new _MainVertexShaderConst[m_maxInstanceCount];
-			m_instanceMainPixConst = new _MainPixelShaderConst[m_maxInstanceCount];
+			m_instanceMainVtxConst = new _VertexShaderConst_Main[m_maxInstanceCount];
+			m_instanceMainPixConst = new _PixelShaderConst_Main[m_maxInstanceCount];
 		}
 
 		virtual public void Dispose()
@@ -46,6 +48,7 @@ namespace Oggy
 				m_context.Dispose();
 			}
 
+			m_modelMinimapPixConst.Dispose();
             m_modelPixConst.Dispose();
 			m_mainPixConst.Dispose();
 			m_modelVtxConst.Dispose();
@@ -58,7 +61,7 @@ namespace Oggy
             _SetModelParams(mesh, material, renderMode);
 
             // update vertex shader resouce
-            var vdata = new _MainVertexShaderConst()
+            var vdata = new _VertexShaderConst_Main()
             {
                 // hlsl is column-major memory layout, so we must transpose matrix
                 worldMat = Matrix.Transpose(worldTrans),
@@ -66,7 +69,7 @@ namespace Oggy
             m_context.UpdateSubresource(ref vdata, m_mainVtxConst);
 
             // update pixel shader resouce
-            var pdata = new _MainPixelShaderConst()
+            var pdata = new _PixelShaderConst_Main()
             {
                 instanceColor = color
             };
@@ -110,7 +113,7 @@ namespace Oggy
 
 			// update vertex shader resouce
 			{
-				var vdata = new _MainVertexShaderConst()
+				var vdata = new _VertexShaderConst_Main()
 				{
 					// hlsl is column-major memory layout, so we must transpose matrix
 					worldMat = Matrix.Transpose(worldTrans),
@@ -120,7 +123,7 @@ namespace Oggy
 
 			// update pixel shader resouce
 			{
-				var pdata = new _MainPixelShaderConst()
+				var pdata = new _PixelShaderConst_Main()
 				{
 					instanceColor = Color4.White,
 				};
@@ -144,17 +147,17 @@ namespace Oggy
 		virtual public void AddInstance(Matrix worldTrans, Color4 color)
 		{
 			// hlsl is column-major memory layout, so we must transpose matrix
-			m_instanceMainVtxConst[m_nextInstanceIndex] = new _MainVertexShaderConst() { worldMat = Matrix.Transpose(worldTrans) };
-			m_instanceMainPixConst[m_nextInstanceIndex] = new _MainPixelShaderConst() { instanceColor = color };
+			m_instanceMainVtxConst[m_nextInstanceIndex] = new _VertexShaderConst_Main() { worldMat = Matrix.Transpose(worldTrans) };
+			m_instanceMainPixConst[m_nextInstanceIndex] = new _PixelShaderConst_Main() { instanceColor = color };
 
 			m_nextInstanceIndex++;
 			if (m_nextInstanceIndex == m_maxInstanceCount)
 			{
 				// update vertex shader resouce
-				m_context.UpdateSubresource<_MainVertexShaderConst>(m_instanceMainVtxConst, m_mainVtxConst);
+				m_context.UpdateSubresource<_VertexShaderConst_Main>(m_instanceMainVtxConst, m_mainVtxConst);
 
 				// update pixel shader resouce
-				m_context.UpdateSubresource<_MainPixelShaderConst>(m_instanceMainPixConst, m_mainPixConst);
+				m_context.UpdateSubresource<_PixelShaderConst_Main>(m_instanceMainPixConst, m_mainPixConst);
 
 				// low performance @todo
 				for (int i = 0; i < m_tmpBoneMatrices.Length; ++i)
@@ -176,10 +179,10 @@ namespace Oggy
 			if (m_nextInstanceIndex != 0)
 			{
 				// update vertex shader resouce
-				m_context.UpdateSubresource<_MainVertexShaderConst>(m_instanceMainVtxConst, m_mainVtxConst);
+				m_context.UpdateSubresource<_VertexShaderConst_Main>(m_instanceMainVtxConst, m_mainVtxConst);
 
 				// update pixel shader resouce
-				m_context.UpdateSubresource<_MainPixelShaderConst>(m_instanceMainPixConst, m_mainPixConst);
+				m_context.UpdateSubresource<_PixelShaderConst_Main>(m_instanceMainPixConst, m_mainPixConst);
 
 				// low performance @todo
 				for (int i = 0; i < m_tmpBoneMatrices.Length; ++i)
@@ -253,7 +256,7 @@ namespace Oggy
 
 		public void UpdateEyeParams(DeviceContext context, RenderTarget renderTarget, DrawSystem.EyeData eyeData)
 		{
-			var vdata = new _WorldVertexShaderConst()
+			var vdata = new _VertexShaderConst_World()
 			{
 				// hlsl is column-major memory layout, so we must transpose matrix
 				vpMat = Matrix.Transpose(eyeData.ViewMatrix * eyeData.ProjectionMatrix),
@@ -261,7 +264,7 @@ namespace Oggy
 			context.UpdateSubresource(ref vdata, m_initParam.WorldVtxConst);
 
 			// init pixel shader resource
-			var pdata = new _WorldPixelShaderConst()
+			var pdata = new _PixelShaderConst_World()
 			{
 				ambientCol = new Color4(m_worldData.AmbientColor),
 				fogCol = new Color4(m_worldData.FogColor),
@@ -291,6 +294,7 @@ namespace Oggy
 		private Buffer m_modelVtxConst = null;
 		private Buffer m_mainPixConst = null;
         private Buffer m_modelPixConst = null;
+		private Buffer m_modelMinimapPixConst = null;
         private Matrix[] m_tmpBoneMatrices = new Matrix[MaxBoneMatrices];
 
 		// previous draw setting
@@ -306,8 +310,8 @@ namespace Oggy
 		// DrawInstancedModel context
 		private int m_nextInstanceIndex = 0;
 		private int m_maxInstanceCount = 32;
-		private _MainVertexShaderConst[] m_instanceMainVtxConst;
-		private _MainPixelShaderConst[] m_instanceMainPixConst;
+		private _VertexShaderConst_Main[] m_instanceMainVtxConst;
+		private _PixelShaderConst_Main[] m_instanceMainPixConst;
 		
 
 		#endregion // private members
@@ -349,7 +353,7 @@ namespace Oggy
             // update texture uv scale
             if (m_lastTextureUvScale == null || !m_lastTextureUvScale.Value.Equals(tex.UvScale))
             {
-                var modelPixConst = new _ModelPixelShaderConst()
+                var modelPixConst = new _PixelShaderConst_Model()
                 {
                     uvScale1 = tex.UvScale,
                     uvScale2 = new Vector2(1, 1),   // @todo
@@ -363,7 +367,7 @@ namespace Oggy
 			bool isEnableSkinning = mesh.Buffers.Count() == 3;
 			if (m_lastEnableSkinning == null || !m_lastEnableSkinning.Value.Equals(isEnableSkinning))
 			{
-				var modelVtxConst = new _ModelVertexShaderConst()
+				var modelVtxConst = new _VertexShaderConst_Model()
 				{
 					isEnableSkinning  = isEnableSkinning,
 				};
@@ -396,6 +400,20 @@ namespace Oggy
 							m_context.InputAssembler.InputLayout = effect.Layout;
 							m_context.VertexShader.Set(effect.VertexShader);
 							m_context.PixelShader.Set(effect.PixelShader);
+
+							// update material shader param
+							var mtl = material as MinimapMaterial;
+							m_context.PixelShader.SetConstantBuffer(3, m_modelMinimapPixConst);
+							var tmpConst = new _PixelShaderConst_ModelMinimap();
+							tmpConst.width = mtl.GetMapWidth();
+							tmpConst.height = mtl.GetMapHeight();
+							int[] mapTable = mtl.GetMapTable();
+							unsafe
+							{
+								// copy map table
+								Marshal.Copy(mapTable, 0, new IntPtr(tmpConst.map), tmpConst.width * tmpConst.height);
+							}
+							m_context.UpdateSubresource(ref tmpConst, m_modelMinimapPixConst);
 						}
 						break;
 
