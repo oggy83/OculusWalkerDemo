@@ -44,8 +44,8 @@ PS_OUTPUT main(PS_INPUT In)
 
 	// Blinn-Phong Model
 	float3 halfVec = normalize(EyeDir + Light1Dir);
-	float3 specLight = pow(saturate(dot(Normal, halfVec)), 100);
-	float3 specCol = specLight * 0.3f;// highlight is white 
+	float3 specLight = pow(saturate(dot(Normal, halfVec)), 30);
+	float3 specCol = specLight * 0.1f;// highlight is white 
 
 	Out.Color.rgb = diffCol.rgb + specCol;
 	Out.Color.a = diffCol.a;
