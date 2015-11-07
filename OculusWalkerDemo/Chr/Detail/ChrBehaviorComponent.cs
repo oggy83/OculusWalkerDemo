@@ -63,6 +63,14 @@ namespace Oggy
 			m_layoutC.Transform = pose;
 		}
 
+		/// <summary>
+		/// get whether character is idling 
+		/// </summary>
+		public bool IsIdling()
+		{
+			return !m_isMoving && !m_isTurning;
+		}
+
         /// <summary>
 		/// Update component
 		/// </summary>
@@ -163,14 +171,7 @@ namespace Oggy
             base.OnRemoveFromEntity(entity);
         }
 
-        /// <summary>
-        /// get whether character is idling 
-        /// </summary>
-        public bool IsIdling()
-        {
-            return !m_isMoving && !m_isTurning;
-        }
-
+       
         #region private methods
 
         /// <summary>

@@ -63,6 +63,7 @@
     <Compile Include="Chr\ChrSystem.cs" />
     <Compile Include="Chr\Detail\ChrBehaviorComponent.cs" />
     <Compile Include="Chr\Detail\GodViewInputComponent.cs" />
+    <Compile Include="Chr\Detail\MinimapComponent.cs" />
     <Compile Include="Chr\PlayerEntity.cs" />
     <Compile Include="Coroutine\Coroutine.cs" />
     <Compile Include="Coroutine\Coroutine.Join.cs" />

@@ -31,25 +31,6 @@ namespace Oggy
                 var animRes = AnimResource.FromBlenderScene(path + "/anim", scene);
 				//var debugModel = DrawModel.CreateTangentFrame(path + "/debug", scene);
 
-				// set minimap material param
-				var minimapMtl = drawModel.NodeList[0].Material as MinimapMaterial;
-				Size blockSize = mapSys.GetBlockSize();
-				var mapTable = new int[blockSize.Width * blockSize.Height];
-				for (int h = 0; h < blockSize.Height; ++h)
-				{
-					for (int w = 0; w < blockSize.Width; ++w)
-					{
-						var blockInfo = mapSys.GetBlockInfo(w, h);
-						int data = blockInfo.CanWalkHalf()
-							? 2
-							: blockInfo.CanWalkThrough() 
-								? 1 
-								: 0;
-						mapTable[h * blockSize.Width + w] = data;
-					}
-				}
-				minimapMtl.SetMap(blockSize.Width, blockSize.Height, mapTable);
-
                 if (drawModel.BoneArray.Length != 0)
                 {
                     var skeletonC = new SkeletonComponent(drawModel.BoneArray);
@@ -63,22 +44,27 @@ namespace Oggy
 				//var markerC = new ModelMarkerComponent(scene);
 				//AddComponent(markerC);
 
+				var modelC = new ModelComponent(GameEntityComponent.UpdateLines.Draw);
+				modelC.ModelContext.EnableCastShadow = true;
+				modelC.ModelContext.DrawModel = drawModel;
+				//modelC.ModelContext.DebugModel = debugModel;
+				AddComponent(modelC);
+
 				var animC = new AnimComponent(animRes);
 				AddComponent(animC);
 
                 var behaviorC = new ChrBehaviorComponent();
                 AddComponent(behaviorC);
 
+				var minimapC = new MinimapComponent();
+				AddComponent(minimapC);
+
 				MapLocation startLocation = mapSys.GetStartInfo();
 				//var inputC = new GodViewInputComponent();
                 var inputC = new FpsInputComponent(startLocation);
 				AddComponent(inputC);
 
-				var modelC = new ModelComponent(GameEntityComponent.UpdateLines.Draw);
-				modelC.ModelContext.EnableCastShadow = true;
-				modelC.ModelContext.DrawModel = drawModel;
-				//modelC.ModelContext.DebugModel = debugModel;
-				AddComponent(modelC);
+				
 			}
 		}
 	}

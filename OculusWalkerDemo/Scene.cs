@@ -109,7 +109,7 @@ namespace Oggy
 				entitySys.UpdateComponents(GameEntityComponent.UpdateLines.Input, dt);
 				entitySys.UpdateComponents(GameEntityComponent.UpdateLines.Behavior, dt);
 				cameraSys.Update(dt);
-
+				entitySys.UpdateComponents(GameEntityComponent.UpdateLines.PostBehavior, dt);
 
 				DrawSystem.WorldData worldData;
 				worldData.AmbientColor = new Color3(0.4f, 0.45f, 0.55f);
