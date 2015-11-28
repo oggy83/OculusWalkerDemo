@@ -68,6 +68,10 @@ PS_OUTPUT main(PS_INPUT In)
 		{
 			Out.Color.b = 0.8f;
 		}
+		else if (mapId == 3)
+		{
+			Out.Color = float4(1, 1, 1, 1);
+		}
 		
 	}
 

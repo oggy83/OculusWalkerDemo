@@ -68,7 +68,12 @@ namespace Oggy
 			return m_blockInfoMap[blockY, blockX];
 		}
 
-		public MapLocation GetBlockAddress(Vector3 v)
+		public MapLocation GetMapLocation(GameEntity entity)
+		{
+			return GetMapLocation(entity.FindComponent<LayoutComponent>().Transform.TranslationVector);
+		}
+
+		public MapLocation GetMapLocation(Vector3 v)
 		{
 			Vector3 bias = new Vector3(0.5f * BlockSize, 0.0f, -0.5f * BlockSize);
 
