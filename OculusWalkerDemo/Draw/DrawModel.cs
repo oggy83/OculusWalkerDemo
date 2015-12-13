@@ -212,26 +212,19 @@ foreach (var buf in node.Mesh.Buffers)
                 }
 
                 // copy textures from cache
-                if (n.TextureInfos.ContainsKey(DrawSystem.TextureTypes.Diffuse0))
-                {
-                    node.Material.SetTextureData(
-						DrawSystem.TextureTypes.Diffuse0, 
-						new DrawSystem.TextureData
-						{
-							Resource = drawRepository.FindResource<TextureView>(n.TextureInfos[DrawSystem.TextureTypes.Diffuse0].Name),
-							UvScale = n.TextureInfos[DrawSystem.TextureTypes.Diffuse0].UvScale,
-						});
-                }
-                if (n.TextureInfos.ContainsKey(DrawSystem.TextureTypes.Bump0))
-                {
-                    node.Material.SetTextureData(
-						DrawSystem.TextureTypes.Bump0,
-						new DrawSystem.TextureData
-						{
-							Resource = drawRepository.FindResource<TextureView>(n.TextureInfos[DrawSystem.TextureTypes.Bump0].Name),
-							UvScale = n.TextureInfos[DrawSystem.TextureTypes.Bump0].UvScale,
-						});
-                }
+				foreach (DrawSystem.TextureTypes textureType in Enum.GetValues(typeof(DrawSystem.TextureTypes)))
+				{
+					if (n.TextureInfos.ContainsKey(textureType))
+					{
+						node.Material.SetTextureData(
+							textureType,
+							new DrawSystem.TextureData
+							{
+								Resource = drawRepository.FindResource<TextureView>(n.TextureInfos[textureType].Name),
+								UvScale = n.TextureInfos[textureType].UvScale,
+							});
+					}
+				}
 
                 model.m_nodeList.Add(node);
             }

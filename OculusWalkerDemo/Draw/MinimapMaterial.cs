@@ -14,6 +14,11 @@ namespace Oggy
 		/// </summary>
 		public DrawSystem.TextureData DiffuseTex0 { get; set; }
 
+		/// <summary>
+		/// minimap route texture
+		/// </summary>
+		public DrawSystem.TextureData MinimapRouteTex { get; set; }
+
 		public MinimapMaterial() : base(MaterialTypes.Minimap) { }
 
 		public static MaterialBase Create(DrawSystem.TextureData diffuse)
@@ -32,6 +37,10 @@ namespace Oggy
 					DiffuseTex0 = tex;
 					break;
 
+				case DrawSystem.TextureTypes.MinimapRoute:
+					MinimapRouteTex = tex;
+					break;
+
 				default:
 					Debug.Assert(false, "unsupported texture types");
 					break;
@@ -46,8 +55,28 @@ namespace Oggy
 					outTexture = DiffuseTex0;
 					return true;
 
+				case DrawSystem.TextureTypes.MinimapRoute:
+					outTexture = MinimapRouteTex;
+					return true;
+
 				default:
 					Debug.Assert(false, "unsupported texture types");
+					outTexture = DrawSystem.TextureData.Null();
+					return false;
+			}
+		}
+
+		public override bool GetTextureDataBySlotIndex(int slotIndex, out DrawSystem.TextureData outTexture)
+		{
+			switch (slotIndex)
+			{
+				case 0:
+					return GetTextureData(DrawSystem.TextureTypes.Diffuse0, out outTexture);
+
+				case 1:
+					return GetTextureData(DrawSystem.TextureTypes.MinimapRoute, out outTexture);
+
+				default:
 					outTexture = DrawSystem.TextureData.Null();
 					return false;
 			}

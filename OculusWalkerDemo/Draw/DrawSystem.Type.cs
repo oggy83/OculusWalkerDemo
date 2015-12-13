@@ -111,8 +111,9 @@ namespace Oggy
 
         public enum TextureTypes
         {
-            Diffuse0 = 0,
+			Diffuse0 = 0,
             Bump0,
+			MinimapRoute,	// a special texture type for Minimap material
         }
 
        
@@ -130,6 +131,11 @@ namespace Oggy
                     UvScale = Vector2.One,
                 };
             }
+
+			public bool IsNull()
+			{
+				return Resource == null || Resource.IsDisposed();
+			}
         }
 
         public struct MeshData

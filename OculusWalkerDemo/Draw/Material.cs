@@ -37,6 +37,12 @@ namespace Oggy
 			return false;
 		}
 
+		public virtual bool GetTextureDataBySlotIndex(int slotIndex, out DrawSystem.TextureData outTexture)
+		{
+			outTexture = DrawSystem.TextureData.Null();
+			return false;
+		}
+
 		public virtual bool IsEnableInstanceRendering()
 		{
 			return false;
@@ -102,6 +108,19 @@ namespace Oggy
 
 				default:
 					Debug.Assert(false, "unsupported texture types");
+					outTexture = DrawSystem.TextureData.Null();
+					return false;
+			}
+		}
+
+		public override bool GetTextureDataBySlotIndex(int slotIndex, out DrawSystem.TextureData outTexture)
+		{
+			switch (slotIndex)
+			{
+				case 0:
+					return GetTextureData(DrawSystem.TextureTypes.Diffuse0, out outTexture);
+
+				default:
 					outTexture = DrawSystem.TextureData.Null();
 					return false;
 			}

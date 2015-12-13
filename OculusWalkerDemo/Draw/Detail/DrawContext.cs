@@ -39,6 +39,12 @@ namespace Oggy
 
 			m_instanceMainVtxConst = new _VertexShaderConst_Main[m_maxInstanceCount];
 			m_instanceMainPixConst = new _PixelShaderConst_Main[m_maxInstanceCount];
+
+			m_lastTextureSlots = new _TextureSlot[2];
+			for (int index = 0; index < m_lastTextureSlots.Count(); ++index)
+			{
+				m_lastTextureSlots[index] = _TextureSlot.Create(index);
+			}
 		}
 
 		virtual public void Dispose()
@@ -281,6 +287,25 @@ namespace Oggy
 			m_context.ClearRenderTargetView(renderTarget.TargetView, new Color4(m_worldData.FogColor));
 		}
 
+		#region private types
+
+		private struct _TextureSlot
+		{
+			public int SlotIndex;
+			public DrawSystem.TextureData Texture;
+
+			public static _TextureSlot Create(int index)
+			{
+				return new _TextureSlot
+				{
+					SlotIndex = index,
+					Texture = DrawSystem.TextureData.Null()
+				};
+			}
+		}
+
+		#endregion // private types
+
 		#region private members
 
 		private CommonInitParam m_initParam;
@@ -299,8 +324,7 @@ namespace Oggy
 
 		// previous draw setting
 		private DrawSystem.RenderMode? m_lastRenderMode = null;
-        private TextureView m_lastTextureRes = null;
-        private Vector2? m_lastTextureUvScale = null;
+		private _TextureSlot[] m_lastTextureSlots = null;
 		private bool? m_lastEnableSkinning = null;
 		private PrimitiveTopology? m_lastTopology = null;
 		private VertexBufferBinding[] m_lastVertexBuffers = null;
@@ -320,49 +344,59 @@ namespace Oggy
 
         private void _SetModelParams(DrawSystem.MeshData mesh, MaterialBase material, DrawSystem.RenderMode renderMode)
 		{
-			// update texture resouce
+			// update texture slot
 			DrawSystem.TextureData tex;
-			if (material == null)
+			bool bModelPixConstChanged = false;
+			for (int index = 0; index < m_lastTextureSlots.Count(); ++index)
 			{
-				tex = DrawSystem.TextureData.Null();
+				int slotIndex = m_lastTextureSlots[index].SlotIndex;
+				if (material == null)
+				{
+					tex = DrawSystem.TextureData.Null();
+				}
+				else
+				{
+					material.GetTextureDataBySlotIndex(slotIndex, out tex);
+				}
+
+				// update resouce
+				if (m_lastTextureSlots[index].Texture.Resource != tex.Resource)
+				{
+					// update resource
+					if (tex.Resource != null)
+					{
+						m_context.PixelShader.SetShaderResource(slotIndex, tex.Resource.View);
+						m_context.PixelShader.SetSampler(slotIndex, tex.Resource.SamplerState);
+					}
+					else
+					{
+						// set null texture
+						m_context.PixelShader.SetShaderResource(slotIndex, null);
+						m_context.PixelShader.SetSampler(slotIndex, null);
+					}
+
+					m_lastTextureSlots[index].Texture.Resource = tex.Resource;
+				}
+
+				// update texture uv scale
+				if (!m_lastTextureSlots[index].Texture.UvScale.Equals(tex.UvScale))
+				{
+					bModelPixConstChanged = true;
+					m_lastTextureSlots[index].Texture.UvScale = tex.UvScale;	
+				}
+
 			}
-			else
+
+			if (bModelPixConstChanged)
 			{
-				material.GetTextureData(DrawSystem.TextureTypes.Diffuse0, out tex);
+				var modelPixConst = new _PixelShaderConst_Model()
+				{
+					uvScale1 = m_lastTextureSlots[0].Texture.UvScale,
+					uvScale2 = m_lastTextureSlots[1].Texture.UvScale,
+				};
+				m_context.UpdateSubresource(ref modelPixConst, m_modelPixConst);
 			}
-
-			if (m_lastTextureRes == null || m_lastTextureRes.IsDisposed() || m_lastTextureRes != tex.Resource)
-			{
-                // update resource
-                int slotIndex = 0;
-                if (tex.Resource != null)
-                {
-                    m_context.PixelShader.SetShaderResource(slotIndex, tex.Resource.View);
-                    m_context.PixelShader.SetSampler(slotIndex, tex.Resource.SamplerState);
-                }
-                else
-                {
-                    // set null texture
-                    m_context.PixelShader.SetShaderResource(slotIndex, null);
-                    m_context.PixelShader.SetSampler(slotIndex, null);
-                }
-
-				m_lastTextureRes = tex.Resource;
-			}
-
-            // update texture uv scale
-            if (m_lastTextureUvScale == null || !m_lastTextureUvScale.Value.Equals(tex.UvScale))
-            {
-                var modelPixConst = new _PixelShaderConst_Model()
-                {
-                    uvScale1 = tex.UvScale,
-                    uvScale2 = new Vector2(1, 1),   // @todo
-                };
-                m_context.UpdateSubresource(ref modelPixConst, m_modelPixConst);
-				
-                m_lastTextureUvScale = tex.UvScale;
-			}
-
+			
 			// update model vertex shader param
 			bool isEnableSkinning = mesh.Buffers.Count() == 3;
 			if (m_lastEnableSkinning == null || !m_lastEnableSkinning.Value.Equals(isEnableSkinning))

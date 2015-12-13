@@ -7,6 +7,10 @@
 
 #define MAX_MAP_LENGTH 1024	// 32x32
 
+// material special textures
+Texture2D g_MinimapRouteTex : register(t1);
+SamplerState g_MinimapRouteTexSampler : register(s1);
+
 cbuffer cbModel_Minimap : register(b3)
 {
 	int minimap_width;	// map width
@@ -56,16 +60,21 @@ PS_OUTPUT main(PS_INPUT In)
 	
 	if (min.x < In.UV1.x && In.UV1.x < max.x && min.y < In.UV1.y && In.UV1.y < max.y)
 	{
-		int x = ((In.UV1.x - min.x) / width.x * minimap_width);
-		int y = ((In.UV1.y - min.y) / width.y * minimap_height);
+		float fx = ((In.UV1.x - min.x) / width.x * minimap_width);
+		float fy = ((In.UV1.y - min.y) / width.y * minimap_height);
+		int x = (int)fx;
+		int y = (int)fy;
+		float2 uv = float2(fx - x, fy - y);
 		int index = y * minimap_width + x;
 		int mapId = ((int[4])(minimap_map[index / 4]))[index % 4];
 		if (mapId == 1)
 		{
+			Out.Color = g_MinimapRouteTex.Sample(g_MinimapRouteTexSampler, uv);
 			Out.Color.b = 1.0f;
 		}
 		else if (mapId == 2)
 		{
+			Out.Color = g_MinimapRouteTex.Sample(g_MinimapRouteTexSampler, uv);
 			Out.Color.b = 0.8f;
 		}
 		else if (mapId == 3)

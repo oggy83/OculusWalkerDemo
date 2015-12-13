@@ -29,6 +29,7 @@ cbuffer cbWorld : register(b2)
 Texture2D g_Diffuse1Tex : register(t0);
 SamplerState g_Diffuse1Sampler : register(s0);
 
+
 float2 _ScalingUV(float2 uv, float2 scaleUV)
 {
 	return uv * scaleUV;

@@ -36,6 +36,7 @@ namespace Oggy
 					_LoadTextures(repository, bMaterial, ref texInfos,
 						new DrawSystem.TextureTypes[] { DrawSystem.TextureTypes.Diffuse0 });
 					outMaterial = new MinimapMaterial();
+					texInfos.Add(DrawSystem.TextureTypes.MinimapRoute, new TextureInfo { Name = "route.png", UvScale = new Vector2(1, 1) });// add a special texture
 					outTextureInfos = texInfos;
 					return true;
 
