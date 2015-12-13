@@ -5,7 +5,7 @@
 
 #include "PS_Common.h"
 
-#define MAX_MAP_LENGTH 1024	// 32x32
+#define MAX_MAP_LENGTH 576	// 24x24
 
 // material special textures
 Texture2D g_MinimapRouteTex : register(t1);
@@ -54,8 +54,9 @@ PS_OUTPUT main(PS_INPUT In)
 	Out.Color.rgb = diffCol.rgb + specCol;
 	Out.Color.a = diffCol.a;
 
-	float2 min = float2(0.2, 0.3);
-	float2 max = float2(0.8, 0.9);
+	// these params defines a minimap rectangle over map model
+	float2 min = float2(0.15, 0.25);
+	float2 max = float2(0.85, 0.95);
 	float2 width = max - min;
 	
 	if (min.x < In.UV1.x && In.UV1.x < max.x && min.y < In.UV1.y && In.UV1.y < max.y)

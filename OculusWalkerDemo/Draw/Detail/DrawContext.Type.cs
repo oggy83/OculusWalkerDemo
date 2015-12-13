@@ -71,7 +71,7 @@ namespace Oggy
 			public int height;
 			private float _dummy1;
 			private float _dummy2;
-			public unsafe fixed int map[1024];	// 32x32
+			public unsafe fixed int map[576];	// 24x24
 		}
 
 		[StructLayout(LayoutKind.Sequential, Pack = 16)]
